@@ -1,0 +1,224 @@
+import { useEffect, useRef, useState } from 'react';
+
+export function Hero() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [count, setCount] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    setIsVisible(true);
+    
+    // Animate the counter
+    const duration = 1000;
+    const steps = 40;
+    const interval = duration / steps;
+    let current = 0;
+    
+    const timer = setInterval(() => {
+      current++;
+      setCount(Math.min(current, 40));
+      if (current >= 40) clearInterval(timer);
+    }, interval);
+    
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <section 
+      ref={heroRef}
+      id="hero"
+      className="relative min-h-screen w-full overflow-hidden flex items-center"
+      style={{
+        background: 'linear-gradient(135deg, #5A2E88 0%, #7B4FA2 50%, #E91E8C 100%)',
+      }}
+    >
+      {/* Animated background overlay */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.2) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(233,30,140,0.3) 0%, transparent 50%)',
+        }}
+      />
+      
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white/20"
+            style={{
+              width: `${Math.random() * 6 + 2}px`,
+              height: `${Math.random() * 6 + 2}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `float ${Math.random() * 8 + 8}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left content */}
+          <div className="text-white space-y-6">
+            {/* Celebrating text */}
+            <div 
+              className={`overflow-hidden transition-all duration-600 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+              style={{ transitionDelay: '200ms' }}
+            >
+              <span className="inline-block text-lg sm:text-xl font-medium tracking-[0.3em] uppercase">
+                {'CELEBRATING'.split('').map((letter, i) => (
+                  <span
+                    key={i}
+                    className="inline-block"
+                    style={{
+                      animation: isVisible ? `fadeInUp 0.6s var(--ease-expo-out) ${200 + i * 50}ms forwards` : 'none',
+                      opacity: 0,
+                    }}
+                  >
+                    {letter}
+                  </span>
+                ))}
+              </span>
+            </div>
+
+            {/* 40 YEARS */}
+            <div className="space-y-2">
+              <h1 
+                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                style={{ 
+                  transitionDelay: '600ms',
+                  transitionTimingFunction: 'var(--ease-spring)',
+                }}
+              >
+                <span className="inline-block">{count}</span>
+              </h1>
+              <h2 
+                className={`text-5xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tight transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
+                style={{ 
+                  transitionDelay: '800ms',
+                  transitionTimingFunction: 'var(--ease-expo-out)',
+                }}
+              >
+                YEARS
+              </h2>
+            </div>
+
+            {/* Homosexual Law Reform */}
+            <div className="space-y-1">
+              <h3 
+                className={`text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide transition-all duration-600 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-24'}`}
+                style={{ 
+                  transitionDelay: '1000ms',
+                  transitionTimingFunction: 'var(--ease-expo-out)',
+                }}
+              >
+                HOMOSEXUAL
+              </h3>
+              <h3 
+                className={`text-2xl sm:text-3xl lg:text-4xl font-bold tracking-wide transition-all duration-600 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-24'}`}
+                style={{ 
+                  transitionDelay: '1200ms',
+                  transitionTimingFunction: 'var(--ease-expo-out)',
+                }}
+              >
+                LAW REFORM
+              </h3>
+            </div>
+
+            {/* Date badge */}
+            <div 
+              className={`inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 transition-all duration-800 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 -rotate-180'}`}
+              style={{ 
+                transitionDelay: '1400ms',
+                transitionTimingFunction: 'var(--ease-elastic)',
+              }}
+            >
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              <span className="text-lg font-semibold tracking-wider">JULY 2026</span>
+            </div>
+
+            {/* Supporting text */}
+            <p 
+              className={`text-lg sm:text-xl text-white/90 max-w-lg leading-relaxed transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ 
+                transitionDelay: '1600ms',
+                transitionTimingFunction: 'var(--ease-expo-out)',
+              }}
+            >
+              Celebrating the past, 1986 - 2026 while looking to the future.
+            </p>
+
+            {/* CTA Buttons */}
+            <div 
+              className={`flex flex-wrap gap-4 pt-4 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ 
+                transitionDelay: '1800ms',
+                transitionTimingFunction: 'var(--ease-expo-out)',
+              }}
+            >
+              <a 
+                href="#events" 
+                className="btn-primary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Explore Events
+              </a>
+              <a 
+                href="#history" 
+                className="btn-secondary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('history')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Learn the History
+              </a>
+            </div>
+          </div>
+
+          {/* Right content - Logo mark */}
+          <div 
+            className={`flex justify-center lg:justify-end transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 rotate-180'}`}
+            style={{ 
+              transitionDelay: '800ms',
+              transitionTimingFunction: 'var(--ease-spring)',
+            }}
+          >
+            <div 
+              className="relative"
+              style={{
+                animation: 'float 12s ease-in-out infinite',
+              }}
+            >
+              <img
+                src="/logomark2.png"
+                alt="40 Years Logo"
+                className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl"
+              />
+              {/* Glow effect */}
+              <div 
+                className="absolute inset-0 -z-10 blur-3xl opacity-50"
+                style={{
+                  background: 'radial-gradient(circle, rgba(233,30,140,0.5) 0%, transparent 70%)',
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom gradient fade */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to top, white, transparent)',
+        }}
+      />
+    </section>
+  );
+}
