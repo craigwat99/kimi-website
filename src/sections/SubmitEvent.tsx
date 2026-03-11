@@ -11,7 +11,7 @@ import type { Event } from '../types';
 interface SubmitEventProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (event: Omit<Event, 'id' | 'editToken' | 'createdAt' | 'updatedAt'>) => string;
+  onSubmit: (event: Omit<Event, 'id' | 'editToken' | 'approved' | 'createdAt' | 'updatedAt'>) => string;
 }
 
 export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
@@ -417,8 +417,11 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
             
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Your event has been submitted!</h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-2">
                 Save this edit token - you'll need it to make changes to your event:
+              </p>
+              <p className="text-sm text-amber-700 bg-amber-50 rounded-lg px-3 py-2">
+                Your event will be visible once it has been reviewed and approved.
               </p>
             </div>
 
