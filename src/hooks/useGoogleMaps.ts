@@ -56,21 +56,21 @@ interface PlaceResult {
 export function useGooglePlacesAutocomplete(
   onPlaceSelected: (result: PlaceResult) => void
 ) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputNodeRef = useRef<HTMLInputElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const autocompleteRef = useRef<any>(null);
+  const onPlaceSelectedRef = useRef(onPlaceSelected);
   const [isAvailable, setIsAvailable] = useState(false);
+  const [scriptReady, setScriptReady] = useState(googleMapsLoaded);
 
-  const initAutocomplete = useCallback(() => {
-    if (
-      !inputRef.current ||
-      !window.google?.maps?.places ||
-      autocompleteRef.current
-    )
-      return;
+  // Keep callback ref up to date to avoid stale closures
+  onPlaceSelectedRef.current = onPlaceSelected;
+
+  const initAutocomplete = useCallback((node: HTMLInputElement) => {
+    if (!window.google?.maps?.places || autocompleteRef.current) return;
 
     const autocomplete = new window.google.maps.places.Autocomplete(
-      inputRef.current,
+      node,
       {
         types: ["establishment", "geocode"],
         componentRestrictions: { country: "nz" },
@@ -84,7 +84,7 @@ export function useGooglePlacesAutocomplete(
         const address = place.formatted_address || place.name || "";
         const lat = place.geometry?.location?.lat() ?? null;
         const lng = place.geometry?.location?.lng() ?? null;
-        onPlaceSelected({
+        onPlaceSelectedRef.current({
           address,
           latitude: lat,
           longitude: lng,
@@ -94,23 +94,42 @@ export function useGooglePlacesAutocomplete(
 
     autocompleteRef.current = autocomplete;
     setIsAvailable(true);
-  }, [onPlaceSelected]);
+  }, []);
 
+  // Load the Google Maps script on mount
   useEffect(() => {
     loadGoogleMapsScript().then(() => {
       if (window.google?.maps?.places) {
-        setIsAvailable(true);
-        initAutocomplete();
+        setScriptReady(true);
       }
     });
-  }, [initAutocomplete]);
+  }, []);
 
-  // Re-init when input ref changes
+  // Try to initialize when script becomes ready and input is already mounted
   useEffect(() => {
-    if (isAvailable && inputRef.current && !autocompleteRef.current) {
-      initAutocomplete();
+    if (scriptReady && inputNodeRef.current && !autocompleteRef.current) {
+      initAutocomplete(inputNodeRef.current);
     }
-  }, [isAvailable, initAutocomplete]);
+  }, [scriptReady, initAutocomplete]);
+
+  // Callback ref to detect when the input mounts/unmounts (handles Dialog portals)
+  const inputRef = useCallback(
+    (node: HTMLInputElement | null) => {
+      inputNodeRef.current = node;
+      if (node && scriptReady && !autocompleteRef.current) {
+        initAutocomplete(node);
+      }
+      if (!node && autocompleteRef.current) {
+        // Input unmounted (e.g. dialog closed) - cleanup for re-initialization
+        window.google?.maps?.event?.clearInstanceListeners(
+          autocompleteRef.current
+        );
+        autocompleteRef.current = null;
+        setIsAvailable(false);
+      }
+    },
+    [scriptReady, initAutocomplete]
+  );
 
   return { inputRef, isAvailable };
 }
