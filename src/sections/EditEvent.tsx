@@ -33,7 +33,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
     const newErrors: Record<string, string> = {};
     
     if (!formData.name?.trim()) newErrors.name = 'Event name is required';
-    if (!formData.organizer?.trim()) newErrors.organizer = 'Organizer name is required';
+    if (!formData.organizer?.trim()) newErrors.organizer = 'Organiser name is required';
     if (!formData.email?.trim()) newErrors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email address';
     if (!formData.location?.trim()) newErrors.location = 'Location is required';
@@ -59,7 +59,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
     setShowDeleteConfirm(false);
   };
 
-  const locations = ['Auckland', 'Wellington', 'Christchurch', 'Dunedin', 'Hamilton', 'Tauranga', 'Other'];
+  const locations = ['Auckland', 'Wellington', 'Christchurch', 'Dunedin', 'Hamilton', 'Tauranga', 'Nelson', 'Other'];
   const eventTypes = [
     { value: 'celebration', label: 'Celebration' },
     { value: 'discussion', label: 'Discussion' },
