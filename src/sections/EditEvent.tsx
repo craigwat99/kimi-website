@@ -87,7 +87,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
     const newErrors: Record<string, string> = {};
 
     if (!formData.name?.trim()) newErrors.name = 'Event name is required';
-    if (!formData.organizer?.trim()) newErrors.organizer = 'Organiser name is required';
+    if (!formData.organiser?.trim()) newErrors.organiser = 'Organiser name is required';
     if (!formData.email?.trim()) newErrors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email address';
     if (!formData.location?.trim()) newErrors.location = 'Location is required';
@@ -263,17 +263,17 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="edit-organizer">Organizer Name *</Label>
+                  <Label htmlFor="edit-organiser">Organiser Name *</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
-                      id="edit-organizer"
-                      value={formData.organizer || ''}
-                      onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
-                      className={`pl-10 ${errors.organizer ? 'border-red-500' : ''}`}
+                      id="edit-organiser"
+                      value={formData.organiser || ''}
+                      onChange={(e) => setFormData({ ...formData, organiser: e.target.value })}
+                      className={`pl-10 ${errors.organiser ? 'border-red-500' : ''}`}
                     />
                   </div>
-                  {errors.organizer && <p className="text-sm text-red-500 mt-1">{errors.organizer}</p>}
+                  {errors.organiser && <p className="text-sm text-red-500 mt-1">{errors.organiser}</p>}
                 </div>
 
                 <div>

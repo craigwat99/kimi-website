@@ -1,7 +1,7 @@
 export interface Event {
   id: string;
   name: string;
-  organizer: string;
+  organiser: string;
   email: string;
   location: string;
   venue: string;

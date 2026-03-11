@@ -18,7 +18,7 @@ const sampleEvents: Event[] = [
   {
     id: '1',
     name: '40 Years Celebration Gala',
-    organizer: 'Rainbow Communities NZ',
+    organiser: 'Rainbow Communities NZ',
     email: 'info@rainbownz.org',
     location: 'Auckland',
     venue: 'Auckland Town Hall',
@@ -44,7 +44,7 @@ const sampleEvents: Event[] = [
   {
     id: '2',
     name: 'History Talk: The Journey to Reform',
-    organizer: 'Wellington Heritage',
+    organiser: 'Wellington Heritage',
     email: 'heritage@wellington.nz',
     location: 'Wellington',
     venue: 'National Library Auditorium',
@@ -70,7 +70,7 @@ const sampleEvents: Event[] = [
   {
     id: '3',
     name: 'Through the Lens: 40 Years of Pride',
-    organizer: 'Christchurch Art Gallery',
+    organiser: 'Christchurch Art Gallery',
     email: 'exhibitions@christchurch.art',
     location: 'Christchurch',
     venue: 'Christchurch Art Gallery',
@@ -96,7 +96,7 @@ const sampleEvents: Event[] = [
   {
     id: '4',
     name: 'Stories of Resilience - Theatre Performance',
-    organizer: 'Dunedin Pride',
+    organiser: 'Dunedin Pride',
     email: 'dunedin@pride.org.nz',
     location: 'Dunedin',
     venue: 'Regent Theatre',
@@ -122,7 +122,7 @@ const sampleEvents: Event[] = [
   {
     id: '5',
     name: 'Youth Workshop: Creating Inclusive Spaces',
-    organizer: 'Rainbow Youth',
+    organiser: 'Rainbow Youth',
     email: 'workshops@rainbowyouth.org.nz',
     location: 'Auckland',
     venue: 'Rainbow Youth Centre',

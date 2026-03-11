@@ -50,7 +50,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
           event.name.toLowerCase().includes(query) ||
           event.description.toLowerCase().includes(query) ||
           event.location.toLowerCase().includes(query) ||
-          event.organizer.toLowerCase().includes(query);
+          event.organiser.toLowerCase().includes(query);
         if (!matchesSearch) return false;
       }
       return true;
@@ -330,10 +330,10 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                     <span>{event.location} • {event.venue}</span>
                   </div>
 
-                  {/* Organizer */}
+                  {/* Organiser */}
                   <div className="pt-3 border-t border-gray-100">
                     <p className="text-sm text-gray-500">
-                      Organised by <span className="font-medium text-gray-700">{event.organizer}</span>
+                      Organised by <span className="font-medium text-gray-700">{event.organiser}</span>
                     </p>
                   </div>
 
