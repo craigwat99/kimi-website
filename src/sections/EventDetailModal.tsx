@@ -34,7 +34,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
       setTokenError('');
       onEditRequest(event);
     } else {
-      setTokenError('Invalid edit token. Please check your email or contact the event organizer.');
+      setTokenError('Invalid edit token. Please check your email or contact the event organiser.');
     }
   };
 
@@ -182,15 +182,15 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
             </div>
           )}
 
-          {/* Organizer */}
+          {/* Organiser */}
           <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-            <h3 className="text-sm font-semibold text-[#5A2E88] mb-3 uppercase tracking-wider">Organizer</h3>
+            <h3 className="text-sm font-semibold text-[#5A2E88] mb-3 uppercase tracking-wider">Organiser</h3>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5A2E88] to-[#E91E8C] flex items-center justify-center text-white font-bold text-lg">
-                {event.organizer.charAt(0).toUpperCase()}
+                {event.organiser.charAt(0).toUpperCase()}
               </div>
               <div>
-                <p className="font-medium text-gray-900">{event.organizer}</p>
+                <p className="font-medium text-gray-900">{event.organiser}</p>
                 <p className="text-gray-500 text-sm">{event.email}</p>
               </div>
             </div>
@@ -252,7 +252,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
                   <p className="text-sm text-red-600">{tokenError}</p>
                 )}
                 <p className="text-xs text-gray-500">
-                  The edit token was provided when the event was created. Check your email or contact the organizer.
+                  The edit token was provided when the event was created. Check your email or contact the organiser.
                 </p>
               </div>
             )}

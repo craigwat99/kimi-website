@@ -154,7 +154,7 @@ export function AdminDashboard() {
       const q = searchQuery.toLowerCase();
       return (
         event.name.toLowerCase().includes(q) ||
-        event.organizer.toLowerCase().includes(q) ||
+        event.organiser.toLowerCase().includes(q) ||
         event.email.toLowerCase().includes(q) ||
         event.location.toLowerCase().includes(q)
       );
@@ -274,7 +274,7 @@ export function AdminDashboard() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
-                placeholder="Search by name, organizer, email, location..."
+                placeholder="Search by name, organiser, email, location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -315,7 +315,7 @@ export function AdminDashboard() {
             <TableHeader>
               <TableRow>
                 <TableHead>Event</TableHead>
-                <TableHead>Organizer</TableHead>
+                <TableHead>Organiser</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Status</TableHead>
@@ -341,7 +341,7 @@ export function AdminDashboard() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="text-sm text-gray-900">{event.organizer}</p>
+                        <p className="text-sm text-gray-900">{event.organiser}</p>
                         <p className="text-xs text-gray-500">{event.email}</p>
                       </div>
                     </TableCell>
@@ -545,11 +545,11 @@ function AdminEditModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="admin-organizer">Organizer</Label>
+              <Label htmlFor="admin-organiser">Organiser</Label>
               <Input
-                id="admin-organizer"
-                value={formData.organizer || ''}
-                onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
+                id="admin-organiser"
+                value={formData.organiser || ''}
+                onChange={(e) => setFormData({ ...formData, organiser: e.target.value })}
               />
             </div>
             <div>
