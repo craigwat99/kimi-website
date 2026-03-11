@@ -34,7 +34,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
       setTokenError('');
       onEditRequest(event);
     } else {
-      setTokenError('Invalid edit token. Please check your email or contact the event organizer.');
+      setTokenError('Invalid edit token. Please check your email or contact the event organiser.');
     }
   };
 
@@ -242,7 +242,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
                   <p className="text-sm text-red-600">{tokenError}</p>
                 )}
                 <p className="text-xs text-gray-500">
-                  The edit token was provided when the event was created. Check your email or contact the organizer.
+                  The edit token was provided when the event was created. Check your email or contact the organiser.
                 </p>
               </div>
             )}
