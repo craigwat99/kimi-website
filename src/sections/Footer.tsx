@@ -108,7 +108,7 @@ export function Footer({ onNavigate }: FooterProps) {
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <Mail className="w-4 h-4" />
-              info@40years.co.nz
+              hello@rainbowwellington.org.nz
             </a>
           </div>
         </div>
