@@ -49,7 +49,17 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
     return labels[type] || type;
   };
 
- 
+  const getEventImage = (event: Event) => {
+    if (event.images && event.images[0]) return event.images[0];
+    const typeImages: Record<string, string> = {
+      celebration: '/event-celebration.jpg',
+      discussion: '/event-discussion.jpg',
+      exhibition: '/event-exhibition.jpg',
+      performance: '/event-performance.jpg',
+      workshop: '/event-workshop.jpg',
+    };
+    return typeImages[event.eventType] || '/event-celebration.jpg';
+  };
 
   const hasLocation = event.latitude && event.longitude;
 
@@ -59,7 +69,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
         {/* Image Header */}
         <div className="relative h-64 sm:h-80">
           <img
-            src={getEventImage()}
+            src={getEventImage(event)}
             alt={event.name}
             className="w-full h-full object-cover"
           />
