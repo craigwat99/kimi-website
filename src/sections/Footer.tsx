@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, Mail, Heart } from 'lucide-react';
+import { Facebook, Instagram, Mail, Heart } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (sectionId: string) => void;
