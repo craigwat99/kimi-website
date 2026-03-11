@@ -35,7 +35,7 @@ export function Footer({ onNavigate }: FooterProps) {
               <span className="text-white/90">YEARS</span>
             </a>
             <p className="text-white/80 text-lg mb-6 max-w-md">
-              Celebrating the past, 1986 - 2026 while looking to the future.
+              Celebrating the past, 1986 - 2026, while looking to the future.
             </p>
             <p className="text-white/60 text-sm">
               Honouring the activists, allies, and community who fought for change 
@@ -86,7 +86,7 @@ export function Footer({ onNavigate }: FooterProps) {
             
             <div className="flex gap-4 mb-6">
               <a
-                href="https://facebook.com"
+                href="https://facebook.com/rainbowwgtn"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all"
@@ -94,25 +94,17 @@ export function Footer({ onNavigate }: FooterProps) {
                 <Facebook className="w-5 h-5" />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/rainbowwgtn"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all"
               >
                 <Instagram className="w-5 h-5" />
               </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 hover:scale-110 transition-all"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
             </div>
 
             <a
-              href="mailto:info@40years.co.nz"
+              href="mailto:hello@rainbowwellington.org.nz"
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <Mail className="w-4 h-4" />
