@@ -7,7 +7,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Event } from '../types';
-import { generateEditToken } from '../utils/tokens';
 
 interface SubmitEventProps {
   isOpen: boolean;
@@ -19,6 +18,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
   const [step, setStep] = useState<'form' | 'success'>('form');
   const [editToken, setEditToken] = useState('');
   const [copied, setCopied] = useState(false);
+  const [emailSent, setEmailSent] = useState<boolean | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -60,19 +60,32 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
-    const token = generateEditToken();
-    setEditToken(token);
-    
     const eventData = {
       ...formData,
       ticketPrice: formData.ticketPrice ? parseFloat(formData.ticketPrice) : null,
     };
-    
-    onSubmit(eventData);
+
+    const token = onSubmit(eventData);
+    setEditToken(token);
     setStep('success');
+
+    // Attempt to send the edit token via email
+    setEmailSent(null);
+    fetch('/.netlify/functions/send-edit-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: formData.email,
+        eventName: formData.name,
+        editToken: token,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => setEmailSent(data.sent === true))
+      .catch(() => setEmailSent(false));
   };
 
   const handleCopyToken = () => {
@@ -102,6 +115,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
       images: [],
     });
     setErrors({});
+    setEmailSent(null);
     onClose();
   };
 
@@ -424,7 +438,11 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
             </div>
 
             <p className="text-sm text-gray-500">
-              We've also sent this token to your email for safekeeping.
+              {emailSent === true
+                ? "We've also sent this token to your email for safekeeping."
+                : emailSent === false
+                ? 'Please copy and save this token now — it could not be sent to your email.'
+                : 'Sending a copy of this token to your email...'}
             </p>
 
             <Button
