@@ -35,15 +35,17 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
     }));
   }, []);
 
-  const { inputRef: addressInputRef, isAvailable: mapsAvailable } = useGooglePlacesAutocomplete(handlePlaceSelected);
+  const { inputRef: addressInputRef, isAvailable: mapsAvailable, setInputValue: setAddressInputValue } = useGooglePlacesAutocomplete(handlePlaceSelected);
 
   useEffect(() => {
     if (event) {
       setFormData({ ...event });
       setImagePreview(event.images[0] || null);
       setImageFile(null);
+      // Set the uncontrolled address input value when the event changes
+      setAddressInputValue(event.address || '');
     }
-  }, [event]);
+  }, [event, setAddressInputValue]);
 
   if (!event) return null;
 
@@ -135,7 +137,32 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto"
+        onPointerDownOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (target?.closest?.('.pac-container')) {
+            e.preventDefault();
+          }
+        }}
+        onFocusOutside={(e) => {
+          // Prevent dialog close whenever a pac-container is visible in the DOM
+          const pac = document.querySelector('.pac-container') as HTMLElement | null;
+          if (pac && pac.offsetHeight > 0) {
+            e.preventDefault();
+          }
+        }}
+        onInteractOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (target?.closest?.('.pac-container')) {
+            e.preventDefault();
+            return;
+          }
+          // Also check if pac-container is visible (catches edge cases)
+          const pac = document.querySelector('.pac-container') as HTMLElement | null;
+          if (pac && pac.offsetHeight > 0) {
+            e.preventDefault();
+          }
+        }}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold gradient-text">
             Edit Event
@@ -318,8 +345,9 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
                     ref={addressInputRef}
                     id="edit-address"
                     type="text"
-                    value={formData.address || ''}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    defaultValue={formData.address || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                    onBlur={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                     placeholder={mapsAvailable && hasGoogleMapsKey() ? "Start typing to search for an address..." : "Enter full venue address"}
                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-10 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                   />
