@@ -174,7 +174,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
 
           {/* Organizer */}
           <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-            <h3 className="text-sm font-semibold text-[#5A2E88] mb-3 uppercase tracking-wider">Organizer</h3>
+            <h3 className="text-sm font-semibold text-[#5A2E88] mb-3 uppercase tracking-wider">Organiser</h3>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5A2E88] to-[#E91E8C] flex items-center justify-center text-white font-bold text-lg">
                 {event.organizer.charAt(0).toUpperCase()}
