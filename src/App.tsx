@@ -160,7 +160,6 @@ function App() {
       updatedAt: new Date().toISOString(),
     };
     setEvents(prev => [event, ...prev]);
-    setShowSubmitForm(false);
     return event.editToken;
   }, []);
 
