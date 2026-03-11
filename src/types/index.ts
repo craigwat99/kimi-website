@@ -17,6 +17,7 @@ export interface Event {
   facebookLink: string;
   images: string[];
   editToken: string;
+  approved: boolean;
   createdAt: string;
   updatedAt: string;
 }

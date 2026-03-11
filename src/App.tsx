@@ -34,6 +34,7 @@ const sampleEvents: Event[] = [
     facebookLink: 'https://facebook.com/events/example',
     images: ['/event-celebration.jpg'],
     editToken: generateEditToken(),
+    approved: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -56,6 +57,7 @@ const sampleEvents: Event[] = [
     facebookLink: 'https://facebook.com/events/history-talk',
     images: ['/event-discussion.jpg'],
     editToken: generateEditToken(),
+    approved: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -78,6 +80,7 @@ const sampleEvents: Event[] = [
     facebookLink: 'https://facebook.com/events/exhibition',
     images: ['/event-exhibition.jpg'],
     editToken: generateEditToken(),
+    approved: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -100,6 +103,7 @@ const sampleEvents: Event[] = [
     facebookLink: 'https://facebook.com/events/theatre',
     images: ['/event-performance.jpg'],
     editToken: generateEditToken(),
+    approved: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -122,6 +126,7 @@ const sampleEvents: Event[] = [
     facebookLink: 'https://facebook.com/events/youth-workshop',
     images: ['/event-workshop.jpg'],
     editToken: generateEditToken(),
+    approved: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -145,11 +150,12 @@ function App() {
     localStorage.setItem('hlr-events', JSON.stringify(events));
   }, [events]);
 
-  const handleAddEvent = useCallback((newEvent: Omit<Event, 'id' | 'editToken' | 'createdAt' | 'updatedAt'>) => {
+  const handleAddEvent = useCallback((newEvent: Omit<Event, 'id' | 'editToken' | 'approved' | 'createdAt' | 'updatedAt'>) => {
     const event: Event = {
       ...newEvent,
       id: Date.now().toString(),
       editToken: generateEditToken(),
+      approved: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -179,16 +185,19 @@ function App() {
     }
   };
 
+  // Only show approved events on the public site
+  const approvedEvents = events.filter(e => e.approved !== false);
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation onNavigate={scrollToSection} />
-      
+
       <main>
         <Hero />
         <Introduction />
-        
-        <Events 
-          events={events}
+
+        <Events
+          events={approvedEvents}
           onEventClick={setSelectedEvent}
           onSubmitClick={() => setShowSubmitForm(true)}
         />
