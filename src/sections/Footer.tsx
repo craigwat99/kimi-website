@@ -117,7 +117,7 @@ export function Footer({ onNavigate }: FooterProps) {
         <div className="border-t border-white/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/60 text-sm">
-              © {currentYear} 40 Years - Homosexual Law Reform. All rights reserved.
+              © {currentYear} 40 Years - Homosexual Law Reform. All rights reserved
             </p>
             
             <p className="text-white/60 text-sm flex items-center gap-1">
