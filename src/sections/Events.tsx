@@ -83,6 +83,18 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
     return labels[type] || type;
   };
 
+  const getEventImage = (event: Event) => {
+    if (event.images && event.images[0]) return event.images[0];
+    const typeImages: Record<string, string> = {
+      celebration: '/event-celebration.jpg',
+      discussion: '/event-discussion.jpg',
+      exhibition: '/event-exhibition.jpg',
+      performance: '/event-performance.jpg',
+      workshop: '/event-workshop.jpg',
+    };
+    return typeImages[event.eventType] || '/event-celebration.jpg';
+  };
+
   const clearFilters = () => {
     setLocationFilter('all');
     setTypeFilter('all');
@@ -268,7 +280,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                 {/* Image */}
                 <div className="relative h-48 overflow-hidden">
                   <img
-                    src={event.images[0] || '/event-celebration.jpg'}
+                    src={getEventImage(event)}
                     alt={event.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />

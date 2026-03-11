@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Calendar, MapPin, User, Mail, DollarSign, Link, Facebook, FileText, Accessibility, Trash2, AlertTriangle } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Calendar, MapPin, User, Mail, DollarSign, Link, Facebook, FileText, Accessibility, Trash2, AlertTriangle, ImagePlus, X, Check, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Event } from '../types';
+import { compressImage, uploadEventImage } from '../utils/images';
+import { useGooglePlacesAutocomplete, hasGoogleMapsKey } from '../hooks/useGoogleMaps';
 
 interface EditEventProps {
   event: Event | null;
@@ -20,18 +22,68 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
   const [formData, setFormData] = useState<Partial<Event>>({});
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handlePlaceSelected = useCallback((result: { address: string; latitude: number | null; longitude: number | null }) => {
+    setFormData(prev => ({
+      ...prev,
+      address: result.address,
+      latitude: result.latitude,
+      longitude: result.longitude,
+    }));
+  }, []);
+
+  const { inputRef: addressInputRef, isAvailable: mapsAvailable } = useGooglePlacesAutocomplete(handlePlaceSelected);
 
   useEffect(() => {
     if (event) {
       setFormData({ ...event });
+      setImagePreview(event.images[0] || null);
+      setImageFile(null);
     }
   }, [event]);
 
   if (!event) return null;
 
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setErrors(prev => ({ ...prev, image: 'Please select an image file' }));
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, image: 'Image must be less than 10MB' }));
+      return;
+    }
+
+    try {
+      const { dataUrl } = await compressImage(file);
+      setImagePreview(dataUrl);
+      setImageFile(file);
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next.image;
+        return next;
+      });
+    } catch {
+      setErrors(prev => ({ ...prev, image: 'Failed to process image' }));
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setImageFile(null);
+    setFormData(prev => ({ ...prev, images: [] }));
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name?.trim()) newErrors.name = 'Event name is required';
     if (!formData.organizer?.trim()) newErrors.organizer = 'Organiser name is required';
     if (!formData.email?.trim()) newErrors.email = 'Email is required';
@@ -41,17 +93,30 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
     if (!formData.startDate) newErrors.startDate = 'Start date is required';
     if (!formData.startTime) newErrors.startTime = 'Start time is required';
     if (!formData.description?.trim()) newErrors.description = 'Description is required';
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
-    onUpdate({ ...event, ...formData } as Event);
+    setIsSubmitting(true);
+
+    try {
+      let images = formData.images || [];
+
+      if (imageFile) {
+        const imageUrl = await uploadEventImage(imageFile);
+        images = [imageUrl];
+      }
+
+      onUpdate({ ...event, ...formData, images } as Event);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDelete = () => {
@@ -86,7 +151,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
                 <p className="text-red-600 text-sm">This action cannot be undone.</p>
               </div>
             </div>
-            
+
             <div className="flex gap-3">
               <Button
                 type="button"
@@ -108,10 +173,41 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Event Image */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Event Image</h3>
+
+              {imagePreview ? (
+                <div className="relative rounded-xl overflow-hidden">
+                  <img src={imagePreview} alt="Event preview" className="w-full h-48 object-cover" />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors">
+                  <ImagePlus className="w-8 h-8 text-gray-400 mb-2" />
+                  <span className="text-sm text-gray-500">Click to upload an event photo</span>
+                  <span className="text-xs text-gray-400 mt-1">JPG, PNG up to 10MB</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                </label>
+              )}
+              {errors.image && <p className="text-sm text-red-500">{errors.image}</p>}
+            </div>
+
             {/* Basic Info */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Basic Information</h3>
-              
+
               <div>
                 <Label htmlFor="edit-name">Event Name *</Label>
                 <Input
@@ -158,7 +254,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
             {/* Location & Date */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Location & Date</h3>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="edit-location">City/Region *</Label>
@@ -191,6 +287,34 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
                   </div>
                   {errors.venue && <p className="text-sm text-red-500 mt-1">{errors.venue}</p>}
                 </div>
+              </div>
+
+              {/* Address with Google Maps Autocomplete */}
+              <div>
+                <Label htmlFor="edit-address">
+                  Venue Address
+                  {mapsAvailable && hasGoogleMapsKey() && (
+                    <span className="text-xs text-gray-400 ml-2 font-normal">powered by Google Maps</span>
+                  )}
+                </Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    ref={addressInputRef}
+                    id="edit-address"
+                    type="text"
+                    value={formData.address || ''}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder={mapsAvailable && hasGoogleMapsKey() ? "Start typing to search for an address..." : "Enter full venue address"}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-10 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  />
+                </div>
+                {formData.latitude && formData.longitude && (
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    Location coordinates captured - map will be displayed on event page
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -252,7 +376,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
             {/* Event Details */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Event Details</h3>
-              
+
               <div>
                 <Label htmlFor="edit-eventType">Event Type</Label>
                 <Select
@@ -303,7 +427,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
             {/* Tickets & Links */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tickets & Links</h3>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="edit-ticketPrice">Ticket Price</Label>
@@ -359,6 +483,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
                 variant="outline"
                 onClick={onClose}
                 className="flex-1"
+                disabled={isSubmitting}
               >
                 Cancel
               </Button>
@@ -367,14 +492,23 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
                 variant="outline"
                 onClick={() => setShowDeleteConfirm(true)}
                 className="px-4 text-red-600 border-red-200 hover:bg-red-50"
+                disabled={isSubmitting}
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
               <Button
                 type="submit"
                 className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+                disabled={isSubmitting}
               >
-                Save Changes
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
               </Button>
             </div>
           </form>

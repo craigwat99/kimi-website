@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Check, Copy, Calendar, MapPin, User, Mail, DollarSign, Link, Facebook, FileText, Accessibility } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Check, Copy, Calendar, MapPin, User, Mail, DollarSign, Link, Facebook, FileText, Accessibility, ImagePlus, X, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Event } from '../types';
+import { compressImage, uploadEventImage } from '../utils/images';
+import { useGooglePlacesAutocomplete, hasGoogleMapsKey } from '../hooks/useGoogleMaps';
 
 interface SubmitEventProps {
   isOpen: boolean;
@@ -19,13 +21,19 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
   const [editToken, setEditToken] = useState('');
   const [copied, setCopied] = useState(false);
   const [emailSent, setEmailSent] = useState<boolean | null>(null);
-  
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     name: '',
     organizer: '',
     email: '',
     location: '',
     venue: '',
+    address: '',
+    latitude: null as number | null,
+    longitude: null as number | null,
     startDate: '',
     endDate: '',
     startTime: '',
@@ -41,9 +49,53 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const handlePlaceSelected = useCallback((result: { address: string; latitude: number | null; longitude: number | null }) => {
+    setFormData(prev => ({
+      ...prev,
+      address: result.address,
+      latitude: result.latitude,
+      longitude: result.longitude,
+    }));
+  }, []);
+
+  const { inputRef: addressInputRef, isAvailable: mapsAvailable } = useGooglePlacesAutocomplete(handlePlaceSelected);
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setErrors(prev => ({ ...prev, image: 'Please select an image file' }));
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, image: 'Image must be less than 10MB' }));
+      return;
+    }
+
+    try {
+      const { dataUrl } = await compressImage(file);
+      setImagePreview(dataUrl);
+      setImageFile(file);
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next.image;
+        return next;
+      });
+    } catch {
+      setErrors(prev => ({ ...prev, image: 'Failed to process image' }));
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setImageFile(null);
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) newErrors.name = 'Event name is required';
     if (!formData.organizer.trim()) newErrors.organizer = 'Organiser name is required';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
@@ -53,39 +105,51 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
     if (!formData.startDate) newErrors.startDate = 'Start date is required';
     if (!formData.startTime) newErrors.startTime = 'Start time is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    const eventData = {
-      ...formData,
-      ticketPrice: formData.ticketPrice ? parseFloat(formData.ticketPrice) : null,
-    };
+    setIsSubmitting(true);
 
-    const token = onSubmit(eventData);
-    setEditToken(token);
-    setStep('success');
+    try {
+      let imageUrl = '';
+      if (imageFile) {
+        imageUrl = await uploadEventImage(imageFile);
+      }
 
-    // Attempt to send the edit token via email
-    setEmailSent(null);
-    fetch('/.netlify/functions/send-edit-token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: formData.email,
-        eventName: formData.name,
-        editToken: token,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => setEmailSent(data.sent === true))
-      .catch(() => setEmailSent(false));
+      const eventData = {
+        ...formData,
+        ticketPrice: formData.ticketPrice ? parseFloat(formData.ticketPrice) : null,
+        images: imageUrl ? [imageUrl] : [],
+      };
+
+      const token = onSubmit(eventData);
+      setEditToken(token);
+      setStep('success');
+
+      // Attempt to send the edit token via email
+      setEmailSent(null);
+      fetch('/.netlify/functions/send-edit-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          eventName: formData.name,
+          editToken: token,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => setEmailSent(data.sent === true))
+        .catch(() => setEmailSent(false));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCopyToken = () => {
@@ -102,6 +166,9 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
       email: '',
       location: '',
       venue: '',
+      address: '',
+      latitude: null,
+      longitude: null,
       startDate: '',
       endDate: '',
       startTime: '',
@@ -116,6 +183,9 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
     });
     setErrors({});
     setEmailSent(null);
+    setImagePreview(null);
+    setImageFile(null);
+    setIsSubmitting(false);
     onClose();
   };
 
@@ -139,10 +209,41 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
 
         {step === 'form' ? (
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Event Image */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Event Image</h3>
+
+              {imagePreview ? (
+                <div className="relative rounded-xl overflow-hidden">
+                  <img src={imagePreview} alt="Event preview" className="w-full h-48 object-cover" />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors">
+                  <ImagePlus className="w-8 h-8 text-gray-400 mb-2" />
+                  <span className="text-sm text-gray-500">Click to upload an event photo</span>
+                  <span className="text-xs text-gray-400 mt-1">JPG, PNG up to 10MB</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                </label>
+              )}
+              {errors.image && <p className="text-sm text-red-500">{errors.image}</p>}
+            </div>
+
             {/* Basic Info */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Basic Information</h3>
-              
+
               <div>
                 <Label htmlFor="name">Event Name *</Label>
                 <Input
@@ -192,7 +293,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
             {/* Location & Date */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Location & Date</h3>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="location">City/Region *</Label>
@@ -226,6 +327,34 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
                   </div>
                   {errors.venue && <p className="text-sm text-red-500 mt-1">{errors.venue}</p>}
                 </div>
+              </div>
+
+              {/* Address with Google Maps Autocomplete */}
+              <div>
+                <Label htmlFor="address">
+                  Venue Address
+                  {mapsAvailable && hasGoogleMapsKey() && (
+                    <span className="text-xs text-gray-400 ml-2 font-normal">powered by Google Maps</span>
+                  )}
+                </Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    ref={addressInputRef}
+                    id="address"
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder={mapsAvailable && hasGoogleMapsKey() ? "Start typing to search for an address..." : "Enter full venue address"}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-10 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  />
+                </div>
+                {formData.latitude && formData.longitude && (
+                  <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    Location coordinates captured - map will be displayed on event page
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -287,7 +416,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
             {/* Event Details */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Event Details</h3>
-              
+
               <div>
                 <Label htmlFor="eventType">Event Type</Label>
                 <Select
@@ -340,7 +469,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
             {/* Tickets & Links */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Tickets & Links</h3>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="ticketPrice">Ticket Price (leave blank for free)</Label>
@@ -398,14 +527,23 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
                 variant="outline"
                 onClick={handleClose}
                 className="flex-1"
+                disabled={isSubmitting}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+                disabled={isSubmitting}
               >
-                Submit Event
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  'Submit Event'
+                )}
               </Button>
             </div>
           </form>
@@ -414,7 +552,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
             <div className="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center">
               <Check className="w-10 h-10 text-green-600" />
             </div>
-            
+
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Your event has been submitted!</h3>
               <p className="text-gray-600 mb-2">
