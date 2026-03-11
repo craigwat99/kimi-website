@@ -49,17 +49,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
     return labels[type] || type;
   };
 
-  const getEventImage = () => {
-    if (event.images && event.images[0]) return event.images[0];
-    const typeImages: Record<string, string> = {
-      celebration: '/event-celebration.jpg',
-      discussion: '/event-discussion.jpg',
-      exhibition: '/event-exhibition.jpg',
-      performance: '/event-performance.jpg',
-      workshop: '/event-workshop.jpg',
-    };
-    return typeImages[event.eventType] || '/event-celebration.jpg';
-  };
+ 
 
   const hasLocation = event.latitude && event.longitude;
 
