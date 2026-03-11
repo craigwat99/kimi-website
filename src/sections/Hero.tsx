@@ -147,7 +147,7 @@ export function Hero() {
                 transitionTimingFunction: 'var(--ease-expo-out)',
               }}
             >
-              Celebrating the past, 1986 - 2026 while looking to the future.
+              Celebrating the past, while looking to the future.
             </p>
 
             {/* CTA Buttons */}
