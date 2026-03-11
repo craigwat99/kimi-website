@@ -84,6 +84,7 @@ export function useGooglePlacesAutocomplete(
         const address = place.formatted_address || place.name || "";
         const lat = place.geometry?.location?.lat() ?? null;
         const lng = place.geometry?.location?.lng() ?? null;
+
         onPlaceSelectedRef.current({
           address,
           latitude: lat,
@@ -131,7 +132,17 @@ export function useGooglePlacesAutocomplete(
     [scriptReady, initAutocomplete]
   );
 
-  return { inputRef, isAvailable };
+  const setInputValue = useCallback((value: string) => {
+    if (inputNodeRef.current) {
+      inputNodeRef.current.value = value;
+    }
+  }, []);
+
+  const getInputValue = useCallback(() => {
+    return inputNodeRef.current?.value || '';
+  }, []);
+
+  return { inputRef, isAvailable, setInputValue, getInputValue };
 }
 
 export function hasGoogleMapsKey(): boolean {

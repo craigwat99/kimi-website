@@ -58,7 +58,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
     }));
   }, []);
 
-  const { inputRef: addressInputRef, isAvailable: mapsAvailable } = useGooglePlacesAutocomplete(handlePlaceSelected);
+  const { inputRef: addressInputRef, isAvailable: mapsAvailable, setInputValue: setAddressInputValue } = useGooglePlacesAutocomplete(handlePlaceSelected);
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -186,6 +186,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
     setImagePreview(null);
     setImageFile(null);
     setIsSubmitting(false);
+    setAddressInputValue('');
     onClose();
   };
 
@@ -200,7 +201,32 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto"
+        onPointerDownOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (target?.closest?.('.pac-container')) {
+            e.preventDefault();
+          }
+        }}
+        onFocusOutside={(e) => {
+          // Prevent dialog close whenever a pac-container is visible in the DOM
+          const pac = document.querySelector('.pac-container') as HTMLElement | null;
+          if (pac && pac.offsetHeight > 0) {
+            e.preventDefault();
+          }
+        }}
+        onInteractOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (target?.closest?.('.pac-container')) {
+            e.preventDefault();
+            return;
+          }
+          // Also check if pac-container is visible (catches edge cases)
+          const pac = document.querySelector('.pac-container') as HTMLElement | null;
+          if (pac && pac.offsetHeight > 0) {
+            e.preventDefault();
+          }
+        }}>
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold gradient-text">
             {step === 'form' ? 'Add Your Event' : 'Event Submitted!'}
@@ -343,8 +369,9 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
                     ref={addressInputRef}
                     id="address"
                     type="text"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    defaultValue=""
+                    onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                    onBlur={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                     placeholder={mapsAvailable && hasGoogleMapsKey() ? "Start typing to search for an address..." : "Enter full venue address"}
                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-10 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                   />
