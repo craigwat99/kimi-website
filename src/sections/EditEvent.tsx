@@ -180,13 +180,28 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
               {imagePreview ? (
                 <div className="relative rounded-xl overflow-hidden">
                   <img src={imagePreview} alt="Event preview" className="w-full h-48 object-cover" />
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
+                  <div className="absolute top-2 right-2 flex gap-2">
+                    <label
+                      className="w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-colors cursor-pointer"
+                      title="Change image"
+                    >
+                      <ImagePlus className="w-4 h-4" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-colors"
+                      title="Remove image"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors">
