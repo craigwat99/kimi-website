@@ -45,7 +45,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
     const newErrors: Record<string, string> = {};
     
     if (!formData.name.trim()) newErrors.name = 'Event name is required';
-    if (!formData.organizer.trim()) newErrors.organizer = 'Organizer name is required';
+    if (!formData.organizer.trim()) newErrors.organizer = 'Organiser name is required';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email address';
     if (!formData.location.trim()) newErrors.location = 'Location is required';
@@ -105,7 +105,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
     onClose();
   };
 
-  const locations = ['Auckland', 'Wellington', 'Christchurch', 'Dunedin', 'Hamilton', 'Tauranga', 'Other'];
+  const locations = ['Auckland', 'Wellington', 'Christchurch', 'Dunedin', 'Hamilton', 'Tauranga', 'Nelson', 'Other'];
   const eventTypes = [
     { value: 'celebration', label: 'Celebration' },
     { value: 'discussion', label: 'Discussion' },
@@ -143,14 +143,14 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="organizer">Organizer Name *</Label>
+                  <Label htmlFor="organizer">Organiser Name *</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
                       id="organizer"
                       value={formData.organizer}
                       onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
-                      placeholder="Your organization"
+                      placeholder="Your organisation"
                       className={`pl-10 ${errors.organizer ? 'border-red-500' : ''}`}
                     />
                   </div>
