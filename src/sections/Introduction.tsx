@@ -70,8 +70,8 @@ export function Introduction() {
             style={{ transitionDelay: '500ms' }}
           >
             This July, we come together to honour the activists, the allies, and the 
-            community who fought for change—and to celebrate how far we've come while 
-            looking toward the future.
+            community who fought for change, and to celebrate how far we've come <strong className="text-[#5A2E88]">while 
+            looking toward the future.</strong>
           </p>
         </div>
 
