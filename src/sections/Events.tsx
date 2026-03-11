@@ -321,7 +321,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                   {/* Organizer */}
                   <div className="pt-3 border-t border-gray-100">
                     <p className="text-sm text-gray-500">
-                      Organized by <span className="font-medium text-gray-700">{event.organizer}</span>
+                      Organised by <span className="font-medium text-gray-700">{event.organizer}</span>
                     </p>
                   </div>
 
