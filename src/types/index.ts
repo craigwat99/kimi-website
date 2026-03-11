@@ -5,6 +5,9 @@ export interface Event {
   email: string;
   location: string;
   venue: string;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
   startDate: string;
   endDate: string;
   startTime: string;

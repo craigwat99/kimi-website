@@ -524,6 +524,16 @@ function AdminEditModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Image Preview */}
+          {formData.images && formData.images[0] && (
+            <div>
+              <Label>Event Image</Label>
+              <div className="mt-1 rounded-lg overflow-hidden h-32">
+                <img src={formData.images[0]} alt="Event" className="w-full h-full object-cover" />
+              </div>
+            </div>
+          )}
+
           <div>
             <Label htmlFor="admin-name">Event Name</Label>
             <Input
@@ -578,6 +588,16 @@ function AdminEditModal({
                 onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="admin-address">Venue Address</Label>
+            <Input
+              id="admin-address"
+              value={formData.address || ''}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              placeholder="Full venue address"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">

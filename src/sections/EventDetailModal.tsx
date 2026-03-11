@@ -5,6 +5,7 @@ import { formatDate, formatTime, formatPrice } from '../utils/tokens';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { getGoogleMapsEmbedUrl, getStaticMapUrl } from '../hooks/useGoogleMaps';
 
 interface EventDetailModalProps {
   event: Event | null;
@@ -48,18 +49,32 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
     return labels[type] || type;
   };
 
+  const getEventImage = () => {
+    if (event.images && event.images[0]) return event.images[0];
+    const typeImages: Record<string, string> = {
+      celebration: '/event-celebration.jpg',
+      discussion: '/event-discussion.jpg',
+      exhibition: '/event-exhibition.jpg',
+      performance: '/event-performance.jpg',
+      workshop: '/event-workshop.jpg',
+    };
+    return typeImages[event.eventType] || '/event-celebration.jpg';
+  };
+
+  const hasLocation = event.latitude && event.longitude;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0">
         {/* Image Header */}
         <div className="relative h-64 sm:h-80">
           <img
-            src={event.images[0] || '/event-celebration.jpg'}
+            src={getEventImage()}
             alt={event.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          
+
           {/* Close button */}
           <button
             onClick={onClose}
@@ -105,7 +120,11 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
               <div>
                 <p className="font-medium text-gray-900">Location</p>
                 <p className="text-gray-600">{event.venue}</p>
-                <p className="text-gray-500 text-sm">{event.location}</p>
+                {event.address ? (
+                  <p className="text-gray-500 text-sm">{event.address}</p>
+                ) : (
+                  <p className="text-gray-500 text-sm">{event.location}</p>
+                )}
               </div>
             </div>
 
@@ -117,6 +136,34 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
               </div>
             </div>
           </div>
+
+          {/* Map */}
+          {hasLocation && (
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-gray-900">Venue Location</h3>
+              <div className="rounded-xl overflow-hidden border border-gray-200">
+                <iframe
+                  src={getGoogleMapsEmbedUrl(event.latitude!, event.longitude!)}
+                  width="100%"
+                  height="300"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Event location map"
+                />
+              </div>
+              <a
+                href={getStaticMapUrl(event.latitude!, event.longitude!)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-sm text-[#5A2E88] hover:text-[#E91E8C] transition-colors"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Open in maps
+              </a>
+            </div>
+          )}
 
           {/* Description */}
           <div>
@@ -162,7 +209,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
                 Get Tickets
               </a>
             )}
-            
+
             {event.facebookLink && (
               <a
                 href={event.facebookLink}
