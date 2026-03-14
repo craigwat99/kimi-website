@@ -227,6 +227,14 @@ export function HistoryTimeline() {
           >
             Read More on NZ History
           </a>
+           <a
+            href="https://www.pridenz.com/time/homosexual_law_reform.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary inline-flex"
+          >
+            Check out the history at Pride NZ
+          </a>
         </div>
       </div>
     </section>
