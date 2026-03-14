@@ -210,34 +210,37 @@ export function HistoryTimeline() {
         </div>
 
         {/* Call to action */}
-        <div
-          <div
-            className={`mt-16 text-center transition-all duration-700 flex flex-col items-center sm:flex-row sm:justify-center gap-4 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-            }`}
-            style={{ transitionDelay: '1500ms' }}
-          </div>
-          <p className="text-gray-600 mb-4">
-            Learn more about this important chapter in New Zealand's history
-          </p>
-          <a
-            href="https://nzhistory.govt.nz/page/homosexual-law-reform-new-zealand"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary inline-flex"
-          >
-            Read More on NZ History
-          </a>
-           <a
-            href="https://www.pridenz.com/time/homosexual_law_reform.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary inline-flex"
-          >
-            Check out the history at Pride NZ
-          </a>
-        </div>
+       <div
+          className={`mt-16 text-center transition-all duration-700 flex flex-col items-center ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+      }`}
+      style={{ transitionDelay: '1500ms' }}
+    >
+      {/* This text stays at the top because it's the first item in the column */}
+      <p className="text-gray-600 mb-6">
+        Learn more about this important chapter in New Zealand's history
+      </p>
+
+      {/* This inner div groups the buttons so THEY sit side-by-side */}
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
+        <a
+          href="https://nzhistory.govt.nz/page/homosexual-law-reform-new-zealand"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary inline-flex"
+        >
+          Read More on NZ History
+        </a>
+        <a
+          href="https://www.pridenz.com/time/homosexual_law_reform.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary inline-flex"
+        >
+          Check out the history at Pride NZ
+        </a>
       </div>
+    </div>
     </section>
   );
 }
