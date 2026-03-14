@@ -211,12 +211,11 @@ export function HistoryTimeline() {
 
         {/* Call to action */}
         <div
-          <div
-            className={`mt-16 text-center transition-all duration-700 flex flex-col items-center sm:flex-row sm:justify-center gap-4 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-            }`}
-            style={{ transitionDelay: '1500ms' }}
-          </div>
+          className={`mt-16 text-center transition-all duration-700 flex flex-col items-center sm:flex-row sm:justify-center gap-4 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+          }`}
+          style={{ transitionDelay: '1500ms' }}
+        >
           <p className="text-gray-600 mb-4">
             Learn more about this important chapter in New Zealand's history
           </p>
