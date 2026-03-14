@@ -216,7 +216,7 @@ export function HistoryTimeline() {
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
             }`}
             style={{ transitionDelay: '1500ms' }}
-        >
+          </div>
           <p className="text-gray-600 mb-4">
             Learn more about this important chapter in New Zealand's history
           </p>
