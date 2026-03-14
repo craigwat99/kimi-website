@@ -241,6 +241,7 @@ export function HistoryTimeline() {
         </a>
       </div>
     </div>
+      </div>
     </section>
   );
 }
