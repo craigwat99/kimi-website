@@ -27,12 +27,17 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handlePlaceSelected = useCallback((result: { address: string; latitude: number | null; longitude: number | null }) => {
-    setFormData(prev => ({
-      ...prev,
-      address: result.address,
-      latitude: result.latitude,
-      longitude: result.longitude,
-    }));
+  // 1. Update the internal React state
+  setFormData(prev => ({
+    ...prev,
+    address: result.address,
+    latitude: result.latitude,
+    longitude: result.longitude,
+  }));
+
+  // 2. Update the actual text showing in the search box
+  setAddressInputValue(result.address);
+}, [setAddressInputValue]); // Add this dependency here
   }, []);
 
   const { inputRef: addressInputRef, isAvailable: mapsAvailable, setInputValue: setAddressInputValue } = useGooglePlacesAutocomplete(handlePlaceSelected);
