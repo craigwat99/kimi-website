@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Calendar, MapPin, User, Mail, DollarSign, Link, Facebook, FileText, Accessibility, Trash2, AlertTriangle, ImagePlus, X, Check, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -26,21 +26,23 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handlePlaceSelected = useCallback((result: { address: string; latitude: number | null; longitude: number | null }) => {
-  // 1. Update the internal React state
-  setFormData(prev => ({
-    ...prev,
-    address: result.address,
-    latitude: result.latitude,
-    longitude: result.longitude,
-  }));
+  const setAddressInputValueRef = useRef<(value: string) => void>(() => {});
 
-  // 2. Update the actual text showing in the search box
-  setAddressInputValue(result.address);
-}, [setAddressInputValue]); // Add this dependency here
+  const handlePlaceSelected = useCallback((result: { address: string; latitude: number | null; longitude: number | null }) => {
+    // 1. Update the internal React state
+    setFormData(prev => ({
+      ...prev,
+      address: result.address,
+      latitude: result.latitude,
+      longitude: result.longitude,
+    }));
+
+    // 2. Update the actual text showing in the search box
+    setAddressInputValueRef.current(result.address);
   }, []);
 
   const { inputRef: addressInputRef, isAvailable: mapsAvailable, setInputValue: setAddressInputValue } = useGooglePlacesAutocomplete(handlePlaceSelected);
+  setAddressInputValueRef.current = setAddressInputValue;
 
   useEffect(() => {
     if (event) {
