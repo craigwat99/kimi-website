@@ -196,7 +196,7 @@ export function Hero() {
               }}
             >
               <img
-                src="/4 (2).png"
+                src="/logo-40years.png"
                 alt="40 Years Logo"
                 className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl"
               />
