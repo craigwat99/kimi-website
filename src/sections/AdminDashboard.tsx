@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -20,8 +20,10 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Event } from '../types';
+import type { Event, TimelineEvent } from '../types';
 import { formatDate } from '../utils/tokens';
+import { loadTimelineEvents, saveTimelineEvents } from '../data/defaultTimeline';
+import { uploadEventImage } from '../utils/images';
 
 const SESSION_KEY = 'hlr-admin-session';
 
@@ -37,6 +39,11 @@ export function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'events' | 'timeline'>('events');
+  const [timelineItems, setTimelineItems] = useState<TimelineEvent[]>([]);
+  const [editingTimeline, setEditingTimeline] = useState<TimelineEvent | null>(null);
+  const [addingTimeline, setAddingTimeline] = useState(false);
+  const [deleteTimelineConfirm, setDeleteTimelineConfirm] = useState<string | null>(null);
 
   // Load events from localStorage
   const loadEvents = useCallback(() => {
@@ -64,6 +71,7 @@ export function AdminDashboard() {
   useEffect(() => {
     if (isAuthenticated) {
       loadEvents();
+      setTimelineItems(loadTimelineEvents());
     }
   }, [isAuthenticated, loadEvents]);
 
@@ -145,6 +153,28 @@ export function AdminDashboard() {
     navigator.clipboard.writeText(token);
     setCopiedToken(eventId);
     setTimeout(() => setCopiedToken(null), 2000);
+  };
+
+  // Timeline handlers
+  const handleSaveTimeline = (item: TimelineEvent) => {
+    const updated = timelineItems.map(t => t.id === item.id ? item : t);
+    saveTimelineEvents(updated);
+    setTimelineItems(updated);
+    setEditingTimeline(null);
+  };
+
+  const handleAddTimeline = (item: TimelineEvent) => {
+    const updated = [...timelineItems, item].sort((a, b) => a.year - b.year);
+    saveTimelineEvents(updated);
+    setTimelineItems(updated);
+    setAddingTimeline(false);
+  };
+
+  const handleDeleteTimeline = (id: string) => {
+    const updated = timelineItems.filter(t => t.id !== id);
+    saveTimelineEvents(updated);
+    setTimelineItems(updated);
+    setDeleteTimelineConfirm(null);
   };
 
   const filteredEvents = events.filter(event => {
@@ -252,6 +282,33 @@ export function AdminDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Tab Navigation */}
+        <div className="flex gap-1 mb-8 bg-white rounded-xl shadow-sm border border-gray-100 p-1">
+          <button
+            onClick={() => setActiveTab('events')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              activeTab === 'events'
+                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            Events ({events.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('timeline')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'timeline'
+                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            Timeline ({timelineItems.length})
+          </button>
+        </div>
+
+        {activeTab === 'events' && (
+        <>
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
@@ -442,6 +499,108 @@ export function AdminDashboard() {
             </TableBody>
           </Table>
         </div>
+        </>
+        )}
+
+        {activeTab === 'timeline' && (
+        <>
+        {/* Timeline Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Timeline Management</h2>
+            <p className="text-sm text-gray-500 mt-1">Manage the historical timeline shown on the main page</p>
+          </div>
+          <Button
+            onClick={() => setAddingTimeline(true)}
+            className="bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Item
+          </Button>
+        </div>
+
+        {/* Timeline Table */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-20">Year</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead className="hidden md:table-cell">Description</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Photo</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {timelineItems.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-12 text-gray-500">
+                    No timeline items found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                timelineItems.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      <span className="font-bold text-[#5A2E88]">{item.year}</span>
+                    </TableCell>
+                    <TableCell>
+                      <p className="font-medium text-gray-900">{item.title}</p>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <p className="text-sm text-gray-600 line-clamp-2 max-w-[300px]">{item.description}</p>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={
+                        item.category === 'reform'
+                          ? 'bg-gradient-to-r from-[#E91E8C] to-[#5A2E88] text-white border-0'
+                          : item.category === 'before'
+                            ? 'bg-purple-100 text-purple-800 border-purple-200'
+                            : 'bg-pink-100 text-pink-800 border-pink-200'
+                      }>
+                        {item.category === 'before' ? 'Before Reform' : item.category === 'reform' ? 'Reform' : 'After Reform'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {item.image ? (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200">
+                          <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <span className="text-xs text-gray-400">None</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingTimeline({ ...item })}
+                          className="h-8 px-2"
+                          title="Edit"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setDeleteTimelineConfirm(item.id)}
+                          className="text-red-600 border-red-200 hover:bg-red-50 h-8 px-2"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        </>
+        )}
       </main>
 
       {/* Edit Event Modal */}
@@ -470,6 +629,49 @@ export function AdminDashboard() {
               </Button>
               <Button
                 onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Timeline Edit Modal */}
+      <TimelineEditModal
+        item={editingTimeline}
+        onClose={() => setEditingTimeline(null)}
+        onSave={handleSaveTimeline}
+      />
+
+      {/* Timeline Add Modal */}
+      <TimelineEditModal
+        item={addingTimeline ? { id: '', year: new Date().getFullYear(), title: '', description: '', category: 'after' } : null}
+        onClose={() => setAddingTimeline(false)}
+        onSave={handleAddTimeline}
+        isNew
+      />
+
+      {/* Delete Timeline Confirmation */}
+      <Dialog open={!!deleteTimelineConfirm} onOpenChange={() => setDeleteTimelineConfirm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Timeline Item</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+              <p className="text-sm text-red-800">
+                This will permanently remove this item from the timeline. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setDeleteTimelineConfirm(null)} className="flex-1">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => deleteTimelineConfirm && handleDeleteTimeline(deleteTimelineConfirm)}
                 className="flex-1 bg-red-600 hover:bg-red-700"
               >
                 Delete
@@ -722,6 +924,200 @@ function AdminEditModal({
               className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
             >
               Save Changes
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// Timeline edit/add modal
+function TimelineEditModal({
+  item,
+  onClose,
+  onSave,
+  isNew = false,
+}: {
+  item: TimelineEvent | null;
+  onClose: () => void;
+  onSave: (item: TimelineEvent) => void;
+  isNew?: boolean;
+}) {
+  const [formData, setFormData] = useState<Partial<TimelineEvent>>({});
+  const [imageUploading, setImageUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (item) {
+      setFormData({ ...item });
+    }
+  }, [item]);
+
+  if (!item) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const finalItem: TimelineEvent = {
+      ...item,
+      ...formData,
+      id: isNew ? `tl-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` : item.id,
+    } as TimelineEvent;
+    onSave(finalItem);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageUploading(true);
+    try {
+      const url = await uploadEventImage(file);
+      setFormData({ ...formData, image: url });
+    } catch {
+      // Keep existing image on failure
+    } finally {
+      setImageUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData({ ...formData, image: undefined });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const categories = [
+    { value: 'before', label: 'Before Reform' },
+    { value: 'reform', label: 'Reform' },
+    { value: 'after', label: 'After Reform' },
+  ];
+
+  return (
+    <Dialog open={!!item} onOpenChange={onClose}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{isNew ? 'Add Timeline Item' : 'Edit Timeline Item'}</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="tl-year">Year</Label>
+              <Input
+                id="tl-year"
+                type="number"
+                min="1800"
+                max="2100"
+                value={formData.year || ''}
+                onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) || 0 })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="tl-category">Category</Label>
+              <Select
+                value={formData.category}
+                onValueChange={(value) => setFormData({ ...formData, category: value as TimelineEvent['category'] })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="tl-title">Title</Label>
+            <Input
+              id="tl-title"
+              value={formData.title || ''}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder="Event title"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="tl-description">Description</Label>
+            <Textarea
+              id="tl-description"
+              value={formData.description || ''}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={4}
+              placeholder="Describe this historical event..."
+              required
+            />
+          </div>
+
+          {/* Photo Section */}
+          <div>
+            <Label>Photo</Label>
+            {formData.image ? (
+              <div className="mt-2 space-y-2">
+                <div className="relative rounded-lg overflow-hidden h-40 border border-gray-200">
+                  <img src={formData.image} alt={formData.title || 'Timeline'} className="w-full h-full object-cover" />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={imageUploading}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Replace
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRemoveImage}
+                    className="text-red-600 border-red-200 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors"
+              >
+                <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">
+                  {imageUploading ? 'Uploading...' : 'Click to upload a photo'}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">JPG, PNG up to 5MB</p>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={imageUploading || !formData.title || !formData.description || !formData.year}
+              className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+            >
+              {isNew ? 'Add Item' : 'Save Changes'}
             </Button>
           </div>
         </form>
