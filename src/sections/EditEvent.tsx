@@ -26,7 +26,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handlePlaceSelected = useCallback((result: { address: string; latitude: number | null; longitude: number | null }) => {
+  const handlePlaceSelected = useCallback((result) => {
     setFormData(prev => ({
       ...prev,
       address: result.address,
@@ -345,12 +345,13 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
                     ref={addressInputRef}
                     id="edit-address"
                     type="text"
-                    defaultValue={formData.address || ''}
+                    /* Change 'defaultValue' to 'value' to make it controlled */
+                    value={formData.address || ''} 
+                    /* This handles manual typing */
                     onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    onBlur={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    placeholder={mapsAvailable && hasGoogleMapsKey() ? "Start typing to search for an address..." : "Enter full venue address"}
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-10 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                  />
+                    placeholder={mapsAvailable && hasGoogleMapsKey() ? "Start typing..." : "Enter address"}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-10 text-base shadow-sm..."
+                />
                 </div>
                 {formData.latitude && formData.longitude && (
                   <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
