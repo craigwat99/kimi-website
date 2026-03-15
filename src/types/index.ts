@@ -26,6 +26,7 @@ export interface Event {
 }
 
 export interface TimelineEvent {
+  id: string;
   year: number;
   title: string;
   description: string;
