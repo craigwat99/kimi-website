@@ -26,7 +26,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handlePlaceSelected = useCallback((result) => {
+  const handlePlaceSelected = useCallback((result: { address: string; latitude: number | null; longitude: number | null }) => {
     setFormData(prev => ({
       ...prev,
       address: result.address,
