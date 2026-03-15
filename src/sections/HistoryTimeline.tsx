@@ -1,86 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import type { TimelineEvent } from '../types';
-
-const timelineEvents: TimelineEvent[] = [
-  {
-    year: 1840,
-    title: 'Te Tiriti o Waitangi',
-    description: 'English law introduced to New Zealand, including the death penalty for sodomy. This criminalisation sharply contrasted with pre-colonial Māori society which embraced diverse sexualities and genders.',
-    category: 'before',
-  },
-  {
-    year: 1893,
-    title: 'Criminal Code Act',
-    description: 'New Zealand\'s Criminal Code Act explicitly outlawed male homosexual activity. Even consensual acts between men were deemed indecent assault, punishable by life imprisonment, hard labour, or corporal punishment.',
-    category: 'before',
-  },
-  {
-    year: 1963,
-    title: 'Dorian Society',
-    description: 'The Legal Subcommittee of the Dorian Society, a club for homosexual men in Wellington, initiated formal organising that led to setting up the NZ Homosexual Law Reform Society.',
-    category: 'before',
-  },
-  {
-    year: 1979,
-    title: 'Warren Freer\'s Attempt',
-    description: 'Labour MP Warren Freer attempted to introduce a private member\'s bill to legalise homosexual acts but withdrew due to divisive opposition within the community about the age of consent.',
-    category: 'before',
-  },
-  {
-    year: 1984,
-    title: 'Gay Task Force Forms',
-    description: 'Wellington Gay Task Force formed to support homosexual law reform, followed by groups in Christchurch and Auckland. The Coalition to Support the Bill united diverse groups.',
-    category: 'before',
-  },
-  {
-    year: 1985,
-    title: 'Fran Wilde\'s Bill Introduced',
-    description: 'Labour MP Fran Wilde introduced the Homosexual Law Reform Bill to Parliament. The bill aimed to decriminalise consensual homosexual activity between men aged 16 and over.',
-    image: '/history-celebration.jpg',
-    category: 'reform',
-  },
-  {
-    year: 1985,
-    title: 'The Petition',
-    description: 'Opponents presented a petition claiming 800,000 signatures (later found to contain irregularities). On September 24, 91 boxes were delivered to Parliament in a controversial ceremony.',
-    category: 'reform',
-  },
-  {
-    year: 1986,
-    title: 'The Vote - July 9',
-    description: 'Part 1 of the Homosexual Law Reform Bill passed by a narrow margin of 49 votes to 44. The age of consent was set at 16, equal to heterosexual acts.',
-    category: 'reform',
-  },
-  {
-    year: 1986,
-    title: 'Act Comes Into Effect - August 8',
-    description: 'The Homosexual Law Reform Act came into effect, decriminalising consensual sexual acts between men aged 16 and over. For the first time, gay men could enter relationships without fear of prosecution.',
-    category: 'reform',
-  },
-  {
-    year: 1993,
-    title: 'Human Rights Act',
-    description: 'The Human Rights Act finally made it illegal to discriminate on the grounds of sexual orientation in employment, accommodation, and services. Part 2 of Fran Wilde\'s original bill was achieved.',
-    category: 'after',
-  },
-  {
-    year: 2004,
-    title: 'Civil Unions Act',
-    description: 'The Civil Union Act allowed same-sex couples to formalise their relationships with legal recognition, providing similar entitlements to marriage.',
-    category: 'after',
-  },
-  {
-    year: 2013,
-    title: 'Marriage Equality',
-    description: 'New Zealand became the 13th country in the world—and the first in the Asia-Pacific region—to legalise same-sex marriage with the Marriage (Definition of Marriage) Amendment Act.',
-    category: 'after',
-  },
-];
+import { loadTimelineEvents } from '../data/defaultTimeline';
 
 export function HistoryTimeline() {
   const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    setTimelineEvents(loadTimelineEvents());
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -144,7 +74,7 @@ export function HistoryTimeline() {
               
               return (
                 <div
-                  key={event.year}
+                  key={event.id}
                   className={`relative flex items-start gap-8 transition-all duration-700 ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
                   }`}
