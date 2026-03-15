@@ -1,7 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Heart, Calendar, Video, RefreshCw } from 'lucide-react';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload } from 'lucide-react';
+import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Heart, Calendar, Video, RefreshCw, Plus, Clock, ImageIcon, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -22,8 +20,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Event, LoveLetter } from '../types';
-import type { Event, TimelineEvent } from '../types';
+import type { Event, LoveLetter, TimelineEvent } from '../types';
 import { formatDate } from '../utils/tokens';
 import { loadTimelineEvents, saveTimelineEvents } from '../data/defaultTimeline';
 import { uploadEventImage } from '../utils/images';
@@ -42,7 +39,7 @@ export function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'events' | 'letters'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'letters' | 'timeline'>('events');
 
   // Letters state
   const [letters, setLetters] = useState<LoveLetter[]>([]);
@@ -52,7 +49,6 @@ export function AdminDashboard() {
   const [letterDeleteConfirm, setLetterDeleteConfirm] = useState<string | null>(null);
   const [viewingLetter, setViewingLetter] = useState<LoveLetter | null>(null);
   const [adminPassword, setAdminPassword] = useState('');
-  const [activeTab, setActiveTab] = useState<'events' | 'timeline'>('events');
   const [timelineItems, setTimelineItems] = useState<TimelineEvent[]>([]);
   const [editingTimeline, setEditingTimeline] = useState<TimelineEvent | null>(null);
   const [addingTimeline, setAddingTimeline] = useState(false);
@@ -413,23 +409,13 @@ export function AdminDashboard() {
             {letterPendingCount > 0 && (
               <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-amber-100 text-amber-700">{letterPendingCount}</span>
             )}
-        <div className="flex gap-1 mb-8 bg-white rounded-xl shadow-sm border border-gray-100 p-1">
-          <button
-            onClick={() => setActiveTab('events')}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
-              activeTab === 'events'
-                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
-          >
-            Events ({events.length})
           </button>
           <button
             onClick={() => setActiveTab('timeline')}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === 'timeline'
-                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ? 'bg-white text-[#5A2E88] shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             <Clock className="w-4 h-4" />
@@ -439,7 +425,6 @@ export function AdminDashboard() {
 
         {activeTab === 'events' && (
           <>
-        <>
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
@@ -831,7 +816,6 @@ export function AdminDashboard() {
               )}
             </div>
           </>
-        </>
         )}
 
         {activeTab === 'timeline' && (
@@ -1072,6 +1056,29 @@ export function AdminDashboard() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Delete Letter</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+              <p className="text-sm text-red-800">
+                This will permanently delete this letter and any associated video. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setLetterDeleteConfirm(null)} className="flex-1">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => letterDeleteConfirm && handleDeleteLetter(letterDeleteConfirm)}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Timeline Edit Modal */}
       <TimelineEditModal
         item={editingTimeline}
@@ -1097,15 +1104,6 @@ export function AdminDashboard() {
             <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
               <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
               <p className="text-sm text-red-800">
-                This will permanently delete this letter and any associated video. This action cannot be undone.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setLetterDeleteConfirm(null)} className="flex-1">
-                Cancel
-              </Button>
-              <Button
-                onClick={() => letterDeleteConfirm && handleDeleteLetter(letterDeleteConfirm)}
                 This will permanently remove this item from the timeline. This action cannot be undone.
               </p>
             </div>
