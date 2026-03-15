@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Calendar, History, Image, PlusCircle } from 'lucide-react';
+import { Menu, X, Calendar, History, Image, PlusCircle, Heart } from 'lucide-react';
 
 interface NavigationProps {
   onNavigate: (sectionId: string) => void;
@@ -18,10 +18,11 @@ export function Navigation({ onNavigate }: NavigationProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
+  const navLinks: { id: string; label: string; icon: typeof Calendar; href?: string }[] = [
     { id: 'events', label: 'Events', icon: Calendar },
     { id: 'history', label: 'History', icon: History },
     { id: 'gallery', label: 'Gallery', icon: Image },
+    { id: 'letters-of-love', label: 'Letters of Love', icon: Heart, href: '/letters-of-love' },
   ];
 
   const handleNavClick = (sectionId: string) => {
@@ -58,8 +59,8 @@ export function Navigation({ onNavigate }: NavigationProps) {
             {navLinks.map((link) => (
               <a
                 key={link.id}
-                href={`#${link.id}`}
-                onClick={(e) => {
+                href={link.href || `#${link.id}`}
+                onClick={link.href ? undefined : (e) => {
                   e.preventDefault();
                   handleNavClick(link.id);
                 }}
@@ -108,8 +109,8 @@ export function Navigation({ onNavigate }: NavigationProps) {
               return (
                 <a
                   key={link.id}
-                  href={`#${link.id}`}
-                  onClick={(e) => {
+                  href={link.href || `#${link.id}`}
+                  onClick={link.href ? undefined : (e) => {
                     e.preventDefault();
                     handleNavClick(link.id);
                   }}

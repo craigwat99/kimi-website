@@ -44,3 +44,18 @@ export interface GalleryImage {
 export type EventType = 'all' | 'celebration' | 'discussion' | 'exhibition' | 'performance' | 'workshop';
 export type LocationFilter = 'all' | 'Auckland' | 'Wellington' | 'Christchurch' | 'Dunedin' | 'Other';
 export type CostFilter = 'all' | 'free' | 'paid';
+
+export interface LoveLetter {
+  id: string;
+  authorName: string;
+  email: string;
+  letterType: 'to-myself' | 'to-passed' | 'to-future-self' | 'to-someone-special';
+  recipientName: string;
+  message: string;
+  videoKey: string | null;
+  galaPermission: boolean;
+  approved: boolean;
+  createdAt: string;
+}
+
+export type LetterType = LoveLetter['letterType'];
