@@ -101,7 +101,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
               <div>
                 <p className="font-medium text-gray-900">Date</p>
                 <p className="text-gray-600">{formatDate(event.startDate)}</p>
-                {event.startDate !== event.endDate && (
+                {event.endDate && event.startDate !== event.endDate && (
                   <p className="text-gray-600">to {formatDate(event.endDate)}</p>
                 )}
               </div>
