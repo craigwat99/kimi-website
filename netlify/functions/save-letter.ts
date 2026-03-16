@@ -11,7 +11,7 @@ export default async (req: Request, _context: Context) => {
 
   try {
     const body = await req.json();
-    const { authorName, email, letterType, recipientName, message, videoKey, galaPermission } = body;
+    const { authorName, email, letterType, recipientName, message, videoKey, imageKey, galaPermission } = body;
 
     if (!email) {
       return new Response(JSON.stringify({ error: "Email is required" }), {
@@ -30,6 +30,7 @@ export default async (req: Request, _context: Context) => {
       recipientName: recipientName || "",
       message: message || "",
       videoKey: videoKey || null,
+      imageKey: imageKey || null,
       galaPermission: !!galaPermission,
       approved: false,
       createdAt: new Date().toISOString(),

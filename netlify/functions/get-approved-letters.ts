@@ -22,6 +22,7 @@ export default async (_req: Request, _context: Context) => {
             authorName: data.authorName || "Anonymous",
             letterType: data.letterType || "to-myself",
             message: data.message || "",
+            imageKey: data.imageKey || null,
             createdAt: data.createdAt || "",
           });
         }

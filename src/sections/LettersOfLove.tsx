@@ -1,9 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Heart, ArrowLeft, PenLine, Video, Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Heart, ArrowLeft, PenLine, Video, Send, CheckCircle2, AlertCircle, ImageIcon, X } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Carousel,
   CarouselContent,
@@ -11,6 +17,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from '@/components/ui/carousel';
+import { compressImage } from '@/utils/images';
 
 const letterTypes: Record<string, { label: string; description: string }> = {
   'to-myself': {
@@ -36,6 +43,7 @@ interface ApprovedLetter {
   authorName: string;
   letterType: string;
   message: string;
+  imageKey: string | null;
   createdAt: string;
 }
 
@@ -55,6 +63,12 @@ export function LettersOfLove() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [viewingLetter, setViewingLetter] = useState<ApprovedLetter | null>(null);
+
+  // Image state (for text letters)
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   // Video state
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -193,6 +207,33 @@ export function LettersOfLove() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setErrors((prev) => ({ ...prev, image: 'Please select an image file.' }));
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, image: 'Image must be under 10MB.' }));
+      return;
+    }
+    setImageFile(file);
+    setImagePreviewUrl(URL.createObjectURL(file));
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.image;
+      return next;
+    });
+  };
+
+  const removeImage = () => {
+    if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+    setImageFile(null);
+    setImagePreviewUrl(null);
+    if (imageInputRef.current) imageInputRef.current.value = '';
+  };
+
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
     if (!email.trim()) {
@@ -215,6 +256,8 @@ export function LettersOfLove() {
     setSubmitting(true);
     try {
       let videoKey: string | null = null;
+      let imageKey: string | null = null;
+
       if (videoFile) {
         const reader = new FileReader();
         const base64 = await new Promise<string>((resolve, reject) => {
@@ -233,6 +276,18 @@ export function LettersOfLove() {
         if (!uploadRes.ok) throw new Error('Video upload failed');
         videoKey = (await uploadRes.json()).key;
       }
+
+      if (imageFile) {
+        const { base64, contentType } = await compressImage(imageFile);
+        const uploadRes = await fetch('/.netlify/functions/upload-letter-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageData: base64, contentType }),
+        });
+        if (!uploadRes.ok) throw new Error('Image upload failed');
+        imageKey = (await uploadRes.json()).key;
+      }
+
       const saveRes = await fetch('/.netlify/functions/save-letter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -243,6 +298,7 @@ export function LettersOfLove() {
           recipientName: recipientName.trim(),
           message: message.trim(),
           videoKey,
+          imageKey,
           galaPermission,
         }),
       });
@@ -295,6 +351,8 @@ export function LettersOfLove() {
                 setMessage('');
                 setVideoFile(null);
                 setVideoPreviewUrl(null);
+                setImageFile(null);
+                setImagePreviewUrl(null);
                 setAuthorName('');
                 setEmail('');
                 setRecipientName('');
@@ -363,35 +421,51 @@ export function LettersOfLove() {
                       key={letter.id}
                       className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
                     >
-                      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 h-full flex flex-col">
-                        <div className="flex items-start gap-3 mb-4">
-                          <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-[#5A2E88]/10 to-[#E91E8C]/10 flex items-center justify-center">
-                            <PenLine className="w-4 h-4 text-[#5A2E88]" />
+                      <button
+                        onClick={() => setViewingLetter(letter)}
+                        className="bg-white rounded-2xl shadow-sm border border-gray-100 h-full flex flex-col text-left w-full hover:shadow-lg hover:border-[#5A2E88]/20 transition-all duration-200 overflow-hidden"
+                      >
+                        {letter.imageKey && (
+                          <div className="w-full aspect-[16/10] overflow-hidden bg-gray-100">
+                            <img
+                              src={`/.netlify/functions/get-letter-image?key=${encodeURIComponent(letter.imageKey)}`}
+                              alt="Letter attachment"
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
                           </div>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-gray-900 text-sm truncate">
-                              {letter.authorName}
-                            </p>
-                            <p className="text-xs text-[#E91E8C]">
-                              {letterTypes[letter.letterType]?.label || 'A letter of love'}
+                        )}
+                        <div className="p-6 flex flex-col flex-1">
+                          <div className="flex items-start gap-3 mb-4">
+                            <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-[#5A2E88]/10 to-[#E91E8C]/10 flex items-center justify-center">
+                              <PenLine className="w-4 h-4 text-[#5A2E88]" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-gray-900 text-sm truncate">
+                                {letter.authorName}
+                              </p>
+                              <p className="text-xs text-[#E91E8C]">
+                                {letterTypes[letter.letterType]?.label || 'A letter of love'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex-1 mb-4">
+                            <p className="text-gray-600 text-sm leading-relaxed line-clamp-6">
+                              {letter.message}
                             </p>
                           </div>
+                          <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                            <p className="text-xs text-gray-400">
+                              {new Date(letter.createdAt).toLocaleDateString('en-NZ', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })}
+                            </p>
+                            <span className="text-xs text-[#5A2E88] font-medium">Read more</span>
+                          </div>
                         </div>
-                        <div className="flex-1 mb-4">
-                          <p className="text-gray-600 text-sm leading-relaxed line-clamp-6">
-                            {letter.message}
-                          </p>
-                        </div>
-                        <div className="pt-3 border-t border-gray-100">
-                          <p className="text-xs text-gray-400">
-                            {new Date(letter.createdAt).toLocaleDateString('en-NZ', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}
-                          </p>
-                        </div>
-                      </div>
+                      </button>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
@@ -577,6 +651,55 @@ export function LettersOfLove() {
                 {errors.message && (
                   <p className="text-red-500 text-xs mt-1">{errors.message}</p>
                 )}
+
+                {/* Image upload */}
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                  <Label className="text-sm font-semibold text-gray-900 mb-2 block">
+                    Attach a Photo <span className="text-gray-400 font-normal">(optional)</span>
+                  </Label>
+                  <p className="text-sm text-gray-500 mb-3">
+                    Upload a photo of a handwritten letter or an image to go with your message.
+                  </p>
+
+                  {!imagePreviewUrl ? (
+                    <div>
+                      <label
+                        htmlFor="letter-image"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#5A2E88]/40 hover:bg-[#5A2E88]/5 transition-colors cursor-pointer"
+                      >
+                        <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
+                        <span className="text-sm text-gray-500">Click to upload an image</span>
+                        <span className="text-xs text-gray-400 mt-1">JPG, PNG, GIF up to 10MB</span>
+                      </label>
+                      <input
+                        ref={imageInputRef}
+                        id="letter-image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <img
+                        src={imagePreviewUrl}
+                        alt="Preview"
+                        className="w-full max-h-64 object-contain rounded-xl border border-gray-200"
+                      />
+                      <button
+                        onClick={removeImage}
+                        className="absolute top-2 right-2 bg-white/90 hover:bg-white rounded-full p-1.5 shadow-md transition-colors"
+                        type="button"
+                      >
+                        <X className="w-4 h-4 text-gray-600" />
+                      </button>
+                    </div>
+                  )}
+                  {errors.image && (
+                    <p className="text-red-500 text-xs mt-1">{errors.image}</p>
+                  )}
+                </div>
               </div>
             )}
 
@@ -763,6 +886,50 @@ export function LettersOfLove() {
           </a>
         </div>
       </div>
+
+      {/* View Letter Dialog */}
+      <Dialog open={!!viewingLetter} onOpenChange={() => setViewingLetter(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#5A2E88]/10 to-[#E91E8C]/10 flex items-center justify-center">
+                <Heart className="w-5 h-5 text-[#5A2E88]" />
+              </div>
+              <div>
+                <p className="text-lg font-bold text-gray-900">{viewingLetter?.authorName}</p>
+                <p className="text-sm font-normal text-[#E91E8C]">
+                  {viewingLetter && (letterTypes[viewingLetter.letterType]?.label || 'A letter of love')}
+                </p>
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          {viewingLetter && (
+            <div className="space-y-4 mt-2">
+              {viewingLetter.imageKey && (
+                <div className="rounded-xl overflow-hidden border border-gray-200">
+                  <img
+                    src={`/.netlify/functions/get-letter-image?key=${encodeURIComponent(viewingLetter.imageKey)}`}
+                    alt="Letter attachment"
+                    className="w-full max-h-96 object-contain bg-gray-50"
+                  />
+                </div>
+              )}
+              <div className="bg-gradient-to-br from-[#5A2E88]/5 to-[#E91E8C]/5 rounded-xl p-6">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {viewingLetter.message}
+                </p>
+              </div>
+              <p className="text-xs text-gray-400 text-right">
+                {new Date(viewingLetter.createdAt).toLocaleDateString('en-NZ', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
