@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, Calendar, History, Image, Heart, PlusCircle } from 'lucide-react';
+import { Menu, X, Calendar, History, Image, Heart, HelpCircle, PlusCircle } from 'lucide-react';
 
 interface NavigationProps {
   onNavigate: (sectionId: string) => void;
@@ -23,6 +23,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
     { id: 'history', label: 'History', icon: History },
     { id: 'gallery', label: 'Gallery', icon: Image },
     { id: 'letters-of-love', label: 'Letters of Love', icon: Heart, href: '/letters-of-love' },
+    { id: 'quiz', label: 'The Quiz', icon: HelpCircle, href: '/quiz' },
   ];
 
   const handleNavClick = (sectionId: string) => {
