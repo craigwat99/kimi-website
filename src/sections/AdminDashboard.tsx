@@ -67,18 +67,36 @@ export function AdminDashboard() {
   const [viewingLetter, setViewingLetter] = useState<Letter | null>(null);
   const [deleteLetterConfirm, setDeleteLetterConfirm] = useState<string | null>(null);
 
-  // Load events from localStorage
-  const loadEvents = useCallback(() => {
-    const saved = localStorage.getItem('hlr-events');
-    if (saved) {
-      setEvents(JSON.parse(saved));
+  // Load events from server
+  const loadEvents = useCallback(async () => {
+    try {
+      await fetch('/.netlify/functions/seed-events', { method: 'POST' });
+      const res = await fetch('/.netlify/functions/get-events');
+      const data = await res.json();
+      if (data.events) {
+        setEvents(data.events);
+      }
+    } catch (err) {
+      console.error('Failed to load events:', err);
     }
   }, []);
 
-  // Save events to localStorage
-  const saveEvents = useCallback((updatedEvents: Event[]) => {
-    localStorage.setItem('hlr-events', JSON.stringify(updatedEvents));
-    setEvents(updatedEvents);
+  // Save a single event to server
+  const persistEvent = useCallback((event: Event) => {
+    fetch('/.netlify/functions/save-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event }),
+    }).catch(err => console.error('Failed to save event:', err));
+  }, []);
+
+  // Delete a single event from server
+  const persistDeleteEvent = useCallback((eventId: string) => {
+    fetch('/.netlify/functions/delete-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventId }),
+    }).catch(err => console.error('Failed to delete event:', err));
   }, []);
 
   // Check for existing session
@@ -137,27 +155,34 @@ export function AdminDashboard() {
     const updated = events.map(e =>
       e.id === eventId ? { ...e, approved: true, updatedAt: new Date().toISOString() } : e
     );
-    saveEvents(updated);
+    setEvents(updated);
+    const event = updated.find(e => e.id === eventId);
+    if (event) persistEvent(event);
   };
 
   const handleReject = (eventId: string) => {
     const updated = events.map(e =>
       e.id === eventId ? { ...e, approved: false, updatedAt: new Date().toISOString() } : e
     );
-    saveEvents(updated);
+    setEvents(updated);
+    const event = updated.find(e => e.id === eventId);
+    if (event) persistEvent(event);
   };
 
   const handleDelete = (eventId: string) => {
     const updated = events.filter(e => e.id !== eventId);
-    saveEvents(updated);
+    setEvents(updated);
+    persistDeleteEvent(eventId);
     setDeleteConfirm(null);
   };
 
   const handleUpdateEvent = (updatedEvent: Event) => {
+    const eventWithTimestamp = { ...updatedEvent, updatedAt: new Date().toISOString() };
     const updated = events.map(e =>
-      e.id === updatedEvent.id ? { ...updatedEvent, updatedAt: new Date().toISOString() } : e
+      e.id === updatedEvent.id ? eventWithTimestamp : e
     );
-    saveEvents(updated);
+    setEvents(updated);
+    persistEvent(eventWithTimestamp);
     setEditingEvent(null);
   };
 
