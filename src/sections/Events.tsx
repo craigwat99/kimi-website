@@ -321,7 +321,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Clock className="w-4 h-4 text-[#5A2E88]" />
-                    <span>{formatTime(event.startTime)} - {formatTime(event.endTime)}</span>
+                    <span>{formatTime(event.startTime)}{event.endTime ? ` - ${formatTime(event.endTime)}` : ''}</span>
                   </div>
 
                   {/* Location */}

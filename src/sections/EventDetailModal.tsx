@@ -111,7 +111,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
               <Clock className="w-5 h-5 text-[#5A2E88] mt-0.5" />
               <div>
                 <p className="font-medium text-gray-900">Time</p>
-                <p className="text-gray-600">{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
+                <p className="text-gray-600">{formatTime(event.startTime)}{event.endTime ? ` - ${formatTime(event.endTime)}` : ''}</p>
               </div>
             </div>
 
