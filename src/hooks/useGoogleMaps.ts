@@ -164,6 +164,6 @@ export function getStaticMapUrl(
   latitude: number,
   longitude: number
 ): string {
-  // Always available OpenStreetMap link
-  return `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=16/${latitude}/${longitude}`;
+  // Google Maps link
+  return `https://www.google.com/maps?q=${latitude},${longitude}`;
 }
