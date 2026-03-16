@@ -33,6 +33,7 @@ interface Letter {
   recipientName: string;
   message: string;
   videoKey: string | null;
+  imageKey: string | null;
   galaPermission: boolean;
   approved: boolean;
   createdAt: string;
@@ -1067,6 +1068,17 @@ export function AdminDashboard() {
                     controls
                     className="w-full rounded-lg border border-gray-200"
                     src={`/.netlify/functions/get-video?key=${encodeURIComponent(viewingLetter.videoKey)}`}
+                  />
+                </div>
+              )}
+
+              {viewingLetter.imageKey && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-2">Attached Image</p>
+                  <img
+                    src={`/.netlify/functions/get-letter-image?key=${encodeURIComponent(viewingLetter.imageKey)}`}
+                    alt="Letter attachment"
+                    className="w-full rounded-lg border border-gray-200 max-h-96 object-contain bg-gray-50"
                   />
                 </div>
               )}
