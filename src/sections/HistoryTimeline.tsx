@@ -183,6 +183,30 @@ export function HistoryTimeline() {
         </a>
       </div>
     </div>
+
+        {/* Quiz call to action */}
+        <div
+          className={`mt-12 text-center transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+          }`}
+          style={{ transitionDelay: '1700ms' }}
+        >
+          <div className="bg-gradient-to-r from-[#5A2E88]/5 to-[#E91E8C]/5 rounded-2xl p-8 sm:p-10 border border-[#5A2E88]/10">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+              Are you ready to test your knowledge?
+            </h3>
+            <p className="text-gray-600 mb-6 max-w-xl mx-auto">
+              Think you know the history of homosexual law reform in New Zealand? Take our quiz and find out!
+            </p>
+            <a
+              href="/quiz"
+              className="btn-primary inline-flex items-center gap-2 text-lg px-8 py-4"
+            >
+              Take the Quiz
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );
