@@ -1,15 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import type { TimelineEvent } from '../types';
-import { loadTimelineEvents } from '../data/defaultTimeline';
+import { defaultTimelineEvents } from '../data/defaultTimeline';
 
 export function HistoryTimeline() {
   const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>(defaultTimelineEvents);
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    setTimelineEvents(loadTimelineEvents());
+    const fetchTimeline = async () => {
+      try {
+        const res = await fetch('/.netlify/functions/get-timeline');
+        const data = await res.json();
+        if (data.timeline && Array.isArray(data.timeline) && data.timeline.length > 0) {
+          setTimelineEvents(data.timeline);
+        }
+        // If server returns no data, keep the defaults already in state
+      } catch {
+        // On error, keep the defaults already in state
+      }
+    };
+    fetchTimeline();
   }, []);
 
   useEffect(() => {

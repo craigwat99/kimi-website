@@ -22,7 +22,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Event, TimelineEvent } from '../types';
 import { formatDate } from '../utils/tokens';
-import { loadTimelineEvents, saveTimelineEvents } from '../data/defaultTimeline';
+import { defaultTimelineEvents } from '../data/defaultTimeline';
 import { uploadEventImage } from '../utils/images';
 
 interface Letter {
@@ -70,7 +70,6 @@ export function AdminDashboard() {
   // Load events from server
   const loadEvents = useCallback(async () => {
     try {
-      await fetch('/.netlify/functions/seed-events', { method: 'POST' });
       const res = await fetch('/.netlify/functions/get-events');
       const data = await res.json();
       if (data.events) {
@@ -99,6 +98,32 @@ export function AdminDashboard() {
     }).catch(err => console.error('Failed to delete event:', err));
   }, []);
 
+  // Load timeline from server
+  const loadTimeline = useCallback(async () => {
+    try {
+      const res = await fetch('/.netlify/functions/get-timeline');
+      const data = await res.json();
+      if (data.timeline && Array.isArray(data.timeline) && data.timeline.length > 0) {
+        setTimelineItems(data.timeline);
+      } else {
+        // No server data yet — load defaults so the admin can manage them
+        setTimelineItems(defaultTimelineEvents);
+      }
+    } catch {
+      console.error('Failed to load timeline');
+      setTimelineItems(defaultTimelineEvents);
+    }
+  }, []);
+
+  // Save timeline to server
+  const persistTimeline = useCallback((items: TimelineEvent[]) => {
+    fetch('/.netlify/functions/save-timeline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ timeline: items }),
+    }).catch(err => console.error('Failed to save timeline:', err));
+  }, []);
+
   // Check for existing session
   useEffect(() => {
     const session = sessionStorage.getItem(SESSION_KEY);
@@ -111,9 +136,9 @@ export function AdminDashboard() {
   useEffect(() => {
     if (isAuthenticated) {
       loadEvents();
-      setTimelineItems(loadTimelineEvents());
+      loadTimeline();
     }
-  }, [isAuthenticated, loadEvents]);
+  }, [isAuthenticated, loadEvents, loadTimeline]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -207,22 +232,22 @@ export function AdminDashboard() {
   // Timeline handlers
   const handleSaveTimeline = (item: TimelineEvent) => {
     const updated = timelineItems.map(t => t.id === item.id ? item : t);
-    saveTimelineEvents(updated);
     setTimelineItems(updated);
+    persistTimeline(updated);
     setEditingTimeline(null);
   };
 
   const handleAddTimeline = (item: TimelineEvent) => {
     const updated = [...timelineItems, item].sort((a, b) => a.year - b.year);
-    saveTimelineEvents(updated);
     setTimelineItems(updated);
+    persistTimeline(updated);
     setAddingTimeline(false);
   };
 
   const handleDeleteTimeline = (id: string) => {
     const updated = timelineItems.filter(t => t.id !== id);
-    saveTimelineEvents(updated);
     setTimelineItems(updated);
+    persistTimeline(updated);
     setDeleteTimelineConfirm(null);
   };
 
