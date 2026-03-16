@@ -42,6 +42,16 @@ export interface GalleryImage {
   span?: 'normal' | 'wide' | 'tall';
 }
 
+export interface Supporter {
+  id: string;
+  name: string;
+  level: 'gold' | 'silver' | 'bronze';
+  url: string;
+  logoKey: string;
+  createdAt: string;
+}
+
+export type SupporterLevel = 'gold' | 'silver' | 'bronze';
 export type EventType = 'all' | 'celebration' | 'discussion' | 'exhibition' | 'performance' | 'workshop';
 export type LocationFilter = 'all' | 'Auckland' | 'Wellington' | 'Christchurch' | 'Dunedin' | 'Other';
 export type CostFilter = 'all' | 'free' | 'paid';

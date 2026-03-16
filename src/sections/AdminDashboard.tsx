@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload, Heart, RefreshCw, Video, FileText } from 'lucide-react';
+import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload, Heart, RefreshCw, Video, FileText, Star, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +20,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Event, TimelineEvent } from '../types';
+import type { Event, TimelineEvent, Supporter } from '../types';
 import { formatDate } from '../utils/tokens';
 import { defaultTimelineEvents } from '../data/defaultTimeline';
 import { uploadEventImage } from '../utils/images';
@@ -53,7 +53,7 @@ export function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'events' | 'timeline' | 'letters'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'timeline' | 'letters' | 'supporters'>('events');
   const [timelineItems, setTimelineItems] = useState<TimelineEvent[]>([]);
   const [editingTimeline, setEditingTimeline] = useState<TimelineEvent | null>(null);
   const [addingTimeline, setAddingTimeline] = useState(false);
@@ -66,6 +66,13 @@ export function AdminDashboard() {
   const [letterStatusFilter, setLetterStatusFilter] = useState<'all' | 'approved' | 'pending'>('all');
   const [viewingLetter, setViewingLetter] = useState<Letter | null>(null);
   const [deleteLetterConfirm, setDeleteLetterConfirm] = useState<string | null>(null);
+
+  // Supporters state
+  const [supporters, setSupporters] = useState<Supporter[]>([]);
+  const [supportersLoading, setSupportersLoading] = useState(false);
+  const [addingSupporter, setAddingSupporter] = useState(false);
+  const [editingSupporter, setEditingSupporter] = useState<Supporter | null>(null);
+  const [deleteSupporterConfirm, setDeleteSupporterConfirm] = useState<string | null>(null);
 
   // Load events from server
   const loadEvents = useCallback(async () => {
@@ -313,6 +320,68 @@ export function AdminDashboard() {
     }
   }, [isAuthenticated, activeTab, letters.length, loadLetters]);
 
+  // Supporters handlers
+  const loadSupporters = useCallback(async () => {
+    setSupportersLoading(true);
+    try {
+      const res = await fetch('/.netlify/functions/get-supporters');
+      const data = await res.json();
+      if (data.supporters) {
+        setSupporters(data.supporters);
+      }
+    } catch {
+      // Failed to load supporters
+    } finally {
+      setSupportersLoading(false);
+    }
+  }, []);
+
+  const handleSaveSupporter = async (supporter: Supporter) => {
+    try {
+      const res = await fetch('/.netlify/functions/save-supporter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ supporter }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const savedSupporter = { ...supporter, id: data.id };
+        setSupporters(prev => {
+          const exists = prev.find(s => s.id === savedSupporter.id);
+          if (exists) {
+            return prev.map(s => s.id === savedSupporter.id ? savedSupporter : s);
+          }
+          return [...prev, savedSupporter];
+        });
+        setAddingSupporter(false);
+        setEditingSupporter(null);
+      }
+    } catch {
+      // Failed to save
+    }
+  };
+
+  const handleDeleteSupporter = async (supporterId: string) => {
+    try {
+      await fetch('/.netlify/functions/delete-supporter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ supporterId }),
+      });
+      setSupporters(prev => prev.filter(s => s.id !== supporterId));
+      setDeleteSupporterConfirm(null);
+    } catch {
+      // Failed to delete
+    }
+  };
+
+  // Load supporters when switching to supporters tab
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'supporters' && supporters.length === 0) {
+      loadSupporters();
+    }
+  }, [isAuthenticated, activeTab, supporters.length, loadSupporters]);
+
   const filteredEvents = events.filter(event => {
     if (statusFilter === 'approved' && !event.approved) return false;
     if (statusFilter === 'pending' && event.approved) return false;
@@ -481,6 +550,17 @@ export function AdminDashboard() {
           >
             <Heart className="w-4 h-4" />
             Letters of Love ({letters.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('supporters')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'supporters'
+                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            <Star className="w-4 h-4" />
+            Supporters ({supporters.length})
           </button>
         </div>
 
@@ -1045,6 +1125,186 @@ export function AdminDashboard() {
               </Button>
               <Button
                 onClick={() => deleteTimelineConfirm && handleDeleteTimeline(deleteTimelineConfirm)}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+        {activeTab === 'supporters' && (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <p className="text-sm text-gray-500">Total Supporters</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{supporters.length}</p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <p className="text-sm text-gray-500">Gold</p>
+              <p className="text-3xl font-bold text-yellow-600 mt-1">{supporters.filter(s => s.level === 'gold').length}</p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <p className="text-sm text-gray-500">Silver</p>
+              <p className="text-3xl font-bold text-gray-500 mt-1">{supporters.filter(s => s.level === 'silver').length}</p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <p className="text-sm text-gray-500">Bronze</p>
+              <p className="text-3xl font-bold text-amber-700 mt-1">{supporters.filter(s => s.level === 'bronze').length}</p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-semibold text-gray-900">Manage Supporters</h2>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadSupporters}
+                disabled={supportersLoading}
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${supportersLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setAddingSupporter(true)}
+                className="bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Supporter
+              </Button>
+            </div>
+          </div>
+
+          {/* Supporters Table */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Logo</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Level</TableHead>
+                  <TableHead>Website</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {supportersLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-12 text-gray-500">
+                      Loading supporters...
+                    </TableCell>
+                  </TableRow>
+                ) : supporters.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-12 text-gray-500">
+                      No supporters yet. Click "Add Supporter" to get started.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  supporters.map((supporter) => (
+                    <TableRow key={supporter.id}>
+                      <TableCell>
+                        <div className="w-16 h-12 rounded border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
+                          {supporter.logoKey ? (
+                            <img
+                              src={`/.netlify/functions/get-supporter-logo?key=${encodeURIComponent(supporter.logoKey)}`}
+                              alt={supporter.name}
+                              className="w-full h-full object-contain p-1"
+                            />
+                          ) : (
+                            <ImageIcon className="w-6 h-6 text-gray-300" />
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <p className="font-medium text-gray-900">{supporter.name}</p>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={
+                          supporter.level === 'gold'
+                            ? 'bg-yellow-100 text-yellow-800 border-yellow-300'
+                            : supporter.level === 'silver'
+                            ? 'bg-gray-100 text-gray-700 border-gray-300'
+                            : 'bg-amber-100 text-amber-800 border-amber-300'
+                        }>
+                          {supporter.level.charAt(0).toUpperCase() + supporter.level.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {supporter.url && (
+                          <a
+                            href={supporter.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-[#5A2E88] hover:underline flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            {supporter.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}
+                          </a>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingSupporter(supporter)}
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDeleteSupporterConfirm(supporter.id)}
+                            className="text-red-600 border-red-200 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </>
+        )}
+
+      {/* Add/Edit Supporter Modal */}
+      {(addingSupporter || editingSupporter) && (
+        <SupporterEditModal
+          supporter={editingSupporter}
+          isNew={addingSupporter}
+          onClose={() => { setAddingSupporter(false); setEditingSupporter(null); }}
+          onSave={handleSaveSupporter}
+        />
+      )}
+
+      {/* Delete Supporter Confirmation */}
+      <Dialog open={!!deleteSupporterConfirm} onOpenChange={() => setDeleteSupporterConfirm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Supporter</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+              <p className="text-sm text-red-800">
+                This will permanently delete this supporter and their logo. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setDeleteSupporterConfirm(null)} className="flex-1">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => deleteSupporterConfirm && handleDeleteSupporter(deleteSupporterConfirm)}
                 className="flex-1 bg-red-600 hover:bg-red-700"
               >
                 Delete
@@ -1634,6 +1894,203 @@ function TimelineEditModal({
               className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
             >
               {isNew ? 'Add Item' : 'Save Changes'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// Supporter edit/add modal
+function SupporterEditModal({
+  supporter,
+  isNew = false,
+  onClose,
+  onSave,
+}: {
+  supporter: Supporter | null;
+  isNew?: boolean;
+  onClose: () => void;
+  onSave: (supporter: Supporter) => void;
+}) {
+  const [name, setName] = useState('');
+  const [level, setLevel] = useState<'gold' | 'silver' | 'bronze'>('bronze');
+  const [url, setUrl] = useState('');
+  const [logoKey, setLogoKey] = useState('');
+  const [logoPreview, setLogoPreview] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (supporter && !isNew) {
+      setName(supporter.name);
+      setLevel(supporter.level);
+      setUrl(supporter.url);
+      setLogoKey(supporter.logoKey);
+      if (supporter.logoKey) {
+        setLogoPreview(`/.netlify/functions/get-supporter-logo?key=${encodeURIComponent(supporter.logoKey)}`);
+      }
+    }
+  }, [supporter, isNew]);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      const result = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+      });
+
+      const base64 = result.split(',')[1];
+      const contentType = file.type || 'image/png';
+
+      const response = await fetch('/.netlify/functions/upload-supporter-logo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageData: base64, contentType }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setLogoKey(data.key);
+        setLogoPreview(data.url);
+      }
+    } catch {
+      // Upload failed
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const supporterData: Supporter = {
+      id: isNew ? '' : (supporter?.id || ''),
+      name,
+      level,
+      url,
+      logoKey,
+      createdAt: isNew ? new Date().toISOString() : (supporter?.createdAt || new Date().toISOString()),
+    };
+    onSave(supporterData);
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{isNew ? 'Add Supporter' : 'Edit Supporter'}</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="supporter-name">Organisation Name</Label>
+            <Input
+              id="supporter-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Wellington City Council"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="supporter-level">Sponsorship Level</Label>
+            <Select
+              value={level}
+              onValueChange={(value) => setLevel(value as 'gold' | 'silver' | 'bronze')}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="gold">Gold</SelectItem>
+                <SelectItem value="silver">Silver</SelectItem>
+                <SelectItem value="bronze">Bronze</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="supporter-url">Website URL</Label>
+            <Input
+              id="supporter-url"
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://www.example.com"
+              required
+            />
+          </div>
+
+          {/* Logo Upload */}
+          <div>
+            <Label>Logo</Label>
+            {logoPreview ? (
+              <div className="mt-2 space-y-2">
+                <div className="relative rounded-lg overflow-hidden h-32 border border-gray-200 bg-gray-50 flex items-center justify-center p-4">
+                  <img src={logoPreview} alt={name || 'Supporter logo'} className="max-h-full max-w-full object-contain" />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Replace
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { setLogoKey(''); setLogoPreview(''); }}
+                    className="text-red-600 border-red-200 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors"
+              >
+                <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-500">
+                  {uploading ? 'Uploading...' : 'Click to upload a logo'}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">PNG, SVG, or JPG recommended</p>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleLogoUpload}
+              className="hidden"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={uploading || !name || !url || !logoKey}
+              className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+            >
+              {isNew ? 'Add Supporter' : 'Save Changes'}
             </Button>
           </div>
         </form>

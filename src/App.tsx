@@ -9,6 +9,7 @@ import { EditEvent } from './sections/EditEvent';
 import { HistoryTimeline } from './sections/HistoryTimeline';
 import { Gallery } from './sections/Gallery';
 import { LettersOfLovePromo } from './sections/LettersOfLovePromo';
+import { Supporters } from './sections/Supporters';
 import { Footer } from './sections/Footer';
 import type { Event } from './types';
 import { generateEditToken } from './utils/tokens';
@@ -113,6 +114,8 @@ function App() {
         <HistoryTimeline />
         
         <Gallery />
+
+        <Supporters />
 
         <SubmitEvent 
           isOpen={showSubmitForm}
