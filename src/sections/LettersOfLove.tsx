@@ -401,82 +401,6 @@ export function LettersOfLove() {
         </div>
       </div>
 
-      {/* Approved letters carousel */}
-      {!loadingLetters && approvedLetters.length > 0 && (
-        <div className="bg-gradient-to-b from-[#5A2E88]/5 to-transparent py-12 sm:py-16">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                Letters from the Community
-              </h2>
-              <p className="text-gray-500 max-w-lg mx-auto">
-                Read what others have shared. Be inspired to write your own letter of love.
-              </p>
-            </div>
-            <div className="relative px-12">
-              <Carousel opts={{ align: 'start', loop: approvedLetters.length > 1 }}>
-                <CarouselContent className="-ml-4">
-                  {approvedLetters.map((letter) => (
-                    <CarouselItem
-                      key={letter.id}
-                      className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
-                    >
-                      <button
-                        onClick={() => setViewingLetter(letter)}
-                        className="bg-white rounded-2xl shadow-sm border border-gray-100 h-full flex flex-col text-left w-full hover:shadow-lg hover:border-[#5A2E88]/20 transition-all duration-200 overflow-hidden"
-                      >
-                        {letter.imageKey && (
-                          <div className="w-full aspect-[16/10] overflow-hidden bg-gray-100">
-                            <img
-                              src={`/.netlify/functions/get-letter-image?key=${encodeURIComponent(letter.imageKey)}`}
-                              alt="Letter attachment"
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                          </div>
-                        )}
-                        <div className="p-6 flex flex-col flex-1">
-                          <div className="flex items-start gap-3 mb-4">
-                            <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-[#5A2E88]/10 to-[#E91E8C]/10 flex items-center justify-center">
-                              <PenLine className="w-4 h-4 text-[#5A2E88]" />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="font-semibold text-gray-900 text-sm truncate">
-                                {letter.authorName}
-                              </p>
-                              <p className="text-xs text-[#E91E8C]">
-                                {letterTypes[letter.letterType]?.label || 'A letter of love'}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex-1 mb-4">
-                            <p className="text-gray-600 text-sm leading-relaxed line-clamp-6">
-                              {letter.message}
-                            </p>
-                          </div>
-                          <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
-                            <p className="text-xs text-gray-400">
-                              {new Date(letter.createdAt).toLocaleDateString('en-NZ', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                              })}
-                            </p>
-                            <span className="text-xs text-[#5A2E88] font-medium">Read more</span>
-                          </div>
-                        </div>
-                      </button>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="bg-white border-gray-200 hover:bg-gray-50 shadow-md -left-6" />
-                <CarouselNext className="bg-white border-gray-200 hover:bg-gray-50 shadow-md -right-6" />
-              </Carousel>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Form area */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Mode selection */}
@@ -870,6 +794,82 @@ export function LettersOfLove() {
           </div>
         )}
       </div>
+
+      {/* Approved letters carousel */}
+      {!loadingLetters && approvedLetters.length > 0 && (
+        <div className="bg-gradient-to-b from-[#5A2E88]/5 to-transparent py-12 sm:py-16">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                Letters from the Community
+              </h2>
+              <p className="text-gray-500 max-w-lg mx-auto">
+                Read what others have shared. Be inspired to write your own letter of love.
+              </p>
+            </div>
+            <div className="relative px-12">
+              <Carousel opts={{ align: 'start', loop: approvedLetters.length > 1 }}>
+                <CarouselContent className="-ml-4">
+                  {approvedLetters.map((letter) => (
+                    <CarouselItem
+                      key={letter.id}
+                      className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
+                    >
+                      <button
+                        onClick={() => setViewingLetter(letter)}
+                        className="bg-white rounded-2xl shadow-sm border border-gray-100 h-full flex flex-col text-left w-full hover:shadow-lg hover:border-[#5A2E88]/20 transition-all duration-200 overflow-hidden"
+                      >
+                        {letter.imageKey && (
+                          <div className="w-full aspect-[16/10] overflow-hidden bg-gray-100">
+                            <img
+                              src={`/.netlify/functions/get-letter-image?key=${encodeURIComponent(letter.imageKey)}`}
+                              alt="Letter attachment"
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        )}
+                        <div className="p-6 flex flex-col flex-1">
+                          <div className="flex items-start gap-3 mb-4">
+                            <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-[#5A2E88]/10 to-[#E91E8C]/10 flex items-center justify-center">
+                              <PenLine className="w-4 h-4 text-[#5A2E88]" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-gray-900 text-sm truncate">
+                                {letter.authorName}
+                              </p>
+                              <p className="text-xs text-[#E91E8C]">
+                                {letterTypes[letter.letterType]?.label || 'A letter of love'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex-1 mb-4">
+                            <p className="text-gray-600 text-sm leading-relaxed line-clamp-6">
+                              {letter.message}
+                            </p>
+                          </div>
+                          <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                            <p className="text-xs text-gray-400">
+                              {new Date(letter.createdAt).toLocaleDateString('en-NZ', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })}
+                            </p>
+                            <span className="text-xs text-[#5A2E88] font-medium">Read more</span>
+                          </div>
+                        </div>
+                      </button>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="bg-white border-gray-200 hover:bg-gray-50 shadow-md -left-6" />
+                <CarouselNext className="bg-white border-gray-200 hover:bg-gray-50 shadow-md -right-6" />
+              </Carousel>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer note */}
       <div className="border-t border-gray-200 mt-12">
