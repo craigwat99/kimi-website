@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
+import { Navigation } from './Navigation';
 
 interface Question {
   question: string;
@@ -150,6 +151,10 @@ export function LawReformQuiz() {
     setIsVisible(true);
   }, []);
 
+  const handleNavigate = useCallback((sectionId: string) => {
+    window.location.href = `/#${sectionId}`;
+  }, []);
+
   const handleAnswer = (index: number) => {
     if (showResult) return;
     setSelectedAnswer(index);
@@ -197,6 +202,8 @@ export function LawReformQuiz() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#5A2E88]/5 via-white to-[#E91E8C]/5">
+      <Navigation onNavigate={handleNavigate} />
+
       {/* Hero header */}
       <div
         ref={topRef}
