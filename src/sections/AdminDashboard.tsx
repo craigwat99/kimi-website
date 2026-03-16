@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload } from 'lucide-react';
+import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload, Heart, RefreshCw, Video, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +25,19 @@ import { formatDate } from '../utils/tokens';
 import { loadTimelineEvents, saveTimelineEvents } from '../data/defaultTimeline';
 import { uploadEventImage } from '../utils/images';
 
+interface Letter {
+  id: string;
+  authorName: string;
+  email: string;
+  letterType: string;
+  recipientName: string;
+  message: string;
+  videoKey: string | null;
+  galaPermission: boolean;
+  approved: boolean;
+  createdAt: string;
+}
+
 const SESSION_KEY = 'hlr-admin-session';
 
 export function AdminDashboard() {
@@ -39,11 +52,19 @@ export function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'events' | 'timeline'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'timeline' | 'letters'>('events');
   const [timelineItems, setTimelineItems] = useState<TimelineEvent[]>([]);
   const [editingTimeline, setEditingTimeline] = useState<TimelineEvent | null>(null);
   const [addingTimeline, setAddingTimeline] = useState(false);
   const [deleteTimelineConfirm, setDeleteTimelineConfirm] = useState<string | null>(null);
+
+  // Letters of Love state
+  const [letters, setLetters] = useState<Letter[]>([]);
+  const [lettersLoading, setLettersLoading] = useState(false);
+  const [letterSearchQuery, setLetterSearchQuery] = useState('');
+  const [letterStatusFilter, setLetterStatusFilter] = useState<'all' | 'approved' | 'pending'>('all');
+  const [viewingLetter, setViewingLetter] = useState<Letter | null>(null);
+  const [deleteLetterConfirm, setDeleteLetterConfirm] = useState<string | null>(null);
 
   // Load events from localStorage
   const loadEvents = useCallback(() => {
@@ -91,6 +112,7 @@ export function AdminDashboard() {
 
       if (data.authenticated) {
         sessionStorage.setItem(SESSION_KEY, 'true');
+        sessionStorage.setItem('hlr-admin-password', password);
         setIsAuthenticated(true);
         setPassword('');
       } else {
@@ -105,6 +127,7 @@ export function AdminDashboard() {
 
   const handleLogout = () => {
     sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem('hlr-admin-password');
     setIsAuthenticated(false);
     setPassword('');
   };
@@ -177,6 +200,68 @@ export function AdminDashboard() {
     setDeleteTimelineConfirm(null);
   };
 
+  // Letters of Love handlers
+  const getStoredPassword = () => sessionStorage.getItem('hlr-admin-password') || '';
+
+  const loadLetters = useCallback(async () => {
+    setLettersLoading(true);
+    try {
+      const response = await fetch('/.netlify/functions/get-letters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: getStoredPassword() }),
+      });
+      const data = await response.json();
+      if (data.letters) {
+        setLetters(data.letters);
+      }
+    } catch {
+      // Failed to load letters
+    } finally {
+      setLettersLoading(false);
+    }
+  }, []);
+
+  const handleApproveLetter = async (letterId: string, approved: boolean) => {
+    try {
+      await fetch('/.netlify/functions/update-letter-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: getStoredPassword(), letterId, approved }),
+      });
+      setLetters(prev => prev.map(l => l.id === letterId ? { ...l, approved } : l));
+      if (viewingLetter?.id === letterId) {
+        setViewingLetter(prev => prev ? { ...prev, approved } : null);
+      }
+    } catch {
+      // Failed to update
+    }
+  };
+
+  const handleDeleteLetter = async (letterId: string) => {
+    try {
+      await fetch('/.netlify/functions/delete-letter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: getStoredPassword(), letterId }),
+      });
+      setLetters(prev => prev.filter(l => l.id !== letterId));
+      setDeleteLetterConfirm(null);
+      if (viewingLetter?.id === letterId) {
+        setViewingLetter(null);
+      }
+    } catch {
+      // Failed to delete
+    }
+  };
+
+  // Load letters when switching to letters tab
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'letters' && letters.length === 0) {
+      loadLetters();
+    }
+  }, [isAuthenticated, activeTab, letters.length, loadLetters]);
+
   const filteredEvents = events.filter(event => {
     if (statusFilter === 'approved' && !event.approved) return false;
     if (statusFilter === 'pending' && event.approved) return false;
@@ -194,6 +279,36 @@ export function AdminDashboard() {
 
   const pendingCount = events.filter(e => !e.approved).length;
   const approvedCount = events.filter(e => e.approved).length;
+
+  // Letters filtering
+  const filteredLetters = letters.filter(letter => {
+    if (letterStatusFilter === 'approved' && !letter.approved) return false;
+    if (letterStatusFilter === 'pending' && letter.approved) return false;
+    if (letterSearchQuery) {
+      const q = letterSearchQuery.toLowerCase();
+      return (
+        letter.authorName.toLowerCase().includes(q) ||
+        letter.email.toLowerCase().includes(q) ||
+        letter.message.toLowerCase().includes(q) ||
+        letter.recipientName.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
+  const lettersPendingCount = letters.filter(l => !l.approved).length;
+  const lettersApprovedCount = letters.filter(l => l.approved).length;
+  const lettersGalaCount = letters.filter(l => l.galaPermission).length;
+
+  const letterTypeLabel = (type: string) => {
+    switch (type) {
+      case 'to-myself': return 'To Myself';
+      case 'to-passed': return 'To Someone Passed';
+      case 'to-future-self': return 'To Future Self';
+      case 'to-someone-special': return 'To Someone Special';
+      default: return type;
+    }
+  };
 
   // Login screen
   if (!isAuthenticated) {
@@ -304,6 +419,17 @@ export function AdminDashboard() {
           >
             <Clock className="w-4 h-4" />
             Timeline ({timelineItems.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('letters')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'letters'
+                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            <Heart className="w-4 h-4" />
+            Letters of Love ({letters.length})
           </button>
         </div>
 
@@ -601,6 +727,202 @@ export function AdminDashboard() {
         </div>
         </>
         )}
+
+        {activeTab === 'letters' && (
+        <>
+        {/* Letters Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500">Total Letters</p>
+            <p className="text-3xl font-bold text-gray-900 mt-1">{letters.length}</p>
+          </div>
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500">Approved</p>
+            <p className="text-3xl font-bold text-green-600 mt-1">{lettersApprovedCount}</p>
+          </div>
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500">Pending</p>
+            <p className="text-3xl font-bold text-amber-600 mt-1">{lettersPendingCount}</p>
+          </div>
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <p className="text-sm text-gray-500">Gala Permission</p>
+            <p className="text-3xl font-bold text-[#5A2E88] mt-1">{lettersGalaCount}</p>
+          </div>
+        </div>
+
+        {/* Letters Filters */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder="Search by author, email, message..."
+                value={letterSearchQuery}
+                onChange={(e) => setLetterSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant={letterStatusFilter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLetterStatusFilter('all')}
+                className={letterStatusFilter === 'all' ? 'bg-[#5A2E88] hover:bg-[#3D1C5E]' : ''}
+              >
+                All ({letters.length})
+              </Button>
+              <Button
+                variant={letterStatusFilter === 'pending' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLetterStatusFilter('pending')}
+                className={letterStatusFilter === 'pending' ? 'bg-amber-600 hover:bg-amber-700' : ''}
+              >
+                Pending ({lettersPendingCount})
+              </Button>
+              <Button
+                variant={letterStatusFilter === 'approved' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setLetterStatusFilter('approved')}
+                className={letterStatusFilter === 'approved' ? 'bg-green-600 hover:bg-green-700' : ''}
+              >
+                Approved ({lettersApprovedCount})
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadLetters}
+                disabled={lettersLoading}
+                title="Refresh"
+              >
+                <RefreshCw className={`w-4 h-4 ${lettersLoading ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Letters Table */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Author</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead className="hidden md:table-cell">Content</TableHead>
+                <TableHead>Gala</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="hidden md:table-cell">Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {lettersLoading ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-12 text-gray-500">
+                    Loading letters...
+                  </TableCell>
+                </TableRow>
+              ) : filteredLetters.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-12 text-gray-500">
+                    {letters.length === 0 ? 'No letters submitted yet' : 'No letters match your filters'}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredLetters.map((letter) => (
+                  <TableRow key={letter.id}>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium text-gray-900">{letter.authorName}</p>
+                        <p className="text-xs text-gray-500">{letter.email}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1.5">
+                        {letter.videoKey ? (
+                          <Video className="w-3.5 h-3.5 text-[#5A2E88]" />
+                        ) : (
+                          <FileText className="w-3.5 h-3.5 text-gray-400" />
+                        )}
+                        <span className="text-sm">{letterTypeLabel(letter.letterType)}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <p className="text-sm text-gray-600 line-clamp-2 max-w-[250px]">
+                        {letter.message || (letter.videoKey ? '(Video message)' : '(No text)')}
+                      </p>
+                    </TableCell>
+                    <TableCell>
+                      {letter.galaPermission ? (
+                        <Badge className="bg-purple-100 text-purple-800 border-purple-200">Yes</Badge>
+                      ) : (
+                        <span className="text-xs text-gray-400">No</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={
+                        letter.approved
+                          ? 'bg-green-100 text-green-800 border-green-200'
+                          : 'bg-amber-100 text-amber-800 border-amber-200'
+                      }>
+                        {letter.approved ? 'Approved' : 'Pending'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <span className="text-sm text-gray-500">
+                        {new Date(letter.createdAt).toLocaleDateString()}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setViewingLetter(letter)}
+                          className="h-8 px-2"
+                          title="View"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        {letter.approved ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleApproveLetter(letter.id, false)}
+                            className="text-amber-600 border-amber-200 hover:bg-amber-50 h-8 px-2"
+                            title="Unapprove"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleApproveLetter(letter.id, true)}
+                            className="text-green-600 border-green-200 hover:bg-green-50 h-8 px-2"
+                            title="Approve"
+                          >
+                            <Check className="w-4 h-4" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setDeleteLetterConfirm(letter.id)}
+                          className="text-red-600 border-red-200 hover:bg-red-50 h-8 px-2"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        </>
+        )}
       </main>
 
       {/* Edit Event Modal */}
@@ -672,6 +994,138 @@ export function AdminDashboard() {
               </Button>
               <Button
                 onClick={() => deleteTimelineConfirm && handleDeleteTimeline(deleteTimelineConfirm)}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Letter Modal */}
+      <Dialog open={!!viewingLetter} onOpenChange={() => setViewingLetter(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Letter Details</DialogTitle>
+          </DialogHeader>
+          {viewingLetter && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Author</p>
+                  <p className="font-medium">{viewingLetter.authorName}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Email</p>
+                  <p className="font-medium">{viewingLetter.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Letter Type</p>
+                  <p className="font-medium">{letterTypeLabel(viewingLetter.letterType)}</p>
+                </div>
+                {viewingLetter.recipientName && (
+                  <div>
+                    <p className="text-sm text-gray-500">Recipient</p>
+                    <p className="font-medium">{viewingLetter.recipientName}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm text-gray-500">Submitted</p>
+                  <p className="font-medium">{new Date(viewingLetter.createdAt).toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Gala Permission</p>
+                  <p className="font-medium">{viewingLetter.galaPermission ? 'Yes' : 'No'}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-500">Status</p>
+                <Badge className={
+                  viewingLetter.approved
+                    ? 'bg-green-100 text-green-800 border-green-200 mt-1'
+                    : 'bg-amber-100 text-amber-800 border-amber-200 mt-1'
+                }>
+                  {viewingLetter.approved ? 'Approved' : 'Pending'}
+                </Badge>
+              </div>
+
+              {viewingLetter.message && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-2">Message</p>
+                  <div className="bg-gray-50 rounded-lg p-4 whitespace-pre-wrap text-sm">
+                    {viewingLetter.message}
+                  </div>
+                </div>
+              )}
+
+              {viewingLetter.videoKey && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-2">Video</p>
+                  <video
+                    controls
+                    className="w-full rounded-lg border border-gray-200"
+                    src={`/.netlify/functions/get-video?key=${encodeURIComponent(viewingLetter.videoKey)}`}
+                  />
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4 border-t">
+                {viewingLetter.approved ? (
+                  <Button
+                    variant="outline"
+                    onClick={() => handleApproveLetter(viewingLetter.id, false)}
+                    className="flex-1 text-amber-600 border-amber-200 hover:bg-amber-50"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Unapprove
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => handleApproveLetter(viewingLetter.id, true)}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Approve
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setDeleteLetterConfirm(viewingLetter.id);
+                    setViewingLetter(null);
+                  }}
+                  className="text-red-600 border-red-200 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Letter Confirmation */}
+      <Dialog open={!!deleteLetterConfirm} onOpenChange={() => setDeleteLetterConfirm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Letter</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+              <p className="text-sm text-red-800">
+                This will permanently delete this letter and any associated video. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setDeleteLetterConfirm(null)} className="flex-1">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => deleteLetterConfirm && handleDeleteLetter(deleteLetterConfirm)}
                 className="flex-1 bg-red-600 hover:bg-red-700"
               >
                 Delete

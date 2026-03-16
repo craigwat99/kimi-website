@@ -67,6 +67,14 @@ export function Footer({ onNavigate }: FooterProps) {
               ))}
               <li>
                 <a
+                  href="/letters-of-love"
+                  className="text-white/70 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-2"
+                >
+                  Letters of Love
+                </a>
+              </li>
+              <li>
+                <a
                   href="#events"
                   onClick={(e) => {
                     e.preventDefault();
