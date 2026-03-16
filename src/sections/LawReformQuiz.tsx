@@ -213,15 +213,8 @@ export function LawReformQuiz() {
           <div className="absolute top-0 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-1/3 w-48 h-48 bg-white rounded-full blur-3xl" />
         </div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <a
-            href="/"
-            className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-8 transition-colors text-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </a>
-          <h1 className="text-4xl sm:text-5xl font-black mb-4">Law Reform Quiz</h1>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 text-center">
+          <h1 className="text-4xl sm:text-5xl font-black mb-2">Law Reform Quiz</h1>
           <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
             Test your knowledge about the history of homosexual law reform in New Zealand.
           </p>
@@ -230,14 +223,14 @@ export function LawReformQuiz() {
 
       {/* Quiz content */}
       <div
-        className={`max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 transition-all duration-700 ${
+        className={`max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 transition-all duration-700 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}
       >
         {!quizComplete ? (
           <>
             {/* Progress bar */}
-            <div className="mb-8">
+            <div className="mb-4">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-gray-600">
                   Question {currentQuestion + 1} of {questions.length}
@@ -397,18 +390,6 @@ export function LawReformQuiz() {
         )}
       </div>
 
-      {/* Footer */}
-      <div className="border-t border-gray-200 mt-12">
-        <div className="max-w-3xl mx-auto px-4 py-8 text-center">
-          <a
-            href="/"
-            className="inline-flex items-center gap-1 text-sm text-[#5A2E88] hover:underline"
-          >
-            <ArrowLeft className="w-3 h-3" />
-            Return to 40 Years
-          </a>
-        </div>
-      </div>
     </div>
   );
 }
