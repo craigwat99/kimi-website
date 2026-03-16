@@ -207,7 +207,7 @@ export function LawReformQuiz() {
       {/* Hero header */}
       <div
         ref={topRef}
-        className="relative bg-gradient-to-r from-[#3D1C5E] via-[#5A2E88] to-[#E91E8C] text-white overflow-hidden"
+        className="relative bg-gradient-to-r from-[#3D1C5E] via-[#5A2E88] to-[#E91E8C] text-white overflow-hidden pt-16"
       >
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl" />
