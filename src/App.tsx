@@ -8,6 +8,7 @@ import { SubmitEvent } from './sections/SubmitEvent';
 import { EditEvent } from './sections/EditEvent';
 import { HistoryTimeline } from './sections/HistoryTimeline';
 import { Gallery } from './sections/Gallery';
+import { LettersOfLovePromo } from './sections/LettersOfLovePromo';
 import { Footer } from './sections/Footer';
 import type { Event } from './types';
 import { generateEditToken } from './utils/tokens';
@@ -210,6 +211,8 @@ function App() {
         <Hero />
         <Introduction />
 
+        <LettersOfLovePromo />
+
         <Events
           events={approvedEvents}
           onEventClick={setSelectedEvent}
@@ -219,7 +222,7 @@ function App() {
         <HistoryTimeline />
         
         <Gallery />
-        
+
         <SubmitEvent 
           isOpen={showSubmitForm}
           onClose={() => setShowSubmitForm(false)}

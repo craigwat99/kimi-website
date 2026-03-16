@@ -16,6 +16,16 @@
   status = 200
 
 [[redirects]]
+  from = "/letters-of-love"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/letters-of-love/"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
