@@ -76,7 +76,7 @@ export function HistoryTimeline() {
         {/* Timeline */}
         <div className="relative">
           {/* Center line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#5A2E88] via-[#7B4FA2] to-[#E91E8C] rounded-full transform md:-translate-x-1/2" />
+          <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#5A2E88] via-[#7B4FA2] to-[#E91E8C] rounded-full -translate-x-1/2" />
 
           {/* Events */}
           <div className="space-y-12">
@@ -95,7 +95,7 @@ export function HistoryTimeline() {
                   onMouseLeave={() => setActiveIndex(null)}
                 >
                   {/* Year marker - mobile left, desktop alternating */}
-                  <div className={`absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10 ${
+                  <div className={`absolute left-5 md:left-1/2 -translate-x-1/2 z-10 ${
                     isActive ? 'scale-125' : ''
                   } transition-transform duration-300`}>
                     <div className={`w-8 h-8 rounded-full border-4 border-white shadow-lg flex items-center justify-center ${
