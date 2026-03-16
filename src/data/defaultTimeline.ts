@@ -1,7 +1,5 @@
 import type { TimelineEvent } from '../types';
 
-export const TIMELINE_STORAGE_KEY = 'hlr-timeline';
-
 export const defaultTimelineEvents: TimelineEvent[] = [
   {
     id: 'tl-1840-tiriti',
@@ -89,15 +87,3 @@ export const defaultTimelineEvents: TimelineEvent[] = [
     category: 'after',
   },
 ];
-
-export function loadTimelineEvents(): TimelineEvent[] {
-  const saved = localStorage.getItem(TIMELINE_STORAGE_KEY);
-  if (saved) {
-    return JSON.parse(saved);
-  }
-  return defaultTimelineEvents;
-}
-
-export function saveTimelineEvents(events: TimelineEvent[]): void {
-  localStorage.setItem(TIMELINE_STORAGE_KEY, JSON.stringify(events));
-}

@@ -24,9 +24,6 @@ function App() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        // First ensure seed data exists
-        await fetch('/.netlify/functions/seed-events', { method: 'POST' });
-
         const res = await fetch('/.netlify/functions/get-events');
         const data = await res.json();
         if (data.events && data.events.length > 0) {
