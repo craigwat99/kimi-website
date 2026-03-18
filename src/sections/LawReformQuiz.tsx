@@ -15,7 +15,7 @@ const questions: Question[] = [
     options: ['1981', '1985', '1986', '1993'],
     correctIndex: 1,
     explanation:
-      'The Homosexual Law Reform Bill was introduced on 8 March 1985 by Labour MP Fran Wilde as a private member\'s bill.',
+      'The Homosexual Law Reform Bill was introduced on 8 March 1985 as a private member\'s bill by a Labour MP.',
   },
   {
     question: 'Who introduced the Homosexual Law Reform Bill to Parliament?',
@@ -43,12 +43,12 @@ const questions: Question[] = [
     options: ['49 to 44', '55 to 38', '47 to 32', '60 to 30'],
     correctIndex: 0,
     explanation:
-      'The bill passed its third reading on 9 July 1986 by a narrow margin of 49 votes to 44.',
+      'On 9 July 1986, Part 1 of the Homosexual Law Reform Bill was narrowly passed by Parliament, 49 votes to 44. Part 2 of the Bill dealing with anti-discrimination measures was lost in April 1986.',
   },
   {
     question: 'What was notable about the petition against the Homosexual Law Reform Bill presented by the Coalition of Concerned Citizens?',
     options: [
-      'It was the largest petition in NZ history at the time',
+      'It was submitted anonymously to Parliament',
       'It contained forged names including "Adolf Hitler" and "Yogi Bear"',
       'It was signed by every member of Parliament',
       'It was presented by the Prime Minister',
@@ -130,7 +130,7 @@ const questions: Question[] = [
   },
   {
     question: 'Which Labour Prime Minister opposed treating homosexuality as "normal" in 1974?',
-    options: ['David Lange', 'Norman Kirk', 'Helen Clark', 'Robert Muldoon'],
+    options: ['David Lange', 'Norman Kirk', 'Helen Clark', 'Bill Rowling'],
     correctIndex: 1,
     explanation:
       'Labour Prime Minister Norman Kirk publicly opposed treating homosexuality as "normal" on 9 July 1974, which led National MP Marilyn Waring to sign up with the Young Nationals in protest.',
