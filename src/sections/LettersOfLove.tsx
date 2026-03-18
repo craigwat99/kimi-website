@@ -758,9 +758,10 @@ export function LettersOfLove() {
                   </Label>
                   <p className="text-sm text-gray-500 mt-1">
                     I give permission for my letter/video to be considered for use as part of a
-                    time capsule or montage at the National Gala Event celebrating 40 years of
-                    Homosexual Law Reform. I understand that my submission may be displayed
-                    publicly and that the organisers will contact me before using my message.
+                    time capsule and in relation to events celebrating 40 years of Homosexual
+                    Law Reform. I understand that my submission may be reproduced publicly in
+                    relation to the 40th anniversary without requiring further consent and that
+                    it may be deposited with archives in the future.
                   </p>
                 </div>
               </div>
