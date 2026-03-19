@@ -182,35 +182,47 @@ export function Hero() {
           </div>
 
           {/* Right content - Logo mark */}
-          <div 
-            className={`flex justify-center lg:justify-end transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 rotate-180'}`}
-            style={{ 
-              transitionDelay: '800ms',
-              transitionTimingFunction: 'var(--ease-spring)',
-            }}
-          >
-            <div 
-              className="relative"
-              style={{
-                animation: 'float 12s ease-in-out infinite',
-              }}
-            >
-              <img
-                src="/logo-40years.png"
-                alt="40 Years Logo"
-                className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl"
-              />
-              {/* Glow effect */}
-              <div 
-                className="absolute inset-0 -z-10 blur-3xl opacity-50"
-                style={{
-                  background: 'radial-gradient(circle, rgba(233,30,140,0.5) 0%, transparent 70%)',
+          {/* 40 YEARS */}
+            <div className="space-y-2">
+              <h1 
+                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                style={{ 
+                  transitionDelay: '600ms',
+                  transitionTimingFunction: 'var(--ease-spring)',
                 }}
-              />
+              >
+                40 YEARS
+              </h1>
+             <h1 
+                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                style={{ 
+                  transitionDelay: '600ms',
+                  transitionTimingFunction: 'var(--ease-spring)',
+                }}
+              >
+               HOMOSEXUAL
+              </h1>
+              <h1 
+                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                style={{ 
+                  transitionDelay: '600ms',
+                  transitionTimingFunction: 'var(--ease-spring)',
+                }}
+              >
+                LAW
+              </h1>
+              <h1 
+                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                style={{ 
+                  transitionDelay: '600ms',
+                  transitionTimingFunction: 'var(--ease-spring)',
+                }}
+              >
+                REFORM
+              </h1>
             </div>
-          </div>
-        </div>
-      </div>
+          
+         
 
       {/* Bottom gradient fade */}
       <div 
