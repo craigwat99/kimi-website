@@ -221,8 +221,8 @@ export function Hero() {
                 REFORM
               </h1>
             </div>
-          
-         
+        </div>
+      </div>
 
       {/* Bottom gradient fade */}
       <div 
