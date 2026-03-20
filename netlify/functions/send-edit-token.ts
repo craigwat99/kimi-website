@@ -38,7 +38,7 @@ export default async (req: Request, _context: Context) => {
 
   const htmlBody = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: linear-gradient(135deg, #5A2E88, #E91E8C); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+      <div style="background: #784982; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
         <h1 style="color: white; margin: 0; font-size: 24px;">Event Submission Confirmation</h1>
       </div>
       <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">

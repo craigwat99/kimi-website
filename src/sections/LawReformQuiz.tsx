@@ -201,13 +201,13 @@ export function LawReformQuiz() {
   const q = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#5A2E88]/5 via-white to-[#E91E8C]/5">
+    <div className="min-h-screen bg-[#784982]/5">
       <Navigation onNavigate={handleNavigate} />
 
       {/* Hero header */}
       <div
         ref={topRef}
-        className="relative bg-gradient-to-r from-[#3D1C5E] via-[#5A2E88] to-[#E91E8C] text-white overflow-hidden pt-16"
+        className="relative bg-[#784982] text-white overflow-hidden pt-16"
       >
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl" />
@@ -235,13 +235,13 @@ export function LawReformQuiz() {
                 <span className="text-sm font-medium text-gray-600">
                   Question {currentQuestion + 1} of {questions.length}
                 </span>
-                <span className="text-sm font-medium text-[#5A2E88]">
+                <span className="text-sm font-medium text-[#784982]">
                   Score: {score}/{currentQuestion + (showResult ? 1 : 0)}
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2.5">
                 <div
-                  className="bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] h-2.5 rounded-full transition-all duration-500"
+                  className="bg-[#784982] h-2.5 rounded-full transition-all duration-500"
                   style={{ width: `${((currentQuestion + (showResult ? 1 : 0)) / questions.length) * 100}%` }}
                 />
               </div>
@@ -266,7 +266,7 @@ export function LawReformQuiz() {
                     }
                   } else {
                     optionClass +=
-                      ' border-gray-200 hover:border-[#5A2E88]/40 hover:bg-[#5A2E88]/5 text-gray-700 cursor-pointer';
+                      ' border-gray-200 hover:border-[#784982]/40 hover:bg-[#784982]/5 text-gray-700 cursor-pointer';
                   }
 
                   return (
@@ -290,8 +290,8 @@ export function LawReformQuiz() {
 
               {/* Explanation */}
               {showResult && (
-                <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-[#5A2E88]/5 to-[#E91E8C]/5 border border-[#5A2E88]/10">
-                  <p className="text-sm font-semibold text-[#5A2E88] mb-1">
+                <div className="mt-6 p-4 rounded-xl bg-[#784982]/5 border border-[#784982]/10">
+                  <p className="text-sm font-semibold text-[#784982] mb-1">
                     {selectedAnswer === q.correctIndex ? 'Correct!' : 'Not quite!'}
                   </p>
                   <p className="text-sm text-gray-600">{q.explanation}</p>
@@ -322,7 +322,7 @@ export function LawReformQuiz() {
           /* Results screen */
           <div className="text-center">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12 mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#784982] mb-6">
                 <span className="text-3xl font-black text-white">{score}</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
@@ -367,7 +367,7 @@ export function LawReformQuiz() {
                 </button>
                 <a
                   href="/"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border-2 border-[#5A2E88] text-[#5A2E88] font-semibold hover:bg-[#5A2E88]/5 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#784982] text-[#784982] font-semibold hover:bg-[#784982]/5 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back to Home
@@ -381,7 +381,7 @@ export function LawReformQuiz() {
                 href="https://www.pridenz.com/time/homosexual_law_reform.html"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#5A2E88] hover:underline"
+                className="text-[#784982] hover:underline"
               >
                 Pride NZ
               </a>

@@ -251,7 +251,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors">
+                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#784982] hover:bg-purple-50/50 transition-colors">
                   <ImagePlus className="w-8 h-8 text-gray-400 mb-2" />
                   <span className="text-sm text-gray-500">Click to upload an event photo</span>
                   <span className="text-xs text-gray-400 mt-1">JPG, PNG up to 10MB</span>
@@ -560,7 +560,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+                className="flex-1 bg-[#784982] hover:bg-[#5a3562]"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -591,13 +591,13 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
             </div>
 
             <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
-              <code className="flex-1 text-sm font-mono text-[#5A2E88] break-all">{editToken}</code>
+              <code className="flex-1 text-sm font-mono text-[#784982] break-all">{editToken}</code>
               <button
                 onClick={handleCopyToken}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
                   copied
                     ? 'bg-green-500 text-white'
-                    : 'bg-[#5A2E88] text-white hover:bg-[#3D1C5E]'
+                    : 'bg-[#784982] text-white hover:bg-[#5a3562]'
                 }`}
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -615,7 +615,7 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
 
             <Button
               onClick={handleClose}
-              className="w-full bg-gradient-to-r from-[#5A2E88] to-[#E91E8C]"
+              className="w-full bg-[#784982] hover:bg-[#5a3562]"
             >
               Done
             </Button>

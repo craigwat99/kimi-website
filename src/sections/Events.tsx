@@ -109,7 +109,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
     <section
       ref={sectionRef}
       id="events"
-      className="relative py-24 sm:py-32 bg-gradient-to-b from-white to-gray-50"
+      className="relative py-24 sm:py-32 bg-gray-50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -147,7 +147,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-[#5A2E88] focus:ring-2 focus:ring-[#5A2E88]/20 outline-none transition-all"
+                className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:border-[#784982] focus:ring-2 focus:ring-[#784982]/20 outline-none transition-all"
               />
             </div>
 
@@ -156,14 +156,14 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
                 showFilters
-                  ? 'bg-[#5A2E88] text-white'
-                  : 'bg-white border border-gray-200 text-gray-700 hover:border-[#5A2E88]'
+                  ? 'bg-[#784982] text-white'
+                  : 'bg-white border border-gray-200 text-gray-700 hover:border-[#784982]'
               }`}
             >
               <Filter className="w-4 h-4" />
               Filters
               {hasActiveFilters && (
-                <span className="ml-1 w-5 h-5 rounded-full bg-[#E91E8C] text-white text-xs flex items-center justify-center">
+                <span className="ml-1 w-5 h-5 rounded-full bg-[#e5c858] text-white text-xs flex items-center justify-center">
                   {[locationFilter, typeFilter, costFilter].filter(f => f !== 'all').length + (dateFilter ? 1 : 0) + (searchQuery ? 1 : 0)}
                 </span>
               )}
@@ -192,7 +192,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                   <select
                     value={locationFilter}
                     onChange={(e) => setLocationFilter(e.target.value as LocationFilter)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#5A2E88] focus:ring-2 focus:ring-[#5A2E88]/20 outline-none transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#784982] focus:ring-2 focus:ring-[#784982]/20 outline-none transition-all"
                   >
                     {locations.map((loc) => (
                       <option key={loc} value={loc}>
@@ -208,7 +208,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                   <select
                     value={typeFilter}
                     onChange={(e) => setTypeFilter(e.target.value as EventType)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#5A2E88] focus:ring-2 focus:ring-[#5A2E88]/20 outline-none transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#784982] focus:ring-2 focus:ring-[#784982]/20 outline-none transition-all"
                   >
                     {types.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -224,7 +224,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                   <select
                     value={costFilter}
                     onChange={(e) => setCostFilter(e.target.value as CostFilter)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#5A2E88] focus:ring-2 focus:ring-[#5A2E88]/20 outline-none transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#784982] focus:ring-2 focus:ring-[#784982]/20 outline-none transition-all"
                   >
                     {costs.map((cost) => (
                       <option key={cost.value} value={cost.value}>
@@ -241,7 +241,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                     type="date"
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#5A2E88] focus:ring-2 focus:ring-[#5A2E88]/20 outline-none transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#784982] focus:ring-2 focus:ring-[#784982]/20 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -250,7 +250,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="mt-4 flex items-center gap-2 text-sm text-[#5A2E88] hover:text-[#E91E8C] transition-colors"
+                  className="mt-4 flex items-center gap-2 text-sm text-[#784982] hover:text-[#e5c858] transition-colors"
                 >
                   <X className="w-4 h-4" />
                   Clear all filters
@@ -284,11 +284,11 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                     alt={event.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-black/40" />
                   
                   {/* Type badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-[#5A2E88] backdrop-blur-sm">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-[#784982] backdrop-blur-sm">
                       {getEventTypeLabel(event.eventType)}
                     </span>
                   </div>
@@ -298,7 +298,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                       event.ticketPrice === null || event.ticketPrice === 0
                         ? 'bg-green-500 text-white'
-                        : 'bg-[#E91E8C] text-white'
+                        : 'bg-[#e5c858] text-white'
                     }`}>
                       {formatPrice(event.ticketPrice)}
                     </span>
@@ -306,7 +306,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
 
                   {/* Title overlay */}
                   <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-white font-bold text-lg line-clamp-2 group-hover:text-[#E91E8C] transition-colors">
+                    <h3 className="text-white font-bold text-lg line-clamp-2 group-hover:text-[#e5c858] transition-colors">
                       {event.name}
                     </h3>
                   </div>
@@ -316,17 +316,17 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                 <div className="p-5 space-y-3">
                   {/* Date & Time */}
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Calendar className="w-4 h-4 text-[#5A2E88]" />
+                    <Calendar className="w-4 h-4 text-[#784982]" />
                     <span>{formatDate(event.startDate)}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Clock className="w-4 h-4 text-[#5A2E88]" />
+                    <Clock className="w-4 h-4 text-[#784982]" />
                     <span>{formatTime(event.startTime)}{event.endTime ? ` - ${formatTime(event.endTime)}` : ''}</span>
                   </div>
 
                   {/* Location */}
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <MapPin className="w-4 h-4 text-[#5A2E88]" />
+                    <MapPin className="w-4 h-4 text-[#784982]" />
                     <span>{event.location} • {event.venue}</span>
                   </div>
 
@@ -345,7 +345,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                         onClick={(e) => e.stopPropagation()}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#5A2E88] text-white text-sm font-medium hover:bg-[#3D1C5E] transition-colors"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#784982] text-white text-sm font-medium hover:bg-[#5a3562] transition-colors"
                       >
                         <ExternalLink className="w-4 h-4" />
                         Tickets
