@@ -12,7 +12,7 @@ export function Footer({ onNavigate }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-gradient-to-br from-[#3D1C5E] via-[#5A2E88] to-[#E91E8C] text-white overflow-hidden">
+    <footer className="relative bg-[#784982] text-white overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl" />
@@ -129,7 +129,7 @@ export function Footer({ onNavigate }: FooterProps) {
             </p>
             
             <p className="text-white/60 text-sm flex items-center gap-1">
-              Made with <Heart className="w-4 h-4 text-[#E91E8C] fill-current" /> for the community
+              Made with <Heart className="w-4 h-4 text-[#e5c858] fill-current" /> for the community
             </p>
           </div>
         </div>

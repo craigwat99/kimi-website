@@ -238,7 +238,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
                   </div>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors">
+                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#784982] hover:bg-purple-50/50 transition-colors">
                   <ImagePlus className="w-8 h-8 text-gray-400 mb-2" />
                   <span className="text-sm text-gray-500">Click to upload an event photo</span>
                   <span className="text-xs text-gray-400 mt-1">JPG, PNG up to 10MB</span>
@@ -549,7 +549,7 @@ export function EditEvent({ event, isOpen, onClose, onUpdate, onDelete }: EditEv
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+                className="flex-1 bg-[#784982] hover:bg-[#5a3562]"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (

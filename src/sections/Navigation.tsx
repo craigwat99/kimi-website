@@ -49,7 +49,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
               handleNavClick('hero');
             }}
             className={`font-bold text-xl transition-colors duration-300 ${
-              isScrolled ? 'text-[#5A2E88]' : 'text-white'
+              isScrolled ? 'text-[#784982]' : 'text-white'
             }`}
           >
             <img src="/rainbow-heart.png" alt="" className="inline-block w-[1.4em] h-[1.4em] mr-1 align-middle relative -top-[0.05em]" />
@@ -67,20 +67,20 @@ export function Navigation({ onNavigate }: NavigationProps) {
                   handleNavClick(link.id);
                 }}
                 className={`relative font-medium text-sm transition-all duration-300 hover:-translate-y-0.5 group ${
-                  isScrolled ? 'text-gray-700 hover:text-[#5A2E88]' : 'text-white/90 hover:text-white'
+                  isScrolled ? 'text-gray-700 hover:text-[#784982]' : 'text-white/90 hover:text-white'
                 }`}
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] transition-all duration-300 group-hover:w-full group-hover:left-0" />
+                <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-[#784982] transition-all duration-300 group-hover:w-full group-hover:left-0" />
               </a>
             ))}
             
             <button
               onClick={() => handleNavClick('events')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 hover:scale-105 ${
+              className={`flex items-center gap-2 px-5 py-2.5 font-semibold text-sm transition-all duration-300 hover:scale-105 ${
                 isScrolled
-                  ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-lg hover:shadow-xl'
-                  : 'bg-white text-[#5A2E88] hover:bg-white/90'
+                  ? 'bg-[#784982] text-white shadow-lg hover:shadow-xl'
+                  : 'bg-[#784982] text-white hover:bg-[#784982]/90'
               }`}
             >
               <PlusCircle className="w-4 h-4" />
@@ -118,7 +118,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
                   }}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
                     isScrolled
-                      ? 'text-gray-700 hover:bg-white hover:text-[#5A2E88] hover:shadow-md'
+                      ? 'text-gray-700 hover:bg-white hover:text-[#784982] hover:shadow-md'
                       : 'text-white hover:bg-white/20'
                   }`}
                 >
@@ -130,7 +130,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
             
             <button
               onClick={() => handleNavClick('events')}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold bg-[#784982] text-white transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
             >
               <PlusCircle className="w-5 h-5" />
               Submit Event

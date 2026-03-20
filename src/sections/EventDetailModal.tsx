@@ -73,7 +73,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
             alt={event.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-black/50" />
 
           {/* Close button */}
           <button
@@ -85,7 +85,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
 
           {/* Title overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-6">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-[#5A2E88] mb-3">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-[#784982] mb-3">
               {getEventTypeLabel(event.eventType)}
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">{event.name}</h2>
@@ -97,7 +97,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
           {/* Key Info Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
-              <Calendar className="w-5 h-5 text-[#5A2E88] mt-0.5" />
+              <Calendar className="w-5 h-5 text-[#784982] mt-0.5" />
               <div>
                 <p className="font-medium text-gray-900">Date</p>
                 <p className="text-gray-600">{formatDate(event.startDate)}</p>
@@ -108,7 +108,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
             </div>
 
             <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
-              <Clock className="w-5 h-5 text-[#5A2E88] mt-0.5" />
+              <Clock className="w-5 h-5 text-[#784982] mt-0.5" />
               <div>
                 <p className="font-medium text-gray-900">Time</p>
                 <p className="text-gray-600">{formatTime(event.startTime)}{event.endTime ? ` - ${formatTime(event.endTime)}` : ''}</p>
@@ -116,7 +116,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
             </div>
 
             <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
-              <MapPin className="w-5 h-5 text-[#5A2E88] mt-0.5" />
+              <MapPin className="w-5 h-5 text-[#784982] mt-0.5" />
               <div>
                 <p className="font-medium text-gray-900">Location</p>
                 <p className="text-gray-600">{event.venue}</p>
@@ -129,7 +129,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
             </div>
 
             <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
-              <DollarSign className="w-5 h-5 text-[#5A2E88] mt-0.5" />
+              <DollarSign className="w-5 h-5 text-[#784982] mt-0.5" />
               <div>
                 <p className="font-medium text-gray-900">Tickets</p>
                 <p className="text-gray-600">{formatPrice(event.ticketPrice)}</p>
@@ -157,7 +157,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
                 href={getStaticMapUrl(event.latitude!, event.longitude!)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-[#5A2E88] hover:text-[#E91E8C] transition-colors"
+                className="inline-flex items-center gap-1 text-sm text-[#784982] hover:text-[#e5c858] transition-colors"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 Open in maps
@@ -184,9 +184,9 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
 
           {/* Organiser */}
           <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-            <h3 className="text-sm font-semibold text-[#5A2E88] mb-3 uppercase tracking-wider">Organiser</h3>
+            <h3 className="text-sm font-semibold text-[#784982] mb-3 uppercase tracking-wider">Organiser</h3>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5A2E88] to-[#E91E8C] flex items-center justify-center text-white font-bold text-lg">
+              <div className="w-12 h-12 rounded-full bg-[#784982] flex items-center justify-center text-white font-bold text-lg">
                 {event.organiser.charAt(0).toUpperCase()}
               </div>
               <div>
@@ -203,7 +203,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
                 href={event.ticketLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white font-semibold hover:shadow-lg hover:scale-105 transition-all"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#784982] text-white font-semibold hover:bg-[#5a3562] hover:shadow-lg hover:scale-105 transition-all"
               >
                 <ExternalLink className="w-5 h-5" />
                 Get Tickets
@@ -226,7 +226,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
             {!showEditVerify ? (
               <button
                 onClick={() => setShowEditVerify(true)}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:border-[#5A2E88] hover:text-[#5A2E88] transition-all"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold hover:border-[#784982] hover:text-[#784982] transition-all"
               >
                 <Edit3 className="w-5 h-5" />
                 Edit Event
@@ -244,7 +244,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
                     onChange={(e) => setEditToken(e.target.value)}
                     className="flex-1"
                   />
-                  <Button onClick={handleVerifyToken} className="bg-[#5A2E88]">
+                  <Button onClick={handleVerifyToken} className="bg-[#784982]">
                     <Check className="w-4 h-4" />
                   </Button>
                 </div>
