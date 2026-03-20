@@ -185,7 +185,7 @@ export function Hero() {
           {/* 40 YEARS */}
             <div className="space-y-2">
               <h1 
-                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
                 style={{ 
                   transitionDelay: '600ms',
                   transitionTimingFunction: 'var(--ease-spring)',
@@ -194,7 +194,7 @@ export function Hero() {
                 40 YEARS
               </h1>
              <h1 
-                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
                 style={{ 
                   transitionDelay: '600ms',
                   transitionTimingFunction: 'var(--ease-spring)',
@@ -203,7 +203,7 @@ export function Hero() {
                HOMOSEXUAL
               </h1>
               <h1 
-                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
                 style={{ 
                   transitionDelay: '600ms',
                   transitionTimingFunction: 'var(--ease-spring)',
@@ -212,7 +212,7 @@ export function Hero() {
                 LAW
               </h1>
               <h1 
-                className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+                className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
                 style={{ 
                   transitionDelay: '600ms',
                   transitionTimingFunction: 'var(--ease-spring)',
