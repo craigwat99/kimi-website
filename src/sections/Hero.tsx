@@ -191,7 +191,7 @@ export function Hero() {
                   transitionTimingFunction: 'var(--ease-spring)',
                 }}
               >
-                40 YEARS
+                4O YEARS
               </h1>
              <h1 
                 className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
@@ -223,14 +223,6 @@ export function Hero() {
             </div>
         </div>
       </div>
-
-      {/* Bottom fade */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-        style={{
-          background: 'rgba(255, 255, 255, 0.8)',
-        }}
-      />
     </section>
   );
 }
