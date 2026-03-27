@@ -2,7 +2,6 @@ import {useRef, useState } from 'react';
 
 export function Hero() {
   const [isVisible, setIsVisible] = useState(false);
-  const [count, setCount] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
 
 
