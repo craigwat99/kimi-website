@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { MapPin, Calendar, Clock, ExternalLink, Facebook, Filter, X, Search } from 'lucide-react';
+import { MapPin, Calendar, Clock, Facebook, Filter, X, Search, Ticket } from 'lucide-react';
 import type { Event, EventType, LocationFilter, CostFilter } from '../types';
 import { formatDate, formatTime, formatPrice } from '../utils/tokens';
 
@@ -346,10 +346,10 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                         onClick={(e) => e.stopPropagation()}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#784982] text-white text-sm font-medium hover:bg-[#5a3562] transition-colors"
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#784982] text-white text-sm font-medium hover:bg-[#5a3562] transition-colors"
+                        title="Get Tickets"
                       >
-                        <ExternalLink className="w-4 h-4" />
-                        Tickets
+                        <Ticket className="w-4 h-4" />
                       </a>
                     )}
                     {event.facebookLink && (
@@ -359,6 +359,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+                        title="Facebook Event"
                       >
                         <Facebook className="w-4 h-4" />
                       </a>

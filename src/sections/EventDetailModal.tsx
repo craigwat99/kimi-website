@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { X, MapPin, Calendar, Clock, Accessibility, DollarSign, ExternalLink, Facebook, Edit3, Check } from 'lucide-react';
+import { X, MapPin, Calendar, Clock, Accessibility, DollarSign, ExternalLink, Facebook, Edit3, Check, Ticket } from 'lucide-react';
 import type { Event } from '../types';
 import { formatDate, formatTime, formatPrice } from '../utils/tokens';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -133,6 +133,17 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
               <div>
                 <p className="font-medium text-gray-900">Tickets</p>
                 <p className="text-gray-600">{formatPrice(event.ticketPrice)}</p>
+                {event.ticketLink && (
+                  <a
+                    href={event.ticketLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-1 text-sm text-[#784982] hover:text-[#e5c858] transition-colors"
+                  >
+                    <Ticket className="w-3.5 h-3.5" />
+                    Ticket link
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -203,9 +214,10 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
                 href={event.ticketLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-[#784982] text-white font-semibold hover:bg-[#5a3562] hover:shadow-lg hover:scale-105 transition-all"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#784982] text-white font-semibold hover:bg-[#5a3562] hover:shadow-lg hover:scale-105 transition-all"
+                title="Get Tickets"
               >
-                <ExternalLink className="w-5 h-5" />
+                <Ticket className="w-5 h-5" />
                 Get Tickets
               </a>
             )}
@@ -216,6 +228,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 hover:shadow-lg transition-all"
+                title="Facebook Event"
               >
                 <Facebook className="w-5 h-5" />
                 Facebook Event
