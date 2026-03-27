@@ -113,27 +113,23 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl leading-normal sm:leading-normal lg:leading-normal font-black text-white mb-4">
-          Join the celebrations
-        </h2>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl leading-normal sm:leading-normal lg:leading-normal font-black gradient-text mb-4">
+            Join the celebrations
+          </h2>
 
-       {/* Body text */}
-        <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto mb-3">
-          Find an event happening around Aotearoa.
-        </p>
+          {/* Body text */}
+          <p className="text-lg sm:text-xl text-gray-700 mx-auto mb-3">
+            Find an event happening around Aotearoa.
+          </p>
 
-        <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto mb-3">
-          Are you a historian, event producer, community organisation or just passionate about our queer culture – why not organise an event and submit it here.
-        </p>
+          <p className="text-lg sm:text-xl text-gray-700 mx-auto mb-3">
+            Are you a historian, event producer, community organisation or just passionate about our queer culture – why not organise an event and submit it here.
+          </p>
 
-        <p className="text-white/70 max-w-xl mx-auto mb-10">
-          All events submitted by 1 June 2026, will be included in the printed programme, being distrusted around the country.
-        </p>
-        </div>                      
-
-         
-
+          <p className="text-gray-600 mx-auto mb-10">
+            All events submitted by 1 June 2026, will be included in the printed programme, being distrusted around the country.
+          </p>
         </div>
 
         {/* Search and Filter Bar */}
@@ -387,6 +383,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
             </button>
           </div>
         )}
+      </div>
     </section>
   );
 }
