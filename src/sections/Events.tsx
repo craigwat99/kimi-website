@@ -387,7 +387,6 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
             </button>
           </div>
         )}
-      </div>
     </section>
   );
 }
