@@ -60,7 +60,7 @@ export function Introduction() {
             <img
               src="/40Y_HLR_LOGO_V1.png"
               alt="40 Years of Homosexual Law Reform logo"
-              className="w-full rounded-none shadow-2xl"
+              className="w-auto rounded-none shadow-none"
             />
           </div>
 
