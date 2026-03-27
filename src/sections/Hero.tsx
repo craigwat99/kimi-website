@@ -1,27 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import {useRef, useState } from 'react';
 
 export function Hero() {
   const [isVisible, setIsVisible] = useState(false);
   const [count, setCount] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    setIsVisible(true);
-    
-    // Animate the counter
-    const duration = 1000;
-    const steps = 40;
-    const interval = duration / steps;
-    let current = 0;
-    
-    const timer = setInterval(() => {
-      current++;
-      setCount(Math.min(current, 40));
-      if (current >= 40) clearInterval(timer);
-    }, interval);
-    
-    return () => clearInterval(timer);
-  }, []);
 
   return (
     <section
@@ -92,7 +75,7 @@ export function Hero() {
                   transitionTimingFunction: 'var(--ease-spring)',
                 }}
               >
-                <span className="inline-block">{count}</span>
+                4O
               </h1>
               <h2 
                 className={`text-5xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tight transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
