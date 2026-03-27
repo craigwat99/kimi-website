@@ -49,6 +49,21 @@ export function Introduction() {
           style={{ transitionDelay: '200ms' }}
         />
 
+        {/* logo */}
+          <div
+            className={`flex items-center justify-center transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            style={{
+              transitionDelay: '600ms',
+              transitionTimingFunction: 'var(--ease-spring)',
+            }}
+          >
+            <img
+              src="/40Y_HLR_LOGO_V1.png"
+              alt="40 Years of Homosexual Law Reform logo"
+              className="w-full rounded-none shadow-2xl"
+            />
+          </div>
+
         {/* Body text */}
         <div className="space-y-6 text-lg sm:text-xl text-gray-700 leading-relaxed">
           <p
