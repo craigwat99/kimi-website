@@ -83,7 +83,7 @@ export function Supporters() {
     <section id="supporters" className="py-16 sm:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl leading-normal sm:leading-normal font-bold text-gray-900 mb-4">
             Our <span className="gradient-text">Supporters</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">

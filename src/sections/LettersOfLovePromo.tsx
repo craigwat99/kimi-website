@@ -33,7 +33,7 @@ export function LettersOfLovePromo() {
           <Heart className="w-8 h-8 text-white fill-current" />
         </div>
 
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl leading-normal sm:leading-normal lg:leading-normal font-black text-white mb-4">
           Letters of Love
         </h2>
 

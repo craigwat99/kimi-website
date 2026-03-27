@@ -249,7 +249,7 @@ export function LawReformQuiz() {
 
             {/* Question card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">{q.question}</h2>
+              <h2 className="text-xl sm:text-2xl leading-normal sm:leading-normal font-bold text-gray-900 mb-6">{q.question}</h2>
 
               <div className="space-y-3">
                 {q.options.map((option, index) => {
@@ -325,7 +325,7 @@ export function LawReformQuiz() {
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#784982] mb-6">
                 <span className="text-3xl font-black text-white">{score}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl sm:text-3xl leading-normal sm:leading-normal font-bold text-gray-900 mb-2">
                 You scored {score} out of {questions.length}
               </h2>
               <p className="text-lg text-gray-600 mb-8">{getScoreMessage()}</p>

@@ -88,7 +88,7 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
             <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-[#784982] mb-3">
               {getEventTypeLabel(event.eventType)}
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">{event.name}</h2>
+            <h2 className="text-2xl sm:text-3xl leading-normal sm:leading-normal font-bold text-white">{event.name}</h2>
           </div>
         </div>
 
