@@ -119,7 +119,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-            <span className="gradient-text">Events Across Aotearoa</span>
+            <span className="gradient-text">Join the celebrations</span>
           </h2>
           <p
             className={`text-lg text-gray-600 max-w-2xl mx-auto transition-all duration-700 ${
@@ -127,8 +127,29 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
             }`}
             style={{ transitionDelay: '100ms' }}
           >
-            Join celebrations, discussions, and commemorations happening nationwide
+            Find an event happening around Aotearoa.
           </p>
+          <p
+            className={`text-lg text-gray-600 max-w-2xl mx-auto transition-all duration-700 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '100ms' }}
+          >
+            Are you a historian, event producer, community organisation or just passionate about our queer culture – why not organise an event and submit it here.
+           </p>
+          <p
+            className={`text-lg text-gray-600 max-w-2xl mx-auto transition-all duration-700 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '100ms' }}
+          >
+            All events submitted by 1 June 2026, will be included in the printed programme, being distrusted around the country.
+           </p>
+                      
+                      
+
+         
+
         </div>
 
         {/* Search and Filter Bar */}
