@@ -1471,6 +1471,8 @@ function AdminEditModal({
   onSave: (event: Event) => void;
 }) {
   const [formData, setFormData] = useState<Partial<Event>>({});
+  const [imageUploading, setImageUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (event) {
@@ -1483,6 +1485,31 @@ function AdminEditModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({ ...event, ...formData } as Event);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageUploading(true);
+    try {
+      const url = await uploadEventImage(file);
+      setFormData((prev) => ({ ...prev, images: [url] }));
+    } catch {
+      // Keep existing image on failure
+    } finally {
+      setImageUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData((prev) => ({ ...prev, images: [] }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const locations = ['Auckland', 'Wellington', 'Christchurch', 'Dunedin', 'Hamilton', 'Tauranga', 'Nelson', 'Other'];
@@ -1502,15 +1529,55 @@ function AdminEditModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Image Preview */}
-          {formData.images && formData.images[0] && (
-            <div>
-              <Label>Event Image</Label>
-              <div className="mt-1 rounded-lg overflow-hidden h-32">
-                <img src={formData.images[0]} alt="Event" className="w-full h-full object-cover" />
+          <div>
+            <Label>Event Image</Label>
+            {formData.images && formData.images[0] ? (
+              <div className="mt-1 space-y-2">
+                <div className="rounded-lg overflow-hidden h-32">
+                  <img src={formData.images[0]} alt="Event" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={imageUploading}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    {imageUploading ? 'Uploading...' : 'Change Image'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleRemoveImage}
+                    disabled={imageUploading}
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Remove Image
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="mt-1 border-2 border-dashed rounded-lg p-4 text-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={imageUploading}
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  {imageUploading ? 'Uploading...' : 'Upload Event Image'}
+                </Button>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+          </div>
 
           <div>
             <Label htmlFor="admin-name">Event Name</Label>
