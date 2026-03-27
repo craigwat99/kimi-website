@@ -165,44 +165,7 @@ export function Hero() {
 
           {/* Right content - Logo mark */}
           {/* 40 YEARS */}
-            <div className="space-y-2">
-              <h1 
-                className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                style={{ 
-                  transitionDelay: '600ms',
-                  transitionTimingFunction: 'var(--ease-spring)',
-                }}
-              >
-                4O YEARS
-              </h1>
-             <h1 
-                className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                style={{ 
-                  transitionDelay: '600ms',
-                  transitionTimingFunction: 'var(--ease-spring)',
-                }}
-              >
-               HOMOSEXUAL
-              </h1>
-              <h1 
-                className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                style={{ 
-                  transitionDelay: '600ms',
-                  transitionTimingFunction: 'var(--ease-spring)',
-                }}
-              >
-                LAW
-              </h1>
-              <h1 
-                className={`text-7xl sm:text-8xl lg:text-9xl leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
-                style={{ 
-                  transitionDelay: '600ms',
-                  transitionTimingFunction: 'var(--ease-spring)',
-                }}
-              >
-                REFORM
-              </h1>
-            </div>
+
         </div>
       </div>
     </section>
