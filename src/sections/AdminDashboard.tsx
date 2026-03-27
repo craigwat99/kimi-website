@@ -764,7 +764,7 @@ export function AdminDashboard() {
         {/* Timeline Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Timeline Management</h2>
+            <h2 className="text-xl leading-normal font-bold text-gray-900">Timeline Management</h2>
             <p className="text-sm text-gray-500 mt-1">Manage the historical timeline shown on the main page</p>
           </div>
           <Button
@@ -1158,7 +1158,7 @@ export function AdminDashboard() {
 
           {/* Actions */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Manage Supporters</h2>
+            <h2 className="text-lg leading-normal font-semibold text-gray-900">Manage Supporters</h2>
             <div className="flex gap-2">
               <Button
                 variant="outline"

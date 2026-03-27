@@ -81,7 +81,7 @@ export function Hero() {
                 4O
               </h1>
               <h2 
-                className={`text-5xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tight transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
+                className={`text-5xl sm:text-6xl lg:text-7xl font-black leading-normal sm:leading-normal lg:leading-normal tracking-tight transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
                 style={{ 
                   transitionDelay: '800ms',
                   transitionTimingFunction: 'var(--ease-expo-out)',

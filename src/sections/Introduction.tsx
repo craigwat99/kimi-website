@@ -34,7 +34,7 @@ export function Introduction() {
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Heading */}
         <h2
-          className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 transition-all duration-700 ${
+          className={`text-3xl sm:text-4xl lg:text-5xl leading-normal sm:leading-normal lg:leading-normal font-bold mb-8 transition-all duration-700 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
