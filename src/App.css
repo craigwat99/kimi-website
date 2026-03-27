@@ -1,14 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Boldonse&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --primary-purple: #784982;
-  --primary-yellow: #e5c858;
-  --dark-purple: #5a3562;
-  --light-purple: #9a6da4;
+  --primary-purple: #642575;
+  --primary-yellow: #e9D041;
+  --pink: #f089b7;
+  --red: #e30b17;
   --white: #FFFFFF;
   --black: #000000;
   --gray: #666666;
   --light-gray: #F5F5F5;
+  --orange: #f07e1e
+  --green: #006046
+  --light-blue: #00b0db
+  --dark-blue: #203B8E
   
   --ease-dramatic: cubic-bezier(0.87, 0, 0.13, 1);
   --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -52,7 +56,7 @@ h1 {
 h2 {
   font-family: 'Boldonse', cursive;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.2;
   text-transform: uppercase;
 }
 
