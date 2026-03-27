@@ -45,19 +45,19 @@ export function HistoryTimeline() {
     <section
       ref={sectionRef}
       id="history"
-      className="relative py-24 sm:py-32 bg-gradient-to-b from-gray-50 to-white overflow-hidden"
+      className="relative py-24 sm:py-32 bg-gray-50 overflow-hidden"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/4 left-0 w-96 h-96 bg-[#5A2E88] rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-[#E91E8C] rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-[#784982] rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-[#e5c858] rounded-full blur-3xl" />
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
           <h2
-            className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 transition-all duration-700 ${
+            className={`text-3xl sm:text-4xl lg:text-5xl leading-normal sm:leading-normal lg:leading-normal font-bold mb-4 transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
@@ -76,7 +76,7 @@ export function HistoryTimeline() {
         {/* Timeline */}
         <div className="relative">
           {/* Center line */}
-          <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#5A2E88] via-[#7B4FA2] to-[#E91E8C] rounded-full -translate-x-1/2" />
+          <div className="absolute left-5 md:left-1/2 top-0 bottom-0 w-1 bg-[#784982] rounded-full -translate-x-1/2" />
 
           {/* Events */}
           <div className="space-y-12">
@@ -100,8 +100,8 @@ export function HistoryTimeline() {
                   } transition-transform duration-300`}>
                     <div className={`w-8 h-8 rounded-full border-4 border-white shadow-lg flex items-center justify-center ${
                       event.category === 'reform'
-                        ? 'bg-gradient-to-br from-[#E91E8C] to-[#5A2E88]'
-                        : 'bg-gradient-to-br from-[#5A2E88] to-[#7B4FA2]'
+                        ? 'bg-[#e5c858]'
+                        : 'bg-[#784982]'
                     }`}>
                       <div className="w-2 h-2 rounded-full bg-white" />
                     </div>
@@ -112,19 +112,19 @@ export function HistoryTimeline() {
                     isLeft ? 'md:mr-auto md:pr-12 md:text-right' : 'md:ml-auto md:pl-12'
                   }`}>
                     <div className={`group p-6 rounded-2xl bg-white shadow-md hover:shadow-xl transition-all duration-500 border border-gray-100 ${
-                      isActive ? 'scale-105 border-[#5A2E88]/20' : ''
+                      isActive ? 'scale-105 border-[#784982]/20' : ''
                     }`}>
                       {/* Year */}
                       <div className={`inline-block px-4 py-1 rounded-full text-sm font-bold mb-3 ${
                         event.category === 'reform'
-                          ? 'bg-gradient-to-r from-[#E91E8C] to-[#5A2E88] text-white'
-                          : 'bg-gray-100 text-[#5A2E88]'
+                          ? 'bg-[#e5c858] text-white'
+                          : 'bg-gray-100 text-[#784982]'
                       }`}>
                         {event.year}
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#5A2E88] transition-colors">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#784982] transition-colors">
                         {event.title}
                       </h3>
 
@@ -191,7 +191,7 @@ export function HistoryTimeline() {
           }`}
           style={{ transitionDelay: '1700ms' }}
         >
-          <div className="bg-gradient-to-r from-[#5A2E88]/5 to-[#E91E8C]/5 rounded-2xl p-8 sm:p-10 border border-[#5A2E88]/10">
+          <div className="bg-[#784982]/5 rounded-2xl p-8 sm:p-10 border border-[#784982]/10">
             <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
               Are you ready to test your knowledge?
             </h3>

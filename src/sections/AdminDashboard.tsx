@@ -433,10 +433,10 @@ export function AdminDashboard() {
   // Login screen
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#5A2E88]/5 via-white to-[#E91E8C]/5 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#784982]/5 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#784982] mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
@@ -472,13 +472,13 @@ export function AdminDashboard() {
             <Button
               type="submit"
               disabled={loginLoading || !password}
-              className="w-full bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+              className="w-full bg-[#784982] hover:bg-[#5a3562]"
             >
               {loginLoading ? 'Verifying...' : 'Sign In'}
             </Button>
 
             <div className="text-center">
-              <a href="/" className="text-sm text-gray-500 hover:text-[#5A2E88] transition-colors">
+              <a href="/" className="text-sm text-gray-500 hover:text-[#784982] transition-colors">
                 Back to site
               </a>
             </div>
@@ -496,7 +496,7 @@ export function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-[#784982] flex items-center justify-center">
                 <Shield className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -504,7 +504,7 @@ export function AdminDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <a href="/" className="text-sm text-gray-500 hover:text-[#5A2E88] transition-colors">
+              <a href="/" className="text-sm text-gray-500 hover:text-[#784982] transition-colors">
                 View Site
               </a>
               <Button variant="outline" size="sm" onClick={handleLogout}>
@@ -523,7 +523,7 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('events')}
             className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === 'events'
-                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
+                ? 'bg-[#784982] text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
@@ -533,7 +533,7 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('timeline')}
             className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
               activeTab === 'timeline'
-                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
+                ? 'bg-[#784982] text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
@@ -544,7 +544,7 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('letters')}
             className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
               activeTab === 'letters'
-                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
+                ? 'bg-[#784982] text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
@@ -555,7 +555,7 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('supporters')}
             className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
               activeTab === 'supporters'
-                ? 'bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white shadow-sm'
+                ? 'bg-[#784982] text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
             }`}
           >
@@ -599,7 +599,7 @@ export function AdminDashboard() {
                 variant={statusFilter === 'all' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setStatusFilter('all')}
-                className={statusFilter === 'all' ? 'bg-[#5A2E88] hover:bg-[#3D1C5E]' : ''}
+                className={statusFilter === 'all' ? 'bg-[#784982] hover:bg-[#5a3562]' : ''}
               >
                 All ({events.length})
               </Button>
@@ -764,12 +764,12 @@ export function AdminDashboard() {
         {/* Timeline Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Timeline Management</h2>
+            <h2 className="text-xl leading-normal font-bold text-gray-900">Timeline Management</h2>
             <p className="text-sm text-gray-500 mt-1">Manage the historical timeline shown on the main page</p>
           </div>
           <Button
             onClick={() => setAddingTimeline(true)}
-            className="bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+            className="bg-[#784982] hover:bg-[#5a3562]"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Item
@@ -800,7 +800,7 @@ export function AdminDashboard() {
                 timelineItems.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>
-                      <span className="font-bold text-[#5A2E88]">{item.year}</span>
+                      <span className="font-bold text-[#784982]">{item.year}</span>
                     </TableCell>
                     <TableCell>
                       <p className="font-medium text-gray-900">{item.title}</p>
@@ -811,7 +811,7 @@ export function AdminDashboard() {
                     <TableCell>
                       <Badge className={
                         item.category === 'reform'
-                          ? 'bg-gradient-to-r from-[#E91E8C] to-[#5A2E88] text-white border-0'
+                          ? 'bg-[#e5c858] text-white border-0'
                           : item.category === 'before'
                             ? 'bg-purple-100 text-purple-800 border-purple-200'
                             : 'bg-pink-100 text-pink-800 border-pink-200'
@@ -877,7 +877,7 @@ export function AdminDashboard() {
           </div>
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
             <p className="text-sm text-gray-500">Gala Permission</p>
-            <p className="text-3xl font-bold text-[#5A2E88] mt-1">{lettersGalaCount}</p>
+            <p className="text-3xl font-bold text-[#784982] mt-1">{lettersGalaCount}</p>
           </div>
         </div>
 
@@ -898,7 +898,7 @@ export function AdminDashboard() {
                 variant={letterStatusFilter === 'all' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setLetterStatusFilter('all')}
-                className={letterStatusFilter === 'all' ? 'bg-[#5A2E88] hover:bg-[#3D1C5E]' : ''}
+                className={letterStatusFilter === 'all' ? 'bg-[#784982] hover:bg-[#5a3562]' : ''}
               >
                 All ({letters.length})
               </Button>
@@ -970,7 +970,7 @@ export function AdminDashboard() {
                     <TableCell>
                       <div className="flex items-center gap-1.5">
                         {letter.videoKey ? (
-                          <Video className="w-3.5 h-3.5 text-[#5A2E88]" />
+                          <Video className="w-3.5 h-3.5 text-[#784982]" />
                         ) : (
                           <FileText className="w-3.5 h-3.5 text-gray-400" />
                         )}
@@ -1158,7 +1158,7 @@ export function AdminDashboard() {
 
           {/* Actions */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Manage Supporters</h2>
+            <h2 className="text-lg leading-normal font-semibold text-gray-900">Manage Supporters</h2>
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -1172,7 +1172,7 @@ export function AdminDashboard() {
               <Button
                 size="sm"
                 onClick={() => setAddingSupporter(true)}
-                className="bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+                className="bg-[#784982] hover:bg-[#5a3562]"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Supporter
@@ -1241,7 +1241,7 @@ export function AdminDashboard() {
                             href={supporter.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-[#5A2E88] hover:underline flex items-center gap-1"
+                            className="text-sm text-[#784982] hover:underline flex items-center gap-1"
                           >
                             <ExternalLink className="w-3 h-3" />
                             {supporter.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}
@@ -1697,7 +1697,7 @@ function AdminEditModal({
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+              className="flex-1 bg-[#784982] hover:bg-[#5a3562]"
             >
               Save Changes
             </Button>
@@ -1866,7 +1866,7 @@ function TimelineEditModal({
             ) : (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors"
+                className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#784982] hover:bg-purple-50/50 transition-colors"
               >
                 <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                 <p className="text-sm text-gray-500">
@@ -1891,7 +1891,7 @@ function TimelineEditModal({
             <Button
               type="submit"
               disabled={imageUploading || !formData.title || !formData.description || !formData.year}
-              className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+              className="flex-1 bg-[#784982] hover:bg-[#5a3562]"
             >
               {isNew ? 'Add Item' : 'Save Changes'}
             </Button>
@@ -2063,7 +2063,7 @@ function SupporterEditModal({
             ) : (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#5A2E88] hover:bg-purple-50/50 transition-colors"
+                className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#784982] hover:bg-purple-50/50 transition-colors"
               >
                 <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                 <p className="text-sm text-gray-500">
@@ -2088,7 +2088,7 @@ function SupporterEditModal({
             <Button
               type="submit"
               disabled={uploading || !name || !url || !logoKey}
-              className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90"
+              className="flex-1 bg-[#784982] hover:bg-[#5a3562]"
             >
               {isNew ? 'Add Supporter' : 'Save Changes'}
             </Button>

@@ -169,7 +169,7 @@ export function Gallery() {
         {/* Header */}
         <div className="text-center mb-12">
           <h2
-            className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 transition-all duration-700 ${
+            className={`text-3xl sm:text-4xl lg:text-5xl leading-normal sm:leading-normal lg:leading-normal font-bold mb-4 transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
@@ -208,7 +208,7 @@ export function Gallery() {
               />
               
               {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
               {/* Caption */}
               <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
@@ -216,7 +216,7 @@ export function Gallery() {
               </div>
 
               {/* Hover border */}
-              <div className="absolute inset-0 border-4 border-transparent group-hover:border-[#5A2E88]/50 rounded-xl transition-colors duration-300" />
+              <div className="absolute inset-0 border-4 border-transparent group-hover:border-[#784982]/50 rounded-xl transition-colors duration-300" />
             </div>
           ))}
         </div>

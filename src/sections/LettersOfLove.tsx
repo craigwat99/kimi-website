@@ -321,9 +321,9 @@ export function LettersOfLove() {
   // Success state
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#5A2E88]/5 via-white to-[#E91E8C]/5">
+      <div className="min-h-screen bg-[#784982]/5">
         <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#784982] mb-6">
             <CheckCircle2 className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank you for sharing your love</h1>
@@ -339,7 +339,7 @@ export function LettersOfLove() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] text-white font-semibold hover:opacity-90 transition-opacity"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#784982] text-white font-semibold hover:bg-[#5a3562] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Home
@@ -359,7 +359,7 @@ export function LettersOfLove() {
                 setGalaPermission(false);
                 setLetterType('to-myself');
               }}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border-2 border-[#5A2E88] text-[#5A2E88] font-semibold hover:bg-[#5A2E88]/5 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#784982] text-[#784982] font-semibold hover:bg-[#784982]/5 transition-colors"
             >
               <Heart className="w-4 h-4" />
               Write Another Letter
@@ -371,9 +371,9 @@ export function LettersOfLove() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#5A2E88]/5 via-white to-[#E91E8C]/5">
+    <div className="min-h-screen bg-[#784982]/5">
       {/* Hero header */}
-      <div className="relative bg-gradient-to-r from-[#3D1C5E] via-[#5A2E88] to-[#E91E8C] text-white overflow-hidden">
+      <div className="relative bg-[#784982] text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-1/3 w-48 h-48 bg-white rounded-full blur-3xl" />
@@ -407,7 +407,7 @@ export function LettersOfLove() {
         {!mode && (
           <div className="space-y-8">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl leading-normal font-bold text-gray-900 mb-2">
                 How would you like to share your love?
               </h2>
               <p className="text-gray-500">Choose to write a letter or record a video message.</p>
@@ -415,10 +415,10 @@ export function LettersOfLove() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <button
                 onClick={() => setMode('text')}
-                className="group relative bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:border-[#5A2E88]/30 hover:shadow-xl transition-all duration-300 text-left"
+                className="group relative bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:border-[#784982]/30 hover:shadow-xl transition-all duration-300 text-left"
               >
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-r from-[#5A2E88]/10 to-[#E91E8C]/10 mb-4 group-hover:scale-110 transition-transform">
-                  <PenLine className="w-7 h-7 text-[#5A2E88]" />
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#784982]/10 mb-4 group-hover:scale-110 transition-transform">
+                  <PenLine className="w-7 h-7 text-[#784982]" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Write a Letter</h3>
                 <p className="text-gray-500">
@@ -427,10 +427,10 @@ export function LettersOfLove() {
               </button>
               <button
                 onClick={() => setMode('video')}
-                className="group relative bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:border-[#E91E8C]/30 hover:shadow-xl transition-all duration-300 text-left"
+                className="group relative bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:border-[#e5c858]/30 hover:shadow-xl transition-all duration-300 text-left"
               >
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-r from-[#E91E8C]/10 to-[#5A2E88]/10 mb-4 group-hover:scale-110 transition-transform">
-                  <Video className="w-7 h-7 text-[#E91E8C]" />
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#e5c858]/10 mb-4 group-hover:scale-110 transition-transform">
+                  <Video className="w-7 h-7 text-[#e5c858]" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Record a Video</h3>
                 <p className="text-gray-500">
@@ -450,7 +450,7 @@ export function LettersOfLove() {
                 removeVideo();
                 stopCamera();
               }}
-              className="inline-flex items-center gap-2 text-gray-500 hover:text-[#5A2E88] transition-colors text-sm"
+              className="inline-flex items-center gap-2 text-gray-500 hover:text-[#784982] transition-colors text-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to options
@@ -468,13 +468,13 @@ export function LettersOfLove() {
                     onClick={() => setLetterType(key)}
                     className={`text-left p-4 rounded-xl border-2 transition-all duration-200 ${
                       letterType === key
-                        ? 'border-[#5A2E88] bg-[#5A2E88]/5'
+                        ? 'border-[#784982] bg-[#784982]/5'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <p
                       className={`font-semibold text-sm ${
-                        letterType === key ? 'text-[#5A2E88]' : 'text-gray-900'
+                        letterType === key ? 'text-[#784982]' : 'text-gray-900'
                       }`}
                     >
                       {letterTypes[key].label}
@@ -589,7 +589,7 @@ export function LettersOfLove() {
                     <div>
                       <label
                         htmlFor="letter-image"
-                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#5A2E88]/40 hover:bg-[#5A2E88]/5 transition-colors cursor-pointer"
+                        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#784982]/40 hover:bg-[#784982]/5 transition-colors cursor-pointer"
                       >
                         <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
                         <span className="text-sm text-gray-500">Click to upload an image</span>
@@ -700,7 +700,7 @@ export function LettersOfLove() {
                         type="file"
                         accept="video/*"
                         onChange={handleFileUpload}
-                        className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#5A2E88]/10 file:text-[#5A2E88] hover:file:bg-[#5A2E88]/20"
+                        className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#784982]/10 file:text-[#784982] hover:file:bg-[#784982]/20"
                       />
                     </div>
                   </div>
@@ -749,7 +749,7 @@ export function LettersOfLove() {
                     type="checkbox"
                     checked={galaPermission}
                     onChange={(e) => setGalaPermission(e.target.checked)}
-                    className="w-5 h-5 rounded border-gray-300 text-[#5A2E88] focus:ring-[#5A2E88] cursor-pointer"
+                    className="w-5 h-5 rounded border-gray-300 text-[#784982] focus:ring-[#784982] cursor-pointer"
                   />
                 </div>
                 <div>
@@ -780,7 +780,7 @@ export function LettersOfLove() {
               <Button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="flex-1 bg-gradient-to-r from-[#5A2E88] to-[#E91E8C] hover:opacity-90 h-12 text-base font-semibold"
+                className="flex-1 bg-[#784982] hover:bg-[#5a3562] h-12 text-base font-semibold"
               >
                 {submitting ? (
                   'Sending your love...'
@@ -798,10 +798,10 @@ export function LettersOfLove() {
 
       {/* Approved letters carousel */}
       {!loadingLetters && approvedLetters.length > 0 && (
-        <div className="bg-gradient-to-b from-[#5A2E88]/5 to-transparent py-12 sm:py-16">
+        <div className="bg-[#784982]/5 py-12 sm:py-16">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl sm:text-3xl leading-normal sm:leading-normal font-bold text-gray-900 mb-2">
                 Letters from the Community
               </h2>
               <p className="text-gray-500 max-w-lg mx-auto">
@@ -818,7 +818,7 @@ export function LettersOfLove() {
                     >
                       <button
                         onClick={() => setViewingLetter(letter)}
-                        className="bg-white rounded-2xl shadow-sm border border-gray-100 h-full flex flex-col text-left w-full hover:shadow-lg hover:border-[#5A2E88]/20 transition-all duration-200 overflow-hidden"
+                        className="bg-white rounded-2xl shadow-sm border border-gray-100 h-full flex flex-col text-left w-full hover:shadow-lg hover:border-[#784982]/20 transition-all duration-200 overflow-hidden"
                       >
                         {letter.imageKey && (
                           <div className="w-full aspect-[16/10] overflow-hidden bg-gray-100">
@@ -832,14 +832,14 @@ export function LettersOfLove() {
                         )}
                         <div className="p-6 flex flex-col flex-1">
                           <div className="flex items-start gap-3 mb-4">
-                            <div className="shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-[#5A2E88]/10 to-[#E91E8C]/10 flex items-center justify-center">
-                              <PenLine className="w-4 h-4 text-[#5A2E88]" />
+                            <div className="shrink-0 w-8 h-8 rounded-full bg-[#784982]/10 flex items-center justify-center">
+                              <PenLine className="w-4 h-4 text-[#784982]" />
                             </div>
                             <div className="min-w-0">
                               <p className="font-semibold text-gray-900 text-sm truncate">
                                 {letter.authorName}
                               </p>
-                              <p className="text-xs text-[#E91E8C]">
+                              <p className="text-xs text-[#e5c858]">
                                 {letterTypes[letter.letterType]?.label || 'A letter of love'}
                               </p>
                             </div>
@@ -857,7 +857,7 @@ export function LettersOfLove() {
                                 day: 'numeric',
                               })}
                             </p>
-                            <span className="text-xs text-[#5A2E88] font-medium">Read more</span>
+                            <span className="text-xs text-[#784982] font-medium">Read more</span>
                           </div>
                         </div>
                       </button>
@@ -880,7 +880,7 @@ export function LettersOfLove() {
           </p>
           <a
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-[#5A2E88] hover:underline mt-2"
+            className="inline-flex items-center gap-1 text-sm text-[#784982] hover:underline mt-2"
           >
             <ArrowLeft className="w-3 h-3" />
             Return to 40 Years
@@ -893,12 +893,12 @@ export function LettersOfLove() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-[#5A2E88]/10 to-[#E91E8C]/10 flex items-center justify-center">
-                <Heart className="w-5 h-5 text-[#5A2E88]" />
+              <div className="shrink-0 w-10 h-10 rounded-full bg-[#784982]/10 flex items-center justify-center">
+                <Heart className="w-5 h-5 text-[#784982]" />
               </div>
               <div>
                 <p className="text-lg font-bold text-gray-900">{viewingLetter?.authorName}</p>
-                <p className="text-sm font-normal text-[#E91E8C]">
+                <p className="text-sm font-normal text-[#e5c858]">
                   {viewingLetter && (letterTypes[viewingLetter.letterType]?.label || 'A letter of love')}
                 </p>
               </div>
@@ -915,7 +915,7 @@ export function LettersOfLove() {
                   />
                 </div>
               )}
-              <div className="bg-gradient-to-br from-[#5A2E88]/5 to-[#E91E8C]/5 rounded-xl p-6">
+              <div className="bg-[#784982]/5 rounded-xl p-6">
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                   {viewingLetter.message}
                 </p>

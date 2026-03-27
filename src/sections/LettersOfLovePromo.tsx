@@ -3,7 +3,7 @@ import { Heart, PenLine, Video, ArrowRight } from 'lucide-react';
 export function LettersOfLovePromo() {
   return (
     <section className="relative py-20 sm:py-28 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#3D1C5E] via-[#5A2E88] to-[#E91E8C]" />
+      <div className="absolute inset-0 bg-[#784982]" />
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-1/4 w-72 h-72 bg-white rounded-full blur-3xl" />
         <div className="absolute bottom-10 right-1/4 w-56 h-56 bg-white rounded-full blur-3xl" />
@@ -33,7 +33,7 @@ export function LettersOfLovePromo() {
           <Heart className="w-8 h-8 text-white fill-current" />
         </div>
 
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl leading-normal sm:leading-normal lg:leading-normal font-black text-white mb-4">
           Letters of Love
         </h2>
 
@@ -70,7 +70,7 @@ export function LettersOfLovePromo() {
 
         <a
           href="/letters-of-love"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white text-[#5A2E88] font-bold text-lg hover:bg-white/90 transition-all duration-300 hover:scale-105 shadow-xl shadow-black/20"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#784982] font-bold text-lg hover:bg-white/90 transition-all duration-300 hover:scale-105 shadow-xl shadow-black/20"
         >
           Share Your Love
           <ArrowRight className="w-5 h-5" />

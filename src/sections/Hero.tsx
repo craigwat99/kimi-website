@@ -1,42 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState } from 'react';
 
 export function Hero() {
   const [isVisible, setIsVisible] = useState(false);
-  const [count, setCount] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setIsVisible(true);
-    
-    // Animate the counter
-    const duration = 1000;
-    const steps = 40;
-    const interval = duration / steps;
-    let current = 0;
-    
-    const timer = setInterval(() => {
-      current++;
-      setCount(Math.min(current, 40));
-      if (current >= 40) clearInterval(timer);
-    }, interval);
-    
-    return () => clearInterval(timer);
   }, []);
 
+
   return (
-    <section 
+    <section
       ref={heroRef}
       id="hero"
       className="relative min-h-screen w-full overflow-hidden flex items-center"
       style={{
-        background: 'linear-gradient(135deg, #5A2E88 0%, #7B4FA2 50%, #E91E8C 100%)',
+        background: '#e5c858',
       }}
     >
       {/* Animated background overlay */}
-      <div 
+      <div
         className="absolute inset-0 opacity-30"
         style={{
-          background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.2) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(233,30,140,0.3) 0%, transparent 50%)',
+          background: 'rgba(120,73,130,0.08)',
         }}
       />
       
@@ -45,7 +31,7 @@ export function Hero() {
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full bg-white/20"
+            className="absolute rounded-full bg-[#784982]/20"
             style={{
               width: `${Math.random() * 6 + 2}px`,
               height: `${Math.random() * 6 + 2}px`,
@@ -61,7 +47,7 @@ export function Hero() {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
-          <div className="text-white space-y-6">
+          <div className="text-[#784982] space-y-6">
             {/* Celebrating text */}
             <div 
               className={`overflow-hidden transition-all duration-600 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
@@ -84,7 +70,7 @@ export function Hero() {
             </div>
 
             {/* 40 YEARS */}
-            <div className="space-y-2">
+            <div className="space-y-6">
               <h1 
                 className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
                 style={{ 
@@ -92,10 +78,10 @@ export function Hero() {
                   transitionTimingFunction: 'var(--ease-spring)',
                 }}
               >
-                <span className="inline-block">{count}</span>
+                4O
               </h1>
               <h2 
-                className={`text-5xl sm:text-6xl lg:text-7xl font-black leading-none tracking-tight transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
+                className={`text-5xl sm:text-6xl lg:text-7xl font-black leading-normal sm:leading-normal lg:leading-normal tracking-tight transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
                 style={{ 
                   transitionDelay: '800ms',
                   transitionTimingFunction: 'var(--ease-expo-out)',
@@ -128,20 +114,20 @@ export function Hero() {
             </div>
 
             {/* Date badge */}
-            <div 
-              className={`inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 transition-all duration-800 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 -rotate-180'}`}
-              style={{ 
+            <div
+              className={`inline-flex items-center gap-3 px-6 py-3 bg-[#784982]/10 backdrop-blur-sm border border-[#784982]/20 transition-all duration-800 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 -rotate-180'}`}
+              style={{
                 transitionDelay: '1400ms',
                 transitionTimingFunction: 'var(--ease-elastic)',
               }}
             >
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              <div className="w-2 h-2 bg-[#784982] rounded-full animate-pulse" />
               <span className="text-lg font-semibold tracking-wider">JULY 2026</span>
             </div>
 
             {/* Supporting text */}
             <p 
-              className={`text-lg sm:text-xl text-white/90 max-w-lg leading-relaxed transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              className={`text-lg sm:text-xl text-[#784982]/90 max-w-lg leading-relaxed transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
               style={{ 
                 transitionDelay: '1600ms',
                 transitionTimingFunction: 'var(--ease-expo-out)',
@@ -181,44 +167,23 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right content - Logo mark */}
-          <div 
-            className={`flex justify-center lg:justify-end transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 rotate-180'}`}
-            style={{ 
-              transitionDelay: '800ms',
+          {/* Right content - Hero image */}
+          <div
+            className={`flex items-center justify-center transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            style={{
+              transitionDelay: '600ms',
               transitionTimingFunction: 'var(--ease-spring)',
             }}
           >
-            <div 
-              className="relative"
-              style={{
-                animation: 'float 12s ease-in-out infinite',
-              }}
-            >
-              <img
-                src="/logo-40years.png"
-                alt="40 Years Logo"
-                className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl"
-              />
-              {/* Glow effect */}
-              <div 
-                className="absolute inset-0 -z-10 blur-3xl opacity-50"
-                style={{
-                  background: 'radial-gradient(circle, rgba(233,30,140,0.5) 0%, transparent 70%)',
-                }}
-              />
-            </div>
+            <img
+              src="/40Yearssm.jpg"
+              alt="40 Years of Homosexual Law Reform"
+              className="w-full rounded-none shadow-2xl"
+            />
           </div>
+
         </div>
       </div>
-
-      {/* Bottom gradient fade */}
-      <div 
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to top, white, transparent)',
-        }}
-      />
     </section>
   );
 }
