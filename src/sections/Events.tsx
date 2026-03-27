@@ -121,32 +121,37 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
           >
             <span className="gradient-text">Join the celebrations</span>
           </h2>
+                      
+        {/* Body text */}
+        <div className="space-y-6 text-lg sm:text-xl text-gray-700 leading-relaxed">
           <p
-            className={`text-lg text-gray-600 max-w-2xl mx-auto transition-all duration-700 ${
+            className={`transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
-            style={{ transitionDelay: '100ms' }}
+            style={{ transitionDelay: '300ms' }}
           >
-            Find an event happening around Aotearoa.
+            <strong className="text-[#784982]">Find an event happening around Aotearoa.</strong>
           </p>
+
           <p
-            className={`text-lg text-gray-600 max-w-2xl mx-auto transition-all duration-700 ${
+            className={`transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
-            style={{ transitionDelay: '100ms' }}
+            style={{ transitionDelay: '500ms' }}
           >
-            Are you a historian, event producer, community organisation or just passionate about our queer culture – why not organise an event and submit it here.
-           </p>
+            Are you a historian, event producer, community organisation or just passionate about our queer culture – why not organise an event and submit it here
+          </p>
+
           <p
-            className={`text-lg text-gray-600 max-w-2xl mx-auto transition-all duration-700 ${
+            className={`transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
-            style={{ transitionDelay: '100ms' }}
+            style={{ transitionDelay: '500ms' }}
           >
             All events submitted by 1 June 2026, will be included in the printed programme, being distrusted around the country.
-           </p>
-                      
-                      
+          </p>
+
+        </div>                      
 
          
 
