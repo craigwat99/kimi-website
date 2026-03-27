@@ -1,8 +1,12 @@
-import {useRef, useState } from 'react';
+import {useEffect, useRef, useState } from 'react';
 
 export function Hero() {
-  const [isVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
 
   return (
@@ -66,7 +70,7 @@ export function Hero() {
             </div>
 
             {/* 40 YEARS */}
-            <div className="space-y-2">
+            <div className="space-y-6">
               <h1 
                 className={`text-7xl sm:text-8xl lg:text-9xl font-black leading-none tracking-tighter transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
                 style={{ 
@@ -163,8 +167,20 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right content - Logo mark */}
-          {/* 40 YEARS */}
+          {/* Right content - Hero image */}
+          <div
+            className={`flex items-center justify-center transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+            style={{
+              transitionDelay: '600ms',
+              transitionTimingFunction: 'var(--ease-spring)',
+            }}
+          >
+            <img
+              src="/40Yearssm.jpg"
+              alt="40 Years of Homosexual Law Reform"
+              className="w-full rounded-none shadow-2xl"
+            />
+          </div>
 
         </div>
       </div>
