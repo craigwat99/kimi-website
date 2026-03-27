@@ -143,7 +143,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
           </p>
 
           <p 
-            className={`text-white/70 max-w-xl mx-auto mb-10 transition-all duration-700 ${
+            className={`max-w-xl mx-auto mb-10 transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
             style={{ transitionDelay: '500ms' }}
