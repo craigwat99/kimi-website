@@ -142,8 +142,8 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
             Are you a historian, event producer, community organisation or just passionate about our queer culture – why not organise an event and submit it here
           </p>
 
-          <p class="text-white/70 max-w-xl mx-auto mb-10"
-            className={`transition-all duration-700 ${
+          <p 
+            className={`text-white/70 max-w-xl mx-auto mb-10 transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
             style={{ transitionDelay: '500ms' }}
