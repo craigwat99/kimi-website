@@ -32,7 +32,7 @@ export function Footer({ onNavigate }: FooterProps) {
               className="inline-block text-3xl font-black mb-4 hover:scale-105 transition-transform"
             >
               <span className="text-white">40</span>{' '}
-              <span className="text-white/90">YEARS</span>
+              <span className="text-white/90">YEARS OF LOVE</span>
             </a>
             <p className="text-white/80 text-lg mb-6 max-w-md">
               Celebrating the past, 1986 - 2026, while looking to the future.
