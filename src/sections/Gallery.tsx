@@ -183,6 +183,14 @@ export function Gallery() {
           >
             Photographs from the campaign and celebrations
           </p>
+          <p
+            className={`text-med text-gray-600 max-w-2xl mx-auto transition-all duration-700 ${
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: '100ms' }}
+          >
+            Credit: David Hindley
+          </p>
         </div>
 
         {/* Gallery Grid */}
