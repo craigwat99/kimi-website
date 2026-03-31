@@ -52,8 +52,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
               isScrolled ? 'text-[#784982]' : 'text-white'
             }`}
           >
-            <img src="/rainbow-heart.png" alt="" className="inline-block w-[1.4em] h-[1.4em] mr-1 align-middle relative -top-[0.05em]" />
-            <span className="font-black">40</span> YEARS
+            <img src="/40Y.svg" alt="" className="inline-block w-[1.4em] h-[1.4em] mr-1 align-middle relative -top-[0.05em]" />
           </a>
 
           {/* Desktop Navigation */}
