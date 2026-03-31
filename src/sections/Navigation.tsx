@@ -52,7 +52,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
               isScrolled ? 'text-[#784982]' : 'text-white'
             }`}
           >
-            <img src="/40TH.png" alt="" className="inline-block w-[1.4em] h-[1.4em] mr-1 align-middle relative -top-[0.05em]" />
+            <img src="/40TH.png" alt="" className="inline-block  mr-1 align-middle relative -top-[0.05em]" />
           </a>
 
           {/* Desktop Navigation */}
