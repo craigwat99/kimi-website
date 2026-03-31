@@ -31,7 +31,7 @@ export function Footer({ onNavigate }: FooterProps) {
               }}
               className="inline-block text-3xl font-black mb-4 hover:scale-105 transition-transform"
             >
-              <img src="/40Ytxt.png" alt="" className="inline-block mr-1 align-middle relative -top-[0.05em]" />
+              <img src="/40Ytxt.png" alt="" className="inline-block h-[3em] mr-1 align-middle relative -top-[0.05em]" />
             </a>
             <p className="text-white/80 text-lg mb-6 max-w-md">
               Celebrating the past, 1986 - 2026, while looking to the future.
