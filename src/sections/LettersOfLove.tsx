@@ -304,6 +304,24 @@ export function LettersOfLove() {
       });
       if (!saveRes.ok) throw new Error('Failed to save letter');
       setSubmitted(true);
+
+      // Notify admin of new love letter submission
+      fetch('/.netlify/functions/send-admin-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'letter',
+          name: authorName.trim() || 'Anonymous',
+          submitterEmail: email.trim(),
+          details: {
+            'Author': authorName.trim() || 'Anonymous',
+            'Letter Type': letterType,
+            'Recipient': recipientName.trim() || undefined,
+            'Has Video': videoFile ? 'Yes' : 'No',
+            'Gala Permission': galaPermission ? 'Yes' : 'No',
+          },
+        }),
+      }).catch(() => {});
     } catch (err) {
       console.error('Submit error:', err);
       setErrors({ submit: 'Something went wrong. Please try again.' });
