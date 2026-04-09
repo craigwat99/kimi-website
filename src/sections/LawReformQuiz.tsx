@@ -249,7 +249,7 @@ export function LawReformQuiz() {
 
             {/* Question card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-6">
-              <h2 className="text-xl sm:text-2xl leading-normal sm:leading-normal font-bold text-gray-900 mb-6">{q.question}</h2>
+              <h2 className="text-xl sm:text-2xl leading-normal sm:leading-normal font-bold text-gray-900 mb-6" style={{ fontFamily: "'Inter', sans-serif", textTransform: 'none' }}>{q.question}</h2>
 
               <div className="space-y-3">
                 {q.options.map((option, index) => {
