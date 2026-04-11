@@ -8,15 +8,20 @@ interface NavigationProps {
 export function Navigation({ onNavigate }: NavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isHomePage = window.location.pathname === '/' || window.location.pathname === '';
 
   useEffect(() => {
+    if (!isHomePage) {
+      setIsScrolled(true);
+      return;
+    }
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHomePage]);
 
   const navLinks = [
     { id: 'events', label: 'Events', icon: Calendar },
@@ -31,6 +36,10 @@ export function Navigation({ onNavigate }: NavigationProps) {
     setIsMobileMenuOpen(false);
   };
 
+  const getSectionHref = (linkId: string) => {
+    return isHomePage ? `#${linkId}` : `/#${linkId}`;
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -43,11 +52,11 @@ export function Navigation({ onNavigate }: NavigationProps) {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a
-            href="#hero"
-            onClick={(e) => {
+            href={isHomePage ? '#hero' : '/'}
+            onClick={isHomePage ? (e) => {
               e.preventDefault();
               handleNavClick('hero');
-            }}
+            } : undefined}
             className={`font-bold text-xl transition-colors duration-300 ${
               isScrolled ? 'text-[#784982]' : 'text-white'
             }`}
@@ -60,11 +69,11 @@ export function Navigation({ onNavigate }: NavigationProps) {
             {navLinks.map((link) => (
               <a
                 key={link.id}
-                href={'href' in link && link.href ? link.href : `#${link.id}`}
-                onClick={'href' in link && link.href ? undefined : (e) => {
+                href={'href' in link && link.href ? link.href : getSectionHref(link.id)}
+                onClick={'href' in link && link.href ? undefined : isHomePage ? (e) => {
                   e.preventDefault();
                   handleNavClick(link.id);
-                }}
+                } : undefined}
                 className={`relative font-medium text-sm transition-all duration-300 hover:-translate-y-0.5 group ${
                   isScrolled ? 'text-gray-700 hover:text-[#784982]' : 'text-white/90 hover:text-white'
                 }`}
@@ -75,7 +84,13 @@ export function Navigation({ onNavigate }: NavigationProps) {
             ))}
             
             <button
-              onClick={() => handleNavClick('events')}
+              onClick={() => {
+                if (isHomePage) {
+                  handleNavClick('events');
+                } else {
+                  window.location.href = '/#events';
+                }
+              }}
               className={`flex items-center gap-2 px-5 py-2.5 font-semibold text-sm transition-all duration-300 hover:scale-105 ${
                 isScrolled
                   ? 'bg-[#784982] text-white shadow-lg hover:shadow-xl'
@@ -110,11 +125,11 @@ export function Navigation({ onNavigate }: NavigationProps) {
               return (
                 <a
                   key={link.id}
-                  href={'href' in link && link.href ? link.href : `#${link.id}`}
-                  onClick={'href' in link && link.href ? undefined : (e) => {
+                  href={'href' in link && link.href ? link.href : getSectionHref(link.id)}
+                  onClick={'href' in link && link.href ? undefined : isHomePage ? (e) => {
                     e.preventDefault();
                     handleNavClick(link.id);
-                  }}
+                  } : undefined}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
                     isScrolled
                       ? 'text-gray-700 hover:bg-white hover:text-[#784982] hover:shadow-md'
@@ -128,7 +143,13 @@ export function Navigation({ onNavigate }: NavigationProps) {
             })}
             
             <button
-              onClick={() => handleNavClick('events')}
+              onClick={() => {
+                if (isHomePage) {
+                  handleNavClick('events');
+                } else {
+                  window.location.href = '/#events';
+                }
+              }}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold bg-[#784982] text-white transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
             >
               <PlusCircle className="w-5 h-5" />
