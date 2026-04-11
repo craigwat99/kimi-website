@@ -92,6 +92,20 @@ function App() {
     }
   };
 
+  // Handle hash-based navigation from other pages (e.g. /quiz -> /#events)
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      // Small delay to ensure sections are rendered
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, []);
+
   // Only show approved events on the public site
   const approvedEvents = events.filter(e => e.approved !== false);
 
