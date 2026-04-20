@@ -16,6 +16,7 @@ import {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  type CarouselApi,
 } from '@/components/ui/carousel';
 import { compressImage } from '@/utils/images';
 
@@ -64,6 +65,7 @@ export function LettersOfLove() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [viewingLetter, setViewingLetter] = useState<ApprovedLetter | null>(null);
+  const [communityCarouselApi, setCommunityCarouselApi] = useState<CarouselApi | null>(null);
 
   // Image state (for text letters)
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -179,6 +181,19 @@ export function LettersOfLove() {
       }
     })();
   }, []);
+
+  // Auto-scroll the community carousel
+  useEffect(() => {
+    if (!communityCarouselApi || approvedLetters.length <= 1) return;
+    const interval = setInterval(() => {
+      if (communityCarouselApi.canScrollNext()) {
+        communityCarouselApi.scrollNext();
+      } else {
+        communityCarouselApi.scrollTo(0);
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [communityCarouselApi, approvedLetters.length]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -827,7 +842,7 @@ export function LettersOfLove() {
               </p>
             </div>
             <div className="relative px-12">
-              <Carousel opts={{ align: 'start', loop: approvedLetters.length > 1 }}>
+              <Carousel opts={{ align: 'start', loop: approvedLetters.length > 1 }} setApi={setCommunityCarouselApi}>
                 <CarouselContent className="-ml-4">
                   {approvedLetters.map((letter) => (
                     <CarouselItem
