@@ -109,6 +109,11 @@ h3 {
   100% { background-position: 200% center; }
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
