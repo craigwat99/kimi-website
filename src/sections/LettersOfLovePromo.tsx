@@ -116,7 +116,7 @@ export function LettersOfLovePromo() {
       {/* Scrolling letters marquee */}
       {scrollingLetters.length > 0 && (
         <div
-          className="relative mt-14 overflow-hidden"
+          className="relative mt-14 max-w-4xl mx-auto overflow-hidden"
           style={{
             maskImage:
               'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',

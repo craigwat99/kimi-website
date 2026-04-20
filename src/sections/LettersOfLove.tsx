@@ -16,6 +16,7 @@ import {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  type CarouselApi,
 } from '@/components/ui/carousel';
 import { compressImage } from '@/utils/images';
 
@@ -64,6 +65,7 @@ export function LettersOfLove() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [viewingLetter, setViewingLetter] = useState<ApprovedLetter | null>(null);
+  const [letterCarouselApi, setLetterCarouselApi] = useState<CarouselApi | null>(null);
 
   // Image state (for text letters)
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -179,6 +181,20 @@ export function LettersOfLove() {
       }
     })();
   }, []);
+
+  // Auto-scroll the approved letters carousel
+  useEffect(() => {
+    if (!letterCarouselApi || approvedLetters.length <= 1) return;
+    const interval = setInterval(() => {
+      if (!letterCarouselApi) return;
+      if (letterCarouselApi.canScrollNext()) {
+        letterCarouselApi.scrollNext();
+      } else {
+        letterCarouselApi.scrollTo(0);
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [letterCarouselApi, approvedLetters.length]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -388,6 +404,9 @@ export function LettersOfLove() {
     );
   }
 
+  const marqueeLetters =
+    approvedLetters.length > 0 ? [...approvedLetters, ...approvedLetters] : [];
+
   return (
     <div className="min-h-screen bg-[#784982]/5">
       {/* Hero header */}
@@ -417,6 +436,46 @@ export function LettersOfLove() {
             special. Your words may become part of a time capsule at the National Gala Event.
           </p>
         </div>
+
+        {/* Scrolling letters marquee */}
+        {marqueeLetters.length > 0 && (
+          <div
+            className="relative pb-12 overflow-hidden"
+            style={{
+              maskImage:
+                'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+              WebkitMaskImage:
+                'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+            }}
+          >
+            <div className="flex gap-6 w-max animate-[marquee_60s_linear_infinite] hover:[animation-play-state:paused]">
+              {marqueeLetters.map((letter, i) => (
+                <button
+                  key={`${letter.id}-${i}`}
+                  onClick={() => setViewingLetter(letter)}
+                  className="shrink-0 w-72 sm:w-80 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 text-left hover:bg-white/15 hover:border-white/30 transition-colors"
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="shrink-0 w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
+                      <Heart className="w-4 h-4 text-white fill-current" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-white text-sm truncate">
+                        {letter.authorName}
+                      </p>
+                      <p className="text-xs text-[#e5c858]">
+                        {letterTypes[letter.letterType]?.label || 'A letter of love'}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-white/80 text-sm leading-relaxed line-clamp-4">
+                    {letter.message}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Form area */}
@@ -827,7 +886,7 @@ export function LettersOfLove() {
               </p>
             </div>
             <div className="relative px-12">
-              <Carousel opts={{ align: 'start', loop: approvedLetters.length > 1 }}>
+              <Carousel opts={{ align: 'start', loop: approvedLetters.length > 1 }} setApi={setLetterCarouselApi}>
                 <CarouselContent className="-ml-4">
                   {approvedLetters.map((letter) => (
                     <CarouselItem

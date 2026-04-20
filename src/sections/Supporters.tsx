@@ -52,27 +52,44 @@ export function Supporters() {
   const renderGroup = (items: Supporter[], level: 'gold' | 'silver' | 'bronze') => {
     if (items.length === 0) return null;
     const config = levelConfig[level];
+    const rows: Supporter[][] = [];
+    for (let i = 0; i < items.length; i += 3) {
+      rows.push(items.slice(i, i + 3));
+    }
     return (
       <div className="mb-8 last:mb-0">
         <h3 className={`text-sm font-semibold uppercase tracking-wider ${config.color} text-center mb-6`}>
           {config.label}
         </h3>
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8">
-          {items.map((supporter) => (
-            <a
-              key={supporter.id}
-              href={supporter.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={supporter.name}
-              className="group block p-4 transition-all duration-300 hover:-translate-y-1"
+        <div className="flex flex-col items-center gap-6 md:gap-8">
+          {rows.map((row, idx) => (
+            <div
+              key={idx}
+              className={`grid items-center justify-items-center gap-6 md:gap-8 w-full max-w-4xl mx-auto ${
+                row.length === 1
+                  ? 'grid-cols-1'
+                  : row.length === 2
+                    ? 'grid-cols-1 sm:grid-cols-2'
+                    : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
+              }`}
             >
-              <img
-                src={`/.netlify/functions/get-supporter-logo?key=${encodeURIComponent(supporter.logoKey)}`}
-                alt={supporter.name}
-                className={`${config.logoSize} w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity`}
-              />
-            </a>
+              {row.map((supporter) => (
+                <a
+                  key={supporter.id}
+                  href={supporter.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={supporter.name}
+                  className="group block p-4 transition-all duration-300 hover:-translate-y-1"
+                >
+                  <img
+                    src={`/.netlify/functions/get-supporter-logo?key=${encodeURIComponent(supporter.logoKey)}`}
+                    alt={supporter.name}
+                    className={`${config.logoSize} w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity`}
+                  />
+                </a>
+              ))}
+            </div>
           ))}
         </div>
       </div>
