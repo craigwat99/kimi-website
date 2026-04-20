@@ -166,14 +166,6 @@ export function HistoryTimeline() {
       {/* This inner div groups the buttons so THEY sit side-by-side */}
       <div className="flex flex-col sm:flex-row justify-center gap-4">
         <a
-          href="https://nzhistory.govt.nz/page/homosexual-law-reform-new-zealand"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary inline-flex"
-        >
-          Read More on NZ History
-        </a>
-        <a
           href="https://www.pridenz.com/time/homosexual_law_reform.html"
           target="_blank"
           rel="noopener noreferrer"
