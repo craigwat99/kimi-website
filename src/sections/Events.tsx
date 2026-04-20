@@ -126,10 +126,6 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
           <p className="text-lg sm:text-xl text-gray-700 mx-auto mb-3">
             Are you a historian, event producer, community organisation or just passionate about our queer culture – why not organise an event and submit it here.
           </p>
-
-          <p className="text-gray-600 mx-auto mb-10">
-            All events submitted by 1 June 2026, will be included in the printed programme, being distrusted around the country.
-          </p>
         </div>
 
         {/* Search and Filter Bar */}
