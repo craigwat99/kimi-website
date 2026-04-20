@@ -1,6 +1,42 @@
+import { useEffect, useState } from 'react';
 import { Heart, PenLine, Video, ArrowRight } from 'lucide-react';
 
+const letterTypeLabels: Record<string, string> = {
+  'to-myself': 'A letter to myself',
+  'to-passed': 'To someone who has passed',
+  'to-future-self': 'To my future self',
+  'to-someone-special': 'To someone special',
+};
+
+interface ApprovedLetter {
+  id: string;
+  authorName: string;
+  letterType: string;
+  message: string;
+  imageKey: string | null;
+  createdAt: string;
+}
+
 export function LettersOfLovePromo() {
+  const [letters, setLetters] = useState<ApprovedLetter[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/.netlify/functions/get-approved-letters');
+        if (res.ok) {
+          const data = await res.json();
+          setLetters(data.letters || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch approved letters:', err);
+      }
+    })();
+  }, []);
+
+  // Duplicate list for seamless loop
+  const scrollingLetters = letters.length > 0 ? [...letters, ...letters] : [];
+
   return (
     <section className="relative py-20 sm:py-28 overflow-hidden">
       <div className="absolute inset-0 bg-[#784982]" />
@@ -76,6 +112,48 @@ export function LettersOfLovePromo() {
           <ArrowRight className="w-5 h-5" />
         </a>
       </div>
+
+      {/* Scrolling letters marquee */}
+      {scrollingLetters.length > 0 && (
+        <div
+          className="relative mt-14 overflow-hidden"
+          style={{
+            maskImage:
+              'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+            WebkitMaskImage:
+              'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+          }}
+        >
+          <div
+            className="flex gap-6 w-max animate-[marquee_60s_linear_infinite] hover:[animation-play-state:paused]"
+          >
+            {scrollingLetters.map((letter, i) => (
+              <a
+                key={`${letter.id}-${i}`}
+                href="/letters-of-love"
+                className="shrink-0 w-72 sm:w-80 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 text-left hover:bg-white/15 hover:border-white/30 transition-colors"
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
+                    <Heart className="w-4 h-4 text-white fill-current" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-white text-sm truncate">
+                      {letter.authorName}
+                    </p>
+                    <p className="text-xs text-[#e5c858]">
+                      {letterTypeLabels[letter.letterType] || 'A letter of love'}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-white/80 text-sm leading-relaxed line-clamp-4">
+                  {letter.message}
+                </p>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
