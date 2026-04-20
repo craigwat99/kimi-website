@@ -111,11 +111,11 @@ export function Footer({ onNavigate }: FooterProps) {
             </div>
 
             <a
-              href="mailto:hello@rainbowwellington.org.nz"
+              href="mailto:contact@40yearsoflove.nz"
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <Mail className="w-4 h-4" />
-              hello@rainbowwellington.org.nz
+              contact@40yearsoflove.nz
             </a>
           </div>
         </div>
