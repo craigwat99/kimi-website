@@ -73,7 +73,6 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
             alt={event.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/50" />
 
           {/* Close button */}
           <button
@@ -82,18 +81,18 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
           >
             <X className="w-5 h-5" />
           </button>
-
-          {/* Title overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-[#784982] mb-3">
-              {getEventTypeLabel(event.eventType)}
-            </span>
-            <h3 className="text-2xl sm:text-3xl leading-normal sm:leading-normal font-bold text-white">{event.name}</h3>
-          </div>
         </div>
 
         {/* Content */}
         <div className="p-6 space-y-6">
+          {/* Title */}
+          <div>
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#784982]/10 text-[#784982] mb-3">
+              {getEventTypeLabel(event.eventType)}
+            </span>
+            <h3 className="text-2xl sm:text-3xl leading-normal sm:leading-normal font-bold text-gray-900">{event.name}</h3>
+          </div>
+
           {/* Key Info Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">

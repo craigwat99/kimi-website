@@ -281,8 +281,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                     alt={event.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-black/40" />
-                  
+
                   {/* Type badge */}
                   <div className="absolute top-4 left-4">
                     <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-[#784982] backdrop-blur-sm">
@@ -300,17 +299,15 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                       {formatPrice(event.ticketPrice)}
                     </span>
                   </div>
-
-                  {/* Title overlay */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-white font-bold text-lg line-clamp-2 group-hover:text-[#e5c858] transition-colors">
-                      {event.name}
-                    </h3>
-                  </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-5 space-y-3">
+                  {/* Title */}
+                  <h3 className="font-bold text-lg text-gray-900 line-clamp-2 group-hover:text-[#784982] transition-colors">
+                    {event.name}
+                  </h3>
+
                   {/* Date & Time */}
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="w-4 h-4 text-[#784982]" />
