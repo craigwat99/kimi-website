@@ -75,11 +75,11 @@ export function AdminDashboard() {
   const [deleteSupporterConfirm, setDeleteSupporterConfirm] = useState<string | null>(null);
 
   // Remembrance names state
-  const [remembranceNames, setRemembranceNames] = useState<{ id: string; name: string; createdAt: string }[]>([]);
+  const [remembranceNames, setRemembranceNames] = useState<{ id: string; name: string; source: string; createdAt: string }[]>([]);
   const [remembranceLoading, setRemembranceLoading] = useState(false);
   const [remembranceSearch, setRemembranceSearch] = useState('');
   const [addingName, setAddingName] = useState(false);
-  const [editingName, setEditingName] = useState<{ id: string; name: string; createdAt: string } | null>(null);
+  const [editingName, setEditingName] = useState<{ id: string; name: string; source: string; createdAt: string } | null>(null);
   const [deleteNameConfirm, setDeleteNameConfirm] = useState<string | null>(null);
 
   // Load events from server
@@ -399,12 +399,12 @@ export function AdminDashboard() {
     }
   }, []);
 
-  const handleSaveRemembranceName = async (name: string, id?: string, createdAt?: string) => {
+  const handleSaveRemembranceName = async (name: string, id?: string, createdAt?: string, oldFallbackName?: string) => {
     try {
       const res = await fetch('/.netlify/functions/save-remembrance-name', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, id, createdAt }),
+        body: JSON.stringify({ name, id, createdAt, oldFallbackName }),
       });
       const data = await res.json();
       if (data.success) {
@@ -1284,14 +1284,18 @@ export function AdminDashboard() {
         {activeTab === 'remembrance' && (
         <>
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
               <p className="text-sm text-gray-500">Total Names</p>
               <p className="text-3xl font-bold text-gray-900 mt-1">{remembranceNames.length}</p>
             </div>
             <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-              <p className="text-sm text-gray-500">Showing</p>
-              <p className="text-3xl font-bold text-[#784982] mt-1">{filteredRemembranceNames.length}</p>
+              <p className="text-sm text-gray-500">Built-in</p>
+              <p className="text-3xl font-bold text-gray-500 mt-1">{remembranceNames.filter(n => n.source === 'builtin').length}</p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <p className="text-sm text-gray-500">Custom Added</p>
+              <p className="text-3xl font-bold text-[#784982] mt-1">{remembranceNames.filter(n => n.source === 'custom').length}</p>
             </div>
           </div>
 
@@ -1335,6 +1339,7 @@ export function AdminDashboard() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
+                  <TableHead className="hidden sm:table-cell">Source</TableHead>
                   <TableHead className="hidden md:table-cell">Date Added</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -1342,13 +1347,13 @@ export function AdminDashboard() {
               <TableBody>
                 {remembranceLoading ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-12 text-gray-500">
+                    <TableCell colSpan={4} className="text-center py-12 text-gray-500">
                       Loading names...
                     </TableCell>
                   </TableRow>
                 ) : filteredRemembranceNames.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-12 text-gray-500">
+                    <TableCell colSpan={4} className="text-center py-12 text-gray-500">
                       {remembranceNames.length === 0 ? 'No names yet. Click "Add Name" to get started.' : 'No names match your search.'}
                     </TableCell>
                   </TableRow>
@@ -1361,9 +1366,14 @@ export function AdminDashboard() {
                           <span className="font-medium text-gray-900">{entry.name}</span>
                         </div>
                       </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        <Badge variant={entry.source === 'builtin' ? 'secondary' : 'default'} className={entry.source === 'builtin' ? 'bg-gray-100 text-gray-600' : 'bg-[#784982]/10 text-[#784982]'}>
+                          {entry.source === 'builtin' ? 'Built-in' : 'Added'}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="hidden md:table-cell">
                         <span className="text-sm text-gray-500">
-                          {new Date(entry.createdAt).toLocaleDateString()}
+                          {entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : '—'}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -2412,10 +2422,10 @@ function RemembranceNameModal({
   onClose,
   onSave,
 }: {
-  entry: { id: string; name: string; createdAt: string } | null;
+  entry: { id: string; name: string; source: string; createdAt: string } | null;
   isNew?: boolean;
   onClose: () => void;
-  onSave: (name: string, id?: string, createdAt?: string) => void;
+  onSave: (name: string, id?: string, createdAt?: string, oldFallbackName?: string) => void;
 }) {
   const [name, setName] = useState('');
 
@@ -2431,7 +2441,8 @@ function RemembranceNameModal({
     if (isNew) {
       onSave(name.trim());
     } else if (entry) {
-      onSave(name.trim(), entry.id, entry.createdAt);
+      const oldFallback = entry.source === 'builtin' ? entry.name : undefined;
+      onSave(name.trim(), entry.id, entry.createdAt, oldFallback);
     }
   };
 

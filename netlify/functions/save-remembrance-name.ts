@@ -11,7 +11,7 @@ export default async (req: Request, _context: Context) => {
 
   try {
     const body = await req.json();
-    const { name, id } = body;
+    const { name, id, oldFallbackName } = body;
 
     if (!name || typeof name !== "string" || !name.trim()) {
       return new Response(JSON.stringify({ error: "Name is required" }), {
@@ -21,11 +21,34 @@ export default async (req: Request, _context: Context) => {
     }
 
     const store = getStore("remembrance-names");
-    const entryId = id || `name-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+    // If editing a fallback name, add the old name to the removed list
+    if (oldFallbackName) {
+      let removedFallback: string[] = [];
+      try {
+        const removed = await store.get("__removed_fallback__", { type: "json" }) as { names: string[] } | null;
+        if (removed?.names) {
+          removedFallback = removed.names;
+        }
+      } catch {
+        // No removed list yet
+      }
+
+      if (!removedFallback.includes(oldFallbackName)) {
+        removedFallback.push(oldFallbackName);
+      }
+      await store.setJSON("__removed_fallback__", { names: removedFallback });
+    }
+
+    // For fallback edits, always create a new custom entry
+    const isEditingFallback = typeof id === "string" && id.startsWith("fallback:");
+    const entryId = isEditingFallback
+      ? `name-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      : (id || `name-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
 
     await store.setJSON(entryId, {
       name: name.trim(),
-      createdAt: id ? (body.createdAt || new Date().toISOString()) : new Date().toISOString(),
+      createdAt: (!id || isEditingFallback) ? new Date().toISOString() : (body.createdAt || new Date().toISOString()),
     });
 
     return new Response(JSON.stringify({ success: true, id: entryId }), {
