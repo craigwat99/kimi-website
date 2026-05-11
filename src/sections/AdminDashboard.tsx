@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload, Heart, RefreshCw, Video, FileText, Star, ExternalLink } from 'lucide-react';
+import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload, Heart, RefreshCw, Video, FileText, Star, ExternalLink, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -53,7 +53,7 @@ export function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'events' | 'timeline' | 'letters' | 'supporters'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'timeline' | 'letters' | 'supporters' | 'remembrance'>('events');
   const [timelineItems, setTimelineItems] = useState<TimelineEvent[]>([]);
   const [editingTimeline, setEditingTimeline] = useState<TimelineEvent | null>(null);
   const [addingTimeline, setAddingTimeline] = useState(false);
@@ -73,6 +73,14 @@ export function AdminDashboard() {
   const [addingSupporter, setAddingSupporter] = useState(false);
   const [editingSupporter, setEditingSupporter] = useState<Supporter | null>(null);
   const [deleteSupporterConfirm, setDeleteSupporterConfirm] = useState<string | null>(null);
+
+  // Remembrance names state
+  const [remembranceNames, setRemembranceNames] = useState<{ id: string; name: string; createdAt: string }[]>([]);
+  const [remembranceLoading, setRemembranceLoading] = useState(false);
+  const [remembranceSearch, setRemembranceSearch] = useState('');
+  const [addingName, setAddingName] = useState(false);
+  const [editingName, setEditingName] = useState<{ id: string; name: string; createdAt: string } | null>(null);
+  const [deleteNameConfirm, setDeleteNameConfirm] = useState<string | null>(null);
 
   // Load events from server
   const loadEvents = useCallback(async () => {
@@ -375,12 +383,67 @@ export function AdminDashboard() {
     }
   };
 
+  // Remembrance names handlers
+  const loadRemembranceNames = useCallback(async () => {
+    setRemembranceLoading(true);
+    try {
+      const res = await fetch('/.netlify/functions/get-remembrance-names');
+      const data = await res.json();
+      if (data.names) {
+        setRemembranceNames(data.names);
+      }
+    } catch {
+      // Failed to load names
+    } finally {
+      setRemembranceLoading(false);
+    }
+  }, []);
+
+  const handleSaveRemembranceName = async (name: string, id?: string, createdAt?: string) => {
+    try {
+      const res = await fetch('/.netlify/functions/save-remembrance-name', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, id, createdAt }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await loadRemembranceNames();
+        setAddingName(false);
+        setEditingName(null);
+      }
+    } catch {
+      // Failed to save
+    }
+  };
+
+  const handleDeleteRemembranceName = async (nameId: string) => {
+    try {
+      await fetch('/.netlify/functions/delete-remembrance-name', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nameId }),
+      });
+      setRemembranceNames(prev => prev.filter(n => n.id !== nameId));
+      setDeleteNameConfirm(null);
+    } catch {
+      // Failed to delete
+    }
+  };
+
   // Load supporters when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       loadSupporters();
     }
   }, [isAuthenticated, loadSupporters]);
+
+  // Load remembrance names when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadRemembranceNames();
+    }
+  }, [isAuthenticated, loadRemembranceNames]);
 
   const filteredEvents = events.filter(event => {
     if (statusFilter === 'approved' && !event.approved) return false;
@@ -419,6 +482,14 @@ export function AdminDashboard() {
   const lettersPendingCount = letters.filter(l => !l.approved).length;
   const lettersApprovedCount = letters.filter(l => l.approved).length;
   const lettersGalaCount = letters.filter(l => l.galaPermission).length;
+
+  // Remembrance names filtering
+  const filteredRemembranceNames = remembranceNames.filter(entry => {
+    if (remembranceSearch) {
+      return entry.name.toLowerCase().includes(remembranceSearch.toLowerCase());
+    }
+    return true;
+  });
 
   const letterTypeLabel = (type: string) => {
     switch (type) {
@@ -561,6 +632,17 @@ export function AdminDashboard() {
           >
             <Star className="w-4 h-4" />
             Supporters ({supporters.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('remembrance')}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'remembrance'
+                ? 'bg-[#784982] text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            Remembrance ({remembranceNames.length})
           </button>
         </div>
 
@@ -1199,6 +1281,122 @@ export function AdminDashboard() {
         </>
         )}
 
+        {activeTab === 'remembrance' && (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <p className="text-sm text-gray-500">Total Names</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{remembranceNames.length}</p>
+            </div>
+            <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+              <p className="text-sm text-gray-500">Showing</p>
+              <p className="text-3xl font-bold text-[#784982] mt-1">{filteredRemembranceNames.length}</p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  placeholder="Search names..."
+                  value={remembranceSearch}
+                  onChange={(e) => setRemembranceSearch(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={loadRemembranceNames}
+                  disabled={remembranceLoading}
+                >
+                  <RefreshCw className={`w-4 h-4 mr-2 ${remembranceLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setAddingName(true)}
+                  className="bg-[#784982] hover:bg-[#5a3562]"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Name
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Names Table */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead className="hidden md:table-cell">Date Added</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {remembranceLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center py-12 text-gray-500">
+                      Loading names...
+                    </TableCell>
+                  </TableRow>
+                ) : filteredRemembranceNames.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center py-12 text-gray-500">
+                      {remembranceNames.length === 0 ? 'No names yet. Click "Add Name" to get started.' : 'No names match your search.'}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredRemembranceNames.map((entry) => (
+                    <TableRow key={entry.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Star className="w-3.5 h-3.5 text-[#e5c858] fill-[#e5c858] flex-shrink-0" />
+                          <span className="font-medium text-gray-900">{entry.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <span className="text-sm text-gray-500">
+                          {new Date(entry.createdAt).toLocaleDateString()}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingName(entry)}
+                            className="h-8 px-2"
+                            title="Edit"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setDeleteNameConfirm(entry.id)}
+                            className="text-red-600 border-red-200 hover:bg-red-50 h-8 px-2"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </>
+        )}
+
       </main>
 
       {/* Edit Event Modal */}
@@ -1454,6 +1652,44 @@ export function AdminDashboard() {
                 className="flex-1 bg-red-600 hover:bg-red-700"
               >
                 Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add/Edit Remembrance Name Modal */}
+      {(addingName || editingName) && (
+        <RemembranceNameModal
+          entry={editingName}
+          isNew={addingName}
+          onClose={() => { setAddingName(false); setEditingName(null); }}
+          onSave={handleSaveRemembranceName}
+        />
+      )}
+
+      {/* Delete Remembrance Name Confirmation */}
+      <Dialog open={!!deleteNameConfirm} onOpenChange={() => setDeleteNameConfirm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Remove Name</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+              <p className="text-sm text-red-800">
+                This will permanently remove this name from the remembrance list. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setDeleteNameConfirm(null)} className="flex-1">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => deleteNameConfirm && handleDeleteRemembranceName(deleteNameConfirm)}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Remove
               </Button>
             </div>
           </div>
@@ -2161,6 +2397,74 @@ function SupporterEditModal({
               className="flex-1 bg-[#784982] hover:bg-[#5a3562]"
             >
               {isNew ? 'Add Supporter' : 'Save Changes'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// Remembrance name add/edit modal
+function RemembranceNameModal({
+  entry,
+  isNew = false,
+  onClose,
+  onSave,
+}: {
+  entry: { id: string; name: string; createdAt: string } | null;
+  isNew?: boolean;
+  onClose: () => void;
+  onSave: (name: string, id?: string, createdAt?: string) => void;
+}) {
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (entry && !isNew) {
+      setName(entry.name);
+    }
+  }, [entry, isNew]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    if (isNew) {
+      onSave(name.trim());
+    } else if (entry) {
+      onSave(name.trim(), entry.id, entry.createdAt);
+    }
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{isNew ? 'Add Name' : 'Edit Name'}</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="remembrance-name">Name</Label>
+            <Input
+              id="remembrance-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. John Smith"
+              autoFocus
+              required
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={!name.trim()}
+              className="flex-1 bg-[#784982] hover:bg-[#5a3562]"
+            >
+              {isNew ? 'Add Name' : 'Save Changes'}
             </Button>
           </div>
         </form>
