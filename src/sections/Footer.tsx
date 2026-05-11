@@ -74,6 +74,14 @@ export function Footer({ onNavigate }: FooterProps) {
               </li>
               <li>
                 <a
+                  href="/remember-them"
+                  className="text-white/70 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-2"
+                >
+                  Remember Them
+                </a>
+              </li>
+              <li>
+                <a
                   href="#events"
                   onClick={(e) => {
                     e.preventDefault();
