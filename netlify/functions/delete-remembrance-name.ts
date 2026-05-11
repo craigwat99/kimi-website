@@ -21,7 +21,27 @@ export default async (req: Request, _context: Context) => {
     }
 
     const store = getStore("remembrance-names");
-    await store.delete(nameId);
+
+    if (typeof nameId === "string" && nameId.startsWith("fallback:")) {
+      const fallbackName = nameId.slice("fallback:".length);
+      let removedFallback: string[] = [];
+      try {
+        const removed = await store.get("__removed_fallback__", { type: "json" }) as { names: string[] } | null;
+        if (removed?.names) {
+          removedFallback = removed.names;
+        }
+      } catch {
+        // No removed list yet
+      }
+
+      if (!removedFallback.includes(fallbackName)) {
+        removedFallback.push(fallbackName);
+      }
+
+      await store.setJSON("__removed_fallback__", { names: removedFallback });
+    } else {
+      await store.delete(nameId);
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
