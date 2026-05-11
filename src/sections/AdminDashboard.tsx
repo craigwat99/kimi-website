@@ -139,7 +139,7 @@ export function AdminDashboard() {
     }
   }, []);
 
-  // Load events when authenticated
+  // Load events and timeline when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       loadEvents();
@@ -313,12 +313,12 @@ export function AdminDashboard() {
     }
   };
 
-  // Load letters when switching to letters tab
+  // Load letters when authenticated
   useEffect(() => {
-    if (isAuthenticated && activeTab === 'letters' && letters.length === 0) {
+    if (isAuthenticated) {
       loadLetters();
     }
-  }, [isAuthenticated, activeTab, letters.length, loadLetters]);
+  }, [isAuthenticated, loadLetters]);
 
   // Supporters handlers
   const loadSupporters = useCallback(async () => {
@@ -375,12 +375,12 @@ export function AdminDashboard() {
     }
   };
 
-  // Load supporters when switching to supporters tab
+  // Load supporters when authenticated
   useEffect(() => {
-    if (isAuthenticated && activeTab === 'supporters' && supporters.length === 0) {
+    if (isAuthenticated) {
       loadSupporters();
     }
-  }, [isAuthenticated, activeTab, supporters.length, loadSupporters]);
+  }, [isAuthenticated, loadSupporters]);
 
   const filteredEvents = events.filter(event => {
     if (statusFilter === 'approved' && !event.approved) return false;
@@ -1054,85 +1054,6 @@ export function AdminDashboard() {
         </div>
         </>
         )}
-      </main>
-
-      {/* Edit Event Modal */}
-      <AdminEditModal
-        event={editingEvent}
-        onClose={() => setEditingEvent(null)}
-        onSave={handleUpdateEvent}
-      />
-
-      {/* Delete Confirmation */}
-      <Dialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Delete Event</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
-              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
-              <p className="text-sm text-red-800">
-                This will permanently delete this event. This action cannot be undone.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setDeleteConfirm(null)} className="flex-1">
-                Cancel
-              </Button>
-              <Button
-                onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
-                className="flex-1 bg-red-600 hover:bg-red-700"
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Timeline Edit Modal */}
-      <TimelineEditModal
-        item={editingTimeline}
-        onClose={() => setEditingTimeline(null)}
-        onSave={handleSaveTimeline}
-      />
-
-      {/* Timeline Add Modal */}
-      <TimelineEditModal
-        item={addingTimeline ? { id: '', year: new Date().getFullYear(), title: '', description: '', category: 'after' } : null}
-        onClose={() => setAddingTimeline(false)}
-        onSave={handleAddTimeline}
-        isNew
-      />
-
-      {/* Delete Timeline Confirmation */}
-      <Dialog open={!!deleteTimelineConfirm} onOpenChange={() => setDeleteTimelineConfirm(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Delete Timeline Item</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
-              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
-              <p className="text-sm text-red-800">
-                This will permanently remove this item from the timeline. This action cannot be undone.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setDeleteTimelineConfirm(null)} className="flex-1">
-                Cancel
-              </Button>
-              <Button
-                onClick={() => deleteTimelineConfirm && handleDeleteTimeline(deleteTimelineConfirm)}
-                className="flex-1 bg-red-600 hover:bg-red-700"
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
         {activeTab === 'supporters' && (
         <>
@@ -1157,26 +1078,28 @@ export function AdminDashboard() {
           </div>
 
           {/* Actions */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg leading-normal font-semibold text-gray-900">Manage Supporters</h2>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={loadSupporters}
-                disabled={supportersLoading}
-              >
-                <RefreshCw className={`w-4 h-4 mr-2 ${supportersLoading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => setAddingSupporter(true)}
-                className="bg-[#784982] hover:bg-[#5a3562]"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Supporter
-              </Button>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg leading-normal font-semibold text-gray-900">Manage Supporters</h2>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={loadSupporters}
+                  disabled={supportersLoading}
+                >
+                  <RefreshCw className={`w-4 h-4 mr-2 ${supportersLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setAddingSupporter(true)}
+                  className="bg-[#784982] hover:bg-[#5a3562]"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Supporter
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -1275,6 +1198,86 @@ export function AdminDashboard() {
           </div>
         </>
         )}
+
+      </main>
+
+      {/* Edit Event Modal */}
+      <AdminEditModal
+        event={editingEvent}
+        onClose={() => setEditingEvent(null)}
+        onSave={handleUpdateEvent}
+      />
+
+      {/* Delete Confirmation */}
+      <Dialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Event</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+              <p className="text-sm text-red-800">
+                This will permanently delete this event. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setDeleteConfirm(null)} className="flex-1">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Timeline Edit Modal */}
+      <TimelineEditModal
+        item={editingTimeline}
+        onClose={() => setEditingTimeline(null)}
+        onSave={handleSaveTimeline}
+      />
+
+      {/* Timeline Add Modal */}
+      <TimelineEditModal
+        item={addingTimeline ? { id: '', year: new Date().getFullYear(), title: '', description: '', category: 'after' } : null}
+        onClose={() => setAddingTimeline(false)}
+        onSave={handleAddTimeline}
+        isNew
+      />
+
+      {/* Delete Timeline Confirmation */}
+      <Dialog open={!!deleteTimelineConfirm} onOpenChange={() => setDeleteTimelineConfirm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Timeline Item</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
+              <p className="text-sm text-red-800">
+                This will permanently remove this item from the timeline. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setDeleteTimelineConfirm(null)} className="flex-1">
+                Cancel
+              </Button>
+              <Button
+                onClick={() => deleteTimelineConfirm && handleDeleteTimeline(deleteTimelineConfirm)}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Add/Edit Supporter Modal */}
       {(addingSupporter || editingSupporter) && (
