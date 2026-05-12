@@ -365,7 +365,7 @@ export function LettersOfLove() {
           </p>
           {galaPermission && (
             <p className="text-gray-500 mb-8">
-              Thank you for granting permission to include your message in the National Gala Event
+              Thank you for granting permission to include your message in the
               time capsule. We will be in touch if your submission is selected.
             </p>
           )}
@@ -773,21 +773,21 @@ export function LettersOfLove() {
               </div>
             )}
 
-            {/* Gala permission */}
+            {/* Gala ion */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-start gap-4">
                 <div className="flex items-center h-6 mt-0.5">
                   <input
-                    id="gala-permission"
+                    id="gala-ion"
                     type="checkbox"
-                    checked={galaPermission}
+                    checked={galaion}
                     onChange={(e) => setGalaPermission(e.target.checked)}
                     className="w-5 h-5 rounded border-gray-300 text-[#784982] focus:ring-[#784982] cursor-pointer"
                   />
                 </div>
                 <div>
                   <Label htmlFor="gala-permission" className="text-base font-semibold text-gray-900 cursor-pointer">
-                    Permission for National Gala Event
+                    Permission to Reproduce
                   </Label>
                   <p className="text-sm text-gray-500 mt-1">
                     I give permission for my letter/video to be considered for use as part of a
