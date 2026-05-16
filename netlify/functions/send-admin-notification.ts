@@ -1,4 +1,5 @@
 import type { Context } from "@netlify/functions";
+import { Resend } from "resend";
 
 const ADMIN_EMAIL = "craig@rainbowwellington.org.nz";
 
@@ -19,11 +20,11 @@ export default async (req: Request, _context: Context) => {
     );
   }
 
-  const sendgridKey = process.env.SENDGRID_API_KEY;
+  const resendKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.EMAIL_FROM;
 
-  if (!sendgridKey) {
-    console.warn("SENDGRID_API_KEY not configured — admin notification not sent");
+  if (!resendKey) {
+    console.warn("RESEND_API_KEY not configured — admin notification not sent");
     return new Response(
       JSON.stringify({ sent: false, reason: "Email service not configured" }),
       { status: 200, headers: { "Content-Type": "application/json" } }
@@ -71,23 +72,17 @@ export default async (req: Request, _context: Context) => {
   `;
 
   try {
-    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${sendgridKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email: ADMIN_EMAIL }] }],
-        from: { email: fromEmail, name: "40 Years HLR Notifications" },
-        subject,
-        content: [{ type: "text/html", value: htmlBody }],
-      }),
+    const resend = new Resend(resendKey);
+
+    const { error } = await resend.emails.send({
+      from: `40 Years HLR Notifications <${fromEmail}>`,
+      to: [ADMIN_EMAIL],
+      subject,
+      html: htmlBody,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`SendGrid error (${response.status}):`, errorText);
+    if (error) {
+      console.error("Resend error:", error);
       return new Response(
         JSON.stringify({ sent: false, reason: "Failed to send notification" }),
         { status: 200, headers: { "Content-Type": "application/json" } }

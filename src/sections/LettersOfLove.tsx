@@ -780,7 +780,7 @@ export function LettersOfLove() {
                   <input
                     id="gala-ion"
                     type="checkbox"
-                    checked={galaion}
+                    checked={galaPermission}
                     onChange={(e) => setGalaPermission(e.target.checked)}
                     className="w-5 h-5 rounded border-gray-300 text-[#784982] focus:ring-[#784982] cursor-pointer"
                   />
