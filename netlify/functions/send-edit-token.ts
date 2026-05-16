@@ -81,7 +81,12 @@ export default async (req: Request, _context: Context) => {
         reason = "Sender email not verified in SendGrid. Please verify the EMAIL_FROM address in your SendGrid account.";
         console.error(`The EMAIL_FROM address "${fromEmail}" is not a verified sender in SendGrid. Visit https://app.sendgrid.com/settings/sender_auth/senders to verify it.`);
       } else if (response.status === 401) {
-        reason = "SendGrid API key is invalid or expired.";
+        if (errorText.includes("credits exceeded")) {
+          reason = "Email sending quota exceeded. The SendGrid account has run out of email credits.";
+          console.error("SendGrid credits exceeded — upgrade the SendGrid plan or wait for credits to reset.");
+        } else {
+          reason = "SendGrid API key is invalid or expired.";
+        }
       }
 
       return new Response(

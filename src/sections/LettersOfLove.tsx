@@ -320,22 +320,20 @@ export function LettersOfLove() {
       if (!saveRes.ok) throw new Error('Failed to save letter');
       setSubmitted(true);
 
-      // Notify admin of new love letter submission
-      fetch('/.netlify/functions/send-admin-notification', {
+      // Notify admin of new love letter submission via Netlify Forms
+      const notificationData = new URLSearchParams({
+        'form-name': 'letter-notification',
+        'author-name': authorName.trim() || 'Anonymous',
+        'email': email.trim(),
+        'letter-type': letterType,
+        'recipient-name': recipientName.trim(),
+        'has-video': videoFile ? 'Yes' : 'No',
+        'gala-permission': galaPermission ? 'Yes' : 'No',
+      });
+      fetch('/__forms.html', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'letter',
-          name: authorName.trim() || 'Anonymous',
-          submitterEmail: email.trim(),
-          details: {
-            'Author': authorName.trim() || 'Anonymous',
-            'Letter Type': letterType,
-            'Recipient': recipientName.trim() || undefined,
-            'Has Video': videoFile ? 'Yes' : 'No',
-            'Gala Permission': galaPermission ? 'Yes' : 'No',
-          },
-        }),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: notificationData.toString(),
       }).catch(() => {});
     } catch (err) {
       console.error('Submit error:', err);
@@ -780,7 +778,7 @@ export function LettersOfLove() {
                   <input
                     id="gala-ion"
                     type="checkbox"
-                    checked={galaion}
+                    checked={galaPermission}
                     onChange={(e) => setGalaPermission(e.target.checked)}
                     className="w-5 h-5 rounded border-gray-300 text-[#784982] focus:ring-[#784982] cursor-pointer"
                   />

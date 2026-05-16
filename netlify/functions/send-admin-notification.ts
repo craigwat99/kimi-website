@@ -88,8 +88,14 @@ export default async (req: Request, _context: Context) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`SendGrid error (${response.status}):`, errorText);
+
+      let reason = "Failed to send notification";
+      if (response.status === 401 && errorText.includes("credits exceeded")) {
+        reason = "Email sending quota exceeded. The SendGrid account has run out of email credits.";
+      }
+
       return new Response(
-        JSON.stringify({ sent: false, reason: "Failed to send notification" }),
+        JSON.stringify({ sent: false, reason }),
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }

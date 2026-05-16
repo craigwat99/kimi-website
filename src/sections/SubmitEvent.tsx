@@ -148,23 +148,21 @@ export function SubmitEvent({ isOpen, onClose, onSubmit }: SubmitEventProps) {
         .then((data) => setEmailSent(data.sent === true))
         .catch(() => setEmailSent(false));
 
-      // Notify admin of new event submission
-      fetch('/.netlify/functions/send-admin-notification', {
+      // Notify admin of new event submission via Netlify Forms
+      const notificationData = new URLSearchParams({
+        'form-name': 'event-notification',
+        'event-name': formData.name,
+        'organiser': formData.organiser,
+        'email': formData.email,
+        'location': formData.location,
+        'venue': formData.venue,
+        'start-date': formData.startDate,
+        'event-type': formData.eventType,
+      });
+      fetch('/__forms.html', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'event',
-          name: formData.name,
-          submitterEmail: formData.email,
-          details: {
-            'Event Name': formData.name,
-            'Organiser': formData.organiser,
-            'Location': formData.location,
-            'Venue': formData.venue,
-            'Start Date': formData.startDate,
-            'Event Type': formData.eventType,
-          },
-        }),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: notificationData.toString(),
       }).catch(() => {});
     } finally {
       setIsSubmitting(false);
