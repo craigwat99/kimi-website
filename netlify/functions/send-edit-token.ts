@@ -1,4 +1,5 @@
 import type { Context } from "@netlify/functions";
+import { Resend } from "resend";
 
 export default async (req: Request, _context: Context) => {
   if (req.method !== "POST") {
@@ -17,11 +18,11 @@ export default async (req: Request, _context: Context) => {
     );
   }
 
-  const sendgridKey = process.env.SENDGRID_API_KEY;
+  const resendKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.EMAIL_FROM;
 
-  if (!sendgridKey) {
-    console.warn("SENDGRID_API_KEY not configured — email not sent");
+  if (!resendKey) {
+    console.warn("RESEND_API_KEY not configured — email not sent");
     return new Response(
       JSON.stringify({ sent: false, reason: "Email service not configured" }),
       { status: 200, headers: { "Content-Type": "application/json" } }
@@ -29,7 +30,7 @@ export default async (req: Request, _context: Context) => {
   }
 
   if (!fromEmail) {
-    console.warn("EMAIL_FROM not configured — email not sent. Set the EMAIL_FROM environment variable to a verified SendGrid sender email.");
+    console.warn("EMAIL_FROM not configured — email not sent. Set the EMAIL_FROM environment variable to a verified Resend sender email.");
     return new Response(
       JSON.stringify({ sent: false, reason: "Sender email not configured" }),
       { status: 200, headers: { "Content-Type": "application/json" } }
@@ -56,32 +57,21 @@ export default async (req: Request, _context: Context) => {
   `;
 
   try {
-    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${sendgridKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        personalizations: [{ to: [{ email }] }],
-        from: { email: fromEmail, name: "40 Years HLR Events" },
-        subject: `Event Confirmation: ${eventName} — Your Edit Token`,
-        content: [
-          { type: "text/html", value: htmlBody },
-        ],
-      }),
+    const resend = new Resend(resendKey);
+
+    const { error } = await resend.emails.send({
+      from: `40 Years HLR Events <${fromEmail}>`,
+      to: [email],
+      subject: `Event Confirmation: ${eventName} — Your Edit Token`,
+      html: htmlBody,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`SendGrid error (${response.status}):`, errorText);
+    if (error) {
+      console.error("Resend error:", error);
 
       let reason = "Failed to send email";
-      if (response.status === 403 && errorText.includes("verified Sender Identity")) {
-        reason = "Sender email not verified in SendGrid. Please verify the EMAIL_FROM address in your SendGrid account.";
-        console.error(`The EMAIL_FROM address "${fromEmail}" is not a verified sender in SendGrid. Visit https://app.sendgrid.com/settings/sender_auth/senders to verify it.`);
-      } else if (response.status === 401) {
-        reason = "SendGrid API key is invalid or expired.";
+      if (error.name === "validation_error") {
+        reason = "Sender email not verified in Resend. Please verify the EMAIL_FROM address in your Resend account.";
       }
 
       return new Response(
