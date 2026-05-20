@@ -84,7 +84,7 @@ export default async (req: Request, _context: Context) => {
     if (error) {
       console.error("Resend error:", error);
       return new Response(
-        JSON.stringify({ sent: false, reason: "Failed to send notification" }),
+        JSON.stringify({ sent: false, reason }),
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }

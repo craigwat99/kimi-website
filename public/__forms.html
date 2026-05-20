@@ -1,0 +1,29 @@
+<!-- Static form skeleton for Netlify Forms build-time detection -->
+<html>
+  <body>
+    <form name="event-notification" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="event-notification" />
+      <input type="hidden" name="subject" value="New Event Submitted: %{formName}" />
+      <input name="bot-field" />
+      <input name="event-name" />
+      <input name="organiser" />
+      <input name="email" />
+      <input name="location" />
+      <input name="venue" />
+      <input name="start-date" />
+      <input name="event-type" />
+    </form>
+
+    <form name="letter-notification" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="letter-notification" />
+      <input type="hidden" name="subject" value="New Love Letter Submitted: %{formName}" />
+      <input name="bot-field" />
+      <input name="author-name" />
+      <input name="email" />
+      <input name="letter-type" />
+      <input name="recipient-name" />
+      <input name="has-video" />
+      <input name="gala-permission" />
+    </form>
+  </body>
+</html>
