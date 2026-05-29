@@ -1,21 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Navigation } from './sections/Navigation';
-import { Hero } from './sections/Hero';
-import { Introduction } from './sections/Introduction';
-import { Events } from './sections/Events';
-import { EventDetailModal } from './sections/EventDetailModal';
-import { SubmitEvent } from './sections/SubmitEvent';
-import { EditEvent } from './sections/EditEvent';
-import { HistoryTimeline } from './sections/HistoryTimeline';
-import { Gallery } from './sections/Gallery';
-import { LettersOfLovePromo } from './sections/LettersOfLovePromo';
-import { Supporters } from './sections/Supporters';
-import { Footer } from './sections/Footer';
-import type { Event } from './types';
-import { generateEditToken } from './utils/tokens';
-import './App.css';
+import { Navigation } from './Navigation';
+import { Events } from './Events';
+import { EventDetailModal } from './EventDetailModal';
+import { SubmitEvent } from './SubmitEvent';
+import { EditEvent } from './EditEvent';
+import { Footer } from './Footer';
+import type { Event } from '../types';
+import { generateEditToken } from '../utils/tokens';
+import '../App.css';
 
-function App() {
+export function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -48,7 +42,6 @@ function App() {
     };
     setEvents(prev => [event, ...prev]);
 
-    // Persist to server
     fetch('/.netlify/functions/save-event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -65,7 +58,6 @@ function App() {
     ));
     setEditingEvent(null);
 
-    // Persist to server
     fetch('/.netlify/functions/save-event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -77,7 +69,6 @@ function App() {
     setEvents(prev => prev.filter(e => e.id !== eventId));
     setEditingEvent(null);
 
-    // Persist to server
     fetch('/.netlify/functions/delete-event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -85,60 +76,36 @@ function App() {
     }).catch(err => console.error('Failed to delete event:', err));
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
+  // Section links live on the home page — fall back to navigating there with a hash.
+  const navigateToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = `/#${sectionId}`;
     }
   };
-
-  // Handle hash-based navigation from other pages (e.g. /quiz -> /#events)
-  useEffect(() => {
-    const hash = window.location.hash.replace('#', '');
-    if (hash) {
-      // Small delay to ensure sections are rendered
-      setTimeout(() => {
-        const element = document.getElementById(hash);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    }
-  }, []);
 
   // Only show approved events on the public site
   const approvedEvents = events.filter(e => e.approved !== false);
 
   return (
     <div className="min-h-screen bg-white">
-      <Navigation onNavigate={scrollToSection} />
+      <Navigation onNavigate={navigateToSection} />
 
-      <main>
-        <Hero />
-        <Introduction />
-
-        <LettersOfLovePromo />
-
+      <main className="pt-20">
         <Events
           events={approvedEvents}
           onEventClick={setSelectedEvent}
           onSubmitClick={() => setShowSubmitForm(true)}
-          limit={12}
-          showSeeMore
         />
-        
-        <HistoryTimeline />
-        
-        <Gallery />
 
-        <Supporters />
-
-        <SubmitEvent 
+        <SubmitEvent
           isOpen={showSubmitForm}
           onClose={() => setShowSubmitForm(false)}
           onSubmit={handleAddEvent}
         />
-        
+
         <EditEvent
           event={editingEvent}
           isOpen={!!editingEvent}
@@ -146,7 +113,7 @@ function App() {
           onUpdate={handleUpdateEvent}
           onDelete={handleDeleteEvent}
         />
-        
+
         <EventDetailModal
           event={selectedEvent}
           isOpen={!!selectedEvent}
@@ -157,10 +124,8 @@ function App() {
           }}
         />
       </main>
-      
-      <Footer onNavigate={scrollToSection} />
+
+      <Footer onNavigate={navigateToSection} />
     </div>
   );
 }
-
-export default App;
