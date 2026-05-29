@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { MapPin, Calendar, Clock, Facebook, Filter, X, Search, Ticket } from 'lucide-react';
+import { MapPin, Calendar, Clock, Facebook, Filter, X, Search, Ticket, ArrowRight } from 'lucide-react';
 import type { Event, EventType, LocationFilter, CostFilter } from '../types';
 import { formatDate, formatTime, formatPrice } from '../utils/tokens';
 
@@ -7,17 +7,26 @@ interface EventsProps {
   events: Event[];
   onEventClick: (event: Event) => void;
   onSubmitClick: () => void;
+  /** Maximum number of events to show. When set and exceeded, a "See more" button is rendered. */
+  limit?: number;
+  /** When true, a "See more" button links to the full /events page once the limit is exceeded. */
+  showSeeMore?: boolean;
 }
 
-export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
+export function Events({ events, onEventClick, onSubmitClick, limit, showSeeMore = false }: EventsProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [locationFilter, setLocationFilter] = useState<LocationFilter>('all');
   const [typeFilter, setTypeFilter] = useState<EventType>('all');
   const [costFilter, setCostFilter] = useState<CostFilter>('all');
   const [dateFilter, setDateFilter] = useState<string>('');
+  const [showPastEvents, setShowPastEvents] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const sectionRef = useRef<HTMLElement>(null);
+
+  // Today's date in YYYY-MM-DD (local time). Any event whose start date is before
+  // today is treated as past and hidden unless "Show past events" is enabled.
+  const todayStr = new Date().toLocaleDateString('en-CA');
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -38,7 +47,9 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
   }, []);
 
   const filteredEvents = useMemo(() => {
+    const isPastEvent = (event: Event) => event.startDate < todayStr;
     return events.filter((event) => {
+      if (!showPastEvents && isPastEvent(event)) return false;
       if (locationFilter !== 'all' && event.location !== locationFilter) return false;
       if (typeFilter !== 'all' && event.eventType !== typeFilter) return false;
       if (costFilter === 'free' && event.ticketPrice !== null && event.ticketPrice > 0) return false;
@@ -55,7 +66,13 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
       }
       return true;
     }).sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-  }, [events, locationFilter, typeFilter, costFilter, dateFilter, searchQuery]);
+  }, [events, locationFilter, typeFilter, costFilter, dateFilter, searchQuery, showPastEvents, todayStr]);
+
+  const visibleEvents = useMemo(
+    () => (limit ? filteredEvents.slice(0, limit) : filteredEvents),
+    [filteredEvents, limit]
+  );
+  const hasMore = showSeeMore && limit !== undefined && filteredEvents.length > limit;
 
   const locations = ['all', 'Auckland', 'Wellington', 'Christchurch', 'Dunedin', 'Other'] as const;
   const types = [
@@ -101,9 +118,10 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
     setCostFilter('all');
     setDateFilter('');
     setSearchQuery('');
+    setShowPastEvents(false);
   };
 
-  const hasActiveFilters = locationFilter !== 'all' || typeFilter !== 'all' || costFilter !== 'all' || dateFilter || searchQuery;
+  const hasActiveFilters = locationFilter !== 'all' || typeFilter !== 'all' || costFilter !== 'all' || dateFilter || searchQuery || showPastEvents;
 
   return (
     <section
@@ -161,7 +179,7 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
               Filters
               {hasActiveFilters && (
                 <span className="ml-1 w-5 h-5 rounded-full bg-[#e5c858] text-white text-xs flex items-center justify-center">
-                  {[locationFilter, typeFilter, costFilter].filter(f => f !== 'all').length + (dateFilter ? 1 : 0) + (searchQuery ? 1 : 0)}
+                  {[locationFilter, typeFilter, costFilter].filter(f => f !== 'all').length + (dateFilter ? 1 : 0) + (searchQuery ? 1 : 0) + (showPastEvents ? 1 : 0)}
                 </span>
               )}
             </button>
@@ -243,6 +261,17 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
                 </div>
               </div>
 
+              {/* Show past events toggle */}
+              <label className="mt-4 flex items-center gap-3 cursor-pointer select-none w-fit">
+                <input
+                  type="checkbox"
+                  checked={showPastEvents}
+                  onChange={(e) => setShowPastEvents(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 text-[#784982] focus:ring-[#784982]/40"
+                />
+                <span className="text-sm font-medium text-gray-700">Show past events</span>
+              </label>
+
               {/* Clear filters */}
               {hasActiveFilters && (
                 <button
@@ -259,13 +288,15 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
 
         {/* Results count */}
         <div className="mb-6 text-sm text-gray-500">
-          Showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
+          {hasMore
+            ? `Showing ${visibleEvents.length} of ${filteredEvents.length} events`
+            : `Showing ${filteredEvents.length} event${filteredEvents.length !== 1 ? 's' : ''}`}
         </div>
 
         {/* Events Grid */}
         {filteredEvents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredEvents.map((event, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {visibleEvents.map((event, index) => (
               <div
                 key={event.id}
                 onClick={() => onEventClick(event)}
@@ -375,6 +406,16 @@ export function Events({ events, onEventClick, onSubmitClick }: EventsProps) {
             >
               Clear Filters
             </button>
+          </div>
+        )}
+
+        {/* See more */}
+        {hasMore && (
+          <div className="mt-12 text-center">
+            <a href="/events" className="btn-primary inline-flex items-center gap-2">
+              See more events
+              <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
         )}
       </div>
