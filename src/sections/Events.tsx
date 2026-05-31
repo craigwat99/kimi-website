@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { MapPin, Calendar, Clock, Facebook, Filter, X, Search, Ticket, ArrowRight } from 'lucide-react';
+import { MapPin, Calendar, Clock, Facebook, Filter, X, Search, Ticket, ArrowRight, Download } from 'lucide-react';
 import type { Event, EventType, LocationFilter, CostFilter } from '../types';
 import { formatDate, formatTime, formatPrice } from '../utils/tokens';
 
@@ -418,6 +418,48 @@ export function Events({ events, onEventClick, onSubmitClick, limit, showSeeMore
             </a>
           </div>
         )}
+
+        {/* Queer History Month Aotearoa */}
+        <div className="mt-16 sm:mt-20">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#784982] to-[#5a3562] text-white shadow-xl">
+            <div className="relative p-8 sm:p-12 lg:p-16 flex flex-col lg:flex-row lg:items-center gap-8">
+              <div className="flex-1 space-y-4">
+                <a
+                  href="https://www.laganz.org.nz/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block"
+                >
+                  <img
+                    src="/kawe-mahara-logo-white.svg"
+                    alt="Kawe Mahara"
+                    className="h-16 sm:h-20 w-auto"
+                  />
+                </a>
+                <span className="inline-block px-4 py-1.5 rounded-full bg-white/15 text-[#e5c858] text-sm font-semibold backdrop-blur-sm">
+                  Pūmahara Ia Te Wā · Kawe Mahara
+                </span>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-tight">
+                  July is Queer History Month Aotearoa
+                </h3>
+                <p className="text-base sm:text-lg text-white/90 max-w-2xl">
+                  Kawe Mahara has released a digital resource with practical tools and suggested
+                  activities to celebrate queer history your way.
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <a
+                  href="/Kawe-Mahara-KAMP2026.pdf"
+                  download
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#e5c858] text-[#5a3562] font-bold text-lg hover:bg-white transition-colors shadow-lg"
+                >
+                  <Download className="w-5 h-5" />
+                  Download the resource
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
