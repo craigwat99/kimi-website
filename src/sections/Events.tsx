@@ -428,7 +428,7 @@ export function Events({ events, onEventClick, onSubmitClick, limit, showSeeMore
                   href="https://www.laganz.org.nz/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block"
+                  className="block"
                 >
                   <img
                     src="/kawe-mahara-logo-white.svg"
