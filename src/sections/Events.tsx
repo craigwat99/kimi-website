@@ -24,8 +24,9 @@ export function Events({ events, onEventClick, onSubmitClick, limit, showSeeMore
   const [searchQuery, setSearchQuery] = useState('');
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Today's date in YYYY-MM-DD (local time). Any event whose start date is before
-  // today is treated as past and hidden unless "Show past events" is enabled.
+  // Today's date in YYYY-MM-DD (local time). An event is treated as past once its
+  // final day is before today, so multi-day events stay visible while still running.
+  // Past events are hidden unless "Show past events" is enabled.
   const todayStr = new Date().toLocaleDateString('en-CA');
 
   useEffect(() => {
@@ -47,7 +48,7 @@ export function Events({ events, onEventClick, onSubmitClick, limit, showSeeMore
   }, []);
 
   const filteredEvents = useMemo(() => {
-    const isPastEvent = (event: Event) => event.startDate < todayStr;
+    const isPastEvent = (event: Event) => (event.endDate || event.startDate) < todayStr;
     return events.filter((event) => {
       if (!showPastEvents && isPastEvent(event)) return false;
       if (locationFilter !== 'all' && event.location !== locationFilter) return false;
