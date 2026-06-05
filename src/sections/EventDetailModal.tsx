@@ -99,9 +99,10 @@ export function EventDetailModal({ event, isOpen, onClose, onEditRequest }: Even
               <Calendar className="w-5 h-5 text-[#784982] mt-0.5" />
               <div>
                 <p className="font-medium text-gray-900">Date</p>
-                <p className="text-gray-600">{formatDate(event.startDate)}</p>
-                {event.endDate && event.startDate !== event.endDate && (
-                  <p className="text-gray-600">to {formatDate(event.endDate)}</p>
+                {event.endDate && event.startDate !== event.endDate ? (
+                  <p className="text-gray-600">{formatDate(event.startDate)} – {formatDate(event.endDate)}</p>
+                ) : (
+                  <p className="text-gray-600">{formatDate(event.startDate)}</p>
                 )}
               </div>
             </div>
