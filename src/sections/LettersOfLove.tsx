@@ -320,20 +320,21 @@ export function LettersOfLove() {
       if (!saveRes.ok) throw new Error('Failed to save letter');
       setSubmitted(true);
 
-      // Notify admin of new love letter submission via Netlify Forms
-      const notificationData = new URLSearchParams({
-        'form-name': 'letter-notification',
-        'author-name': authorName.trim() || 'Anonymous',
-        'email': email.trim(),
-        'letter-type': letterType,
-        'recipient-name': recipientName.trim(),
-        'has-video': videoFile ? 'Yes' : 'No',
-        'gala-permission': galaPermission ? 'Yes' : 'No',
-      });
-      fetch('/__forms.html', {
+      // Notify admin of new love letter submission via Resend
+      fetch('/.netlify/functions/send-admin-notification', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: notificationData.toString(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'letter',
+          name: authorName.trim() || 'Anonymous',
+          submitterEmail: email.trim(),
+          details: {
+            'Letter Type': letterType,
+            'Recipient': recipientName.trim(),
+            'Has Video': videoFile ? 'Yes' : 'No',
+            'Gala Permission': galaPermission ? 'Yes' : 'No',
+          },
+        }),
       }).catch(() => {});
     } catch (err) {
       console.error('Submit error:', err);
