@@ -9,9 +9,15 @@ export default async (req: Request) => {
   }
 
   const adminPassword = process.env.ADMIN_PASSWORD;
+  const deliveryPassword = process.env.DELIVERY_PASSWORD;
   const authHeader = req.headers.get("x-admin-password");
 
-  if (!adminPassword || authHeader !== adminPassword) {
+  const authorized = !!authHeader && (
+    (!!adminPassword && authHeader === adminPassword) ||
+    (!!deliveryPassword && authHeader === deliveryPassword)
+  );
+
+  if (!authorized) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
