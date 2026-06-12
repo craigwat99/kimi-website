@@ -39,11 +39,22 @@ export default async (req: Request, _context: Context) => {
     );
   }
 
-  const isEvent = type === "event";
-  const heading = isEvent ? "New Event Submission" : "New Love Letter Submission";
-  const subject = isEvent
-    ? `New Event Submitted: ${name}`
-    : `New Love Letter from ${name}`;
+  let heading: string;
+  let subject: string;
+  let introNoun: string;
+  if (type === "event") {
+    heading = "New Event Submission";
+    subject = `New Event Submitted: ${name}`;
+    introNoun = "event";
+  } else if (type === "package") {
+    heading = "New Package Request";
+    subject = `New Package Request from ${name}`;
+    introNoun = "package request";
+  } else {
+    heading = "New Love Letter Submission";
+    subject = `New Love Letter from ${name}`;
+    introNoun = "love letter";
+  }
 
   const detailRows = details
     ? Object.entries(details)
@@ -61,7 +72,7 @@ export default async (req: Request, _context: Context) => {
         <h1 style="color: white; margin: 0; font-size: 24px;">${heading}</h1>
       </div>
       <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
-        <p style="color: #374151; font-size: 16px;">A new ${isEvent ? "event" : "love letter"} has been submitted and is awaiting review.</p>
+        <p style="color: #374151; font-size: 16px;">A new ${introNoun} has been submitted and is awaiting review.</p>
         ${detailRows ? `<table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: #f9fafb; border-radius: 8px; overflow: hidden;">${detailRows}</table>` : ""}
         ${submitterEmail ? `<p style="color: #6b7280; font-size: 14px;">Submitter email: <a href="mailto:${submitterEmail}" style="color: #5A2E88;">${submitterEmail}</a></p>` : ""}
         <p style="color: #374151; font-size: 16px;">Log in to the <strong>Admin Dashboard</strong> to review and approve this submission.</p>
@@ -84,7 +95,7 @@ export default async (req: Request, _context: Context) => {
     if (error) {
       console.error("Resend error:", error);
       return new Response(
-        JSON.stringify({ sent: false, reason }),
+        JSON.stringify({ sent: false, reason: "Failed to send notification" }),
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }

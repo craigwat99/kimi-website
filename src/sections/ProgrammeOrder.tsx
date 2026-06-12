@@ -58,6 +58,23 @@ export function ProgrammeOrder() {
 
       if (!res.ok) throw new Error('Failed to submit');
       setSubmitted(true);
+
+      // Notify admin of new package request via Resend
+      fetch('/.netlify/functions/send-admin-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'package',
+          name: contactName.trim(),
+          details: {
+            'Organisation': organisationName.trim(),
+            'Number of Programmes': numberOfProgrammes,
+            'Postal Address': postalAddress.trim(),
+            'Mobile Number': mobileNumber.trim(),
+            'Delivery Notes': deliveryNotes.trim() || '',
+          },
+        }),
+      }).catch(() => {});
     } catch {
       setErrors({ form: 'Something went wrong. Please try again.' });
     } finally {
