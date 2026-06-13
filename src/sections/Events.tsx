@@ -343,7 +343,11 @@ export function Events({ events, onEventClick, onSubmitClick, limit, showSeeMore
                   {/* Date & Time */}
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="w-4 h-4 text-[#784982]" />
-                    <span>{formatDate(event.startDate)}</span>
+                    <span>
+                      {event.endDate && event.startDate !== event.endDate
+                        ? `${formatDate(event.startDate)} – ${formatDate(event.endDate)}`
+                        : formatDate(event.startDate)}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Clock className="w-4 h-4 text-[#784982]" />
