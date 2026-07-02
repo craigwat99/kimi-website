@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { LogOut, Check, X, Lock, AlertTriangle, Clock, RefreshCw, Package, Download, Truck, Search, Edit3 } from 'lucide-react';
+import { LogOut, Check, X, Lock, AlertTriangle, Clock, RefreshCw, Package, Download, Truck, Search, Edit3, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -43,6 +44,8 @@ export function DeliveryDashboard() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'sent'>('all');
   const [editingOrderId, setEditingOrderId] = useState<number | null>(null);
   const [editingTrackingInfo, setEditingTrackingInfo] = useState('');
+  const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
+  const [editingAddress, setEditingAddress] = useState('');
 
   const getStoredPassword = () => sessionStorage.getItem(PASSWORD_KEY) || '';
 
@@ -122,6 +125,25 @@ export function DeliveryDashboard() {
       }
       setEditingOrderId(null);
       setEditingTrackingInfo('');
+    } catch {
+      // Failed to update
+    }
+  };
+
+  const handleUpdateAddress = async (orderId: number, postalAddress: string) => {
+    if (!postalAddress.trim()) return;
+    try {
+      const res = await fetch('/api/programme-orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': getStoredPassword() },
+        body: JSON.stringify({ id: orderId, postalAddress: postalAddress.trim() }),
+      });
+      const data = await res.json();
+      if (data.order) {
+        setOrders(prev => prev.map(o => o.id === orderId ? data.order : o));
+      }
+      setEditingAddressId(null);
+      setEditingAddress('');
     } catch {
       // Failed to update
     }
@@ -366,9 +388,40 @@ export function DeliveryDashboard() {
                       <span className="text-sm text-gray-700">{order.organisationName}</span>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      <span className="text-sm text-gray-600 max-w-[200px] truncate block" title={order.postalAddress}>
-                        {order.postalAddress}
-                      </span>
+                      {editingAddressId === order.id ? (
+                        <div className="flex flex-col gap-1 min-w-[220px]">
+                          <Textarea
+                            value={editingAddress}
+                            onChange={(e) => setEditingAddress(e.target.value)}
+                            placeholder="Postal address"
+                            rows={3}
+                            className="text-xs"
+                          />
+                          <div className="flex gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 px-2 text-green-600 border-green-200 hover:bg-green-50"
+                              disabled={!editingAddress.trim()}
+                              onClick={() => handleUpdateAddress(order.id, editingAddress)}
+                            >
+                              <Check className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 px-2"
+                              onClick={() => { setEditingAddressId(null); setEditingAddress(''); }}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-600 max-w-[200px] truncate block" title={order.postalAddress}>
+                          {order.postalAddress}
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge className="bg-[#784982]/10 text-[#784982]">
@@ -447,6 +500,15 @@ export function DeliveryDashboard() {
                             <Clock className="w-4 h-4" />
                           </Button>
                         )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-2"
+                          title="Edit delivery address"
+                          onClick={() => { setEditingAddressId(order.id); setEditingAddress(order.postalAddress); }}
+                        >
+                          <MapPin className="w-4 h-4" />
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"

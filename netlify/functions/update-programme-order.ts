@@ -23,15 +23,20 @@ export default async (req: Request) => {
 
   try {
     const body = await req.json();
-    const { id, status, trackingInfo } = body;
+    const { id, status, trackingInfo, postalAddress } = body;
 
     if (!id) {
       return Response.json({ error: "Order ID is required" }, { status: 400 });
     }
 
+    if (postalAddress !== undefined && (typeof postalAddress !== "string" || postalAddress.trim() === "")) {
+      return Response.json({ error: "Postal address cannot be empty" }, { status: 400 });
+    }
+
     const updateData: Record<string, unknown> = { updatedAt: new Date() };
     if (status !== undefined) updateData.status = status;
     if (trackingInfo !== undefined) updateData.trackingInfo = trackingInfo;
+    if (postalAddress !== undefined) updateData.postalAddress = postalAddress.trim();
 
     const [updated] = await db.update(programmeOrders)
       .set(updateData)
