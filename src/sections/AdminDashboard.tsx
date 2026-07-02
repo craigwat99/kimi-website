@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload, Heart, RefreshCw, Video, FileText, Star, ExternalLink, Users, Package, Download, Truck } from 'lucide-react';
+import { LogOut, Check, X, Trash2, Edit3, Eye, EyeOff, Copy, Search, Shield, Lock, AlertTriangle, Plus, Clock, ImageIcon, Upload, Heart, RefreshCw, Video, FileText, Star, ExternalLink, Users, Package, Download, Truck, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -89,6 +89,8 @@ export function AdminDashboard() {
   const [programmesStatusFilter, setProgrammesStatusFilter] = useState<'all' | 'pending' | 'sent'>('all');
   const [editingOrderId, setEditingOrderId] = useState<number | null>(null);
   const [editingTrackingInfo, setEditingTrackingInfo] = useState('');
+  const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
+  const [editingAddress, setEditingAddress] = useState('');
 
   // Load events from server
   const loadEvents = useCallback(async () => {
@@ -470,6 +472,26 @@ export function AdminDashboard() {
       }
       setEditingOrderId(null);
       setEditingTrackingInfo('');
+    } catch {
+      // Failed to update
+    }
+  };
+
+  const handleUpdateAddress = async (orderId: number, postalAddress: string) => {
+    if (!postalAddress.trim()) return;
+    try {
+      const adminPw = sessionStorage.getItem('hlr-admin-password') || '';
+      const res = await fetch('/api/programme-orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPw },
+        body: JSON.stringify({ id: orderId, postalAddress: postalAddress.trim() }),
+      });
+      const data = await res.json();
+      if (data.order) {
+        setProgrammeOrders(prev => prev.map(o => o.id === orderId ? data.order : o));
+      }
+      setEditingAddressId(null);
+      setEditingAddress('');
     } catch {
       // Failed to update
     }
@@ -1619,9 +1641,40 @@ export function AdminDashboard() {
                         <span className="text-sm text-gray-700">{order.organisationName}</span>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        <span className="text-sm text-gray-600 max-w-[200px] truncate block" title={order.postalAddress}>
-                          {order.postalAddress}
-                        </span>
+                        {editingAddressId === order.id ? (
+                          <div className="flex flex-col gap-1 min-w-[220px]">
+                            <Textarea
+                              value={editingAddress}
+                              onChange={(e) => setEditingAddress(e.target.value)}
+                              placeholder="Postal address"
+                              rows={3}
+                              className="text-xs"
+                            />
+                            <div className="flex gap-1">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 px-2 text-green-600 border-green-200 hover:bg-green-50"
+                                disabled={!editingAddress.trim()}
+                                onClick={() => handleUpdateAddress(order.id, editingAddress)}
+                              >
+                                <Check className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 px-2"
+                                onClick={() => { setEditingAddressId(null); setEditingAddress(''); }}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-600 max-w-[200px] truncate block" title={order.postalAddress}>
+                            {order.postalAddress}
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell className="text-center">
                         <Badge className="bg-[#784982]/10 text-[#784982]">
@@ -1700,6 +1753,15 @@ export function AdminDashboard() {
                               <Clock className="w-4 h-4" />
                             </Button>
                           )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2"
+                            title="Edit delivery address"
+                            onClick={() => { setEditingAddressId(order.id); setEditingAddress(order.postalAddress); }}
+                          >
+                            <MapPin className="w-4 h-4" />
+                          </Button>
                           <Button
                             variant="outline"
                             size="sm"
