@@ -8,6 +8,7 @@ import { SubmitEvent } from './sections/SubmitEvent';
 import { EditEvent } from './sections/EditEvent';
 import { HistoryTimeline } from './sections/HistoryTimeline';
 import { Gallery } from './sections/Gallery';
+import { PhotosAndBooklet } from './sections/PhotosAndBooklet';
 import { LettersOfLovePromo } from './sections/LettersOfLovePromo';
 import { Supporters } from './sections/Supporters';
 import { Footer } from './sections/Footer';
@@ -126,7 +127,9 @@ function App() {
           limit={12}
           showSeeMore
         />
-        
+
+        <PhotosAndBooklet />
+
         <HistoryTimeline />
         
         <Gallery />
