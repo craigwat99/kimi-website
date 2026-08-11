@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera, Facebook, ArrowRight, BookOpen, MapPin, Mail } from 'lucide-react';
+import { Camera, Facebook, ArrowRight, BookOpen, MapPin, Mail, Download } from 'lucide-react';
 
 const photoEvents = [
   'National Gala',
@@ -145,6 +145,17 @@ export function PhotosAndBooklet() {
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-4 text-left">
                 <div className="shrink-0 w-11 h-11 rounded-xl bg-[#784982]/10 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-[#784982]" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900">Read it online</p>
+                  <p className="text-gray-600">
+                    The full programme is available to read on screen, or download as a PDF.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 text-left">
+                <div className="shrink-0 w-11 h-11 rounded-xl bg-[#784982]/10 flex items-center justify-center">
                   <MapPin className="w-5 h-5 text-[#784982]" />
                 </div>
                 <div>
@@ -167,13 +178,30 @@ export function PhotosAndBooklet() {
               </div>
             </div>
 
-            <a
-              href="mailto:contact@40yearsoflove.nz?subject=Anniversary%20Booklet%20order"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#784982] text-white font-bold hover:bg-[#5a3562] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl rounded-lg"
-            >
-              <Mail className="w-5 h-5" />
-              Email us to order copies
-            </a>
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center lg:justify-start gap-3">
+              <a
+                href="/programme"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[#784982] text-white font-bold hover:bg-[#5a3562] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl rounded-lg"
+              >
+                <BookOpen className="w-5 h-5" />
+                Read online
+              </a>
+              <a
+                href="/40-years-commemorative-programme.pdf"
+                download
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border-2 border-[#784982] text-[#784982] font-bold hover:bg-[#784982]/5 transition-all duration-300 rounded-lg"
+              >
+                <Download className="w-5 h-5" />
+                Download
+              </a>
+              <a
+                href="mailto:contact@40yearsoflove.nz?subject=Anniversary%20Booklet%20order"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[#784982] font-bold hover:bg-[#784982]/5 transition-all duration-300 rounded-lg"
+              >
+                <Mail className="w-5 h-5" />
+                Email us to order copies
+              </a>
+            </div>
           </div>
         </div>
       </div>
