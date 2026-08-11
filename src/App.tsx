@@ -118,6 +118,8 @@ function App() {
         <Hero />
         <Introduction />
 
+        <PhotosAndBooklet />
+
         <LettersOfLovePromo />
 
         <Events
@@ -127,8 +129,6 @@ function App() {
           limit={12}
           showSeeMore
         />
-
-        <PhotosAndBooklet />
 
         <HistoryTimeline />
         
