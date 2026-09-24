@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { MapPin, Calendar, Clock, Facebook, Filter, X, Search, Ticket, ArrowRight, Download } from 'lucide-react';
+import { MapPin, Calendar, Clock, Facebook, Filter, X, Search, Ticket, ArrowRight, Download, Headphones } from 'lucide-react';
 import type { Event, EventType, LocationFilter, CostFilter } from '../types';
 import { formatDate, formatTime, formatPrice } from '../utils/tokens';
 
@@ -461,6 +461,70 @@ export function Events({ events, onEventClick, onSubmitClick, limit, showSeeMore
                   <Download className="w-5 h-5" />
                   Download the resource
                 </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Rights & Realities podcast — Te Kāhui Tika Tangata Human Rights Commission */}
+        <div className="mt-10 sm:mt-12">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0a3a82] to-[#062456] text-white shadow-xl">
+            <div className="relative p-8 sm:p-12 lg:p-16 flex flex-col lg:flex-row lg:items-center gap-8">
+              <div className="flex-1 space-y-4">
+                <a
+                  href="https://tikatangata.org.nz/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-fit"
+                >
+                  <img
+                    src="/tkt-human-rights-commission-logo-white.png"
+                    alt="Te Kāhui Tika Tangata Human Rights Commission"
+                    className="h-16 sm:h-20 w-auto -ml-3 sm:-ml-4"
+                  />
+                </a>
+                <span className="inline-block px-4 py-1.5 rounded-full bg-white/15 text-[#e5c858] text-sm font-semibold backdrop-blur-sm">
+                  Five-part podcast series
+                </span>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black leading-tight">
+                  Rights &amp; Realities: Remembering 1986
+                </h3>
+                <p className="text-base sm:text-lg text-white/90 max-w-2xl">
+                  Rights &amp; Realities: Remembering 1986 is a five-part series from Te Kāhui Tika
+                  Tangata Human Rights Commission that looks at the events leading up to the passing
+                  of Labour MP Fran Wilde’s Bill, and beyond, through the voices of activists,
+                  politicians, scholars, and the community leaders who lived it. It celebrates how far
+                  we’ve come and acknowledges the Rainbow communities who don’t yet enjoy the
+                  advantages that generation fought to achieve.
+                </p>
+                <p className="text-base sm:text-lg text-white/90 max-w-2xl">
+                  The series features archival audio and conversations with Fran Wilde, Professor
+                  Elizabeth Kerekere, Dr Stephen Rainbow, Phylesha Brown-Acton, Louisa Wall, Professor
+                  Chris Brickell, Linda Evans, Gavin Young, Prudence Walker and Vinod Bal.
+                </p>
+                <p className="text-base sm:text-lg text-white/90 max-w-2xl">
+                  Listen to all five episodes now on Spotify, Apple Podcasts, iHeart, or wherever you
+                  get your podcasts.
+                </p>
+              </div>
+              <div className="flex-shrink-0 flex flex-col gap-3 lg:w-64">
+                {[
+                  { label: 'Spotify', href: 'https://open.spotify.com/show/033KuYQlXuk9ztxunCMUrI?si=d49055a8cfe94871' },
+                  { label: 'Apple Podcasts', href: 'https://podcasts.apple.com/nz/podcast/rights-realities-remembering-1986/id6787827711' },
+                  { label: 'iHeart', href: 'https://www.iheart.com/podcast/1333-rights-realities-remember-338544413/' },
+                ].map(({ label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Listen to Rights & Realities on ${label}`}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#e5c858] text-[#062456] font-bold text-lg hover:bg-white transition-colors shadow-lg"
+                  >
+                    <Headphones className="w-5 h-5" />
+                    Listen on {label}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
